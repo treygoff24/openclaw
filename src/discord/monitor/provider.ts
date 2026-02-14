@@ -4,6 +4,7 @@ import { Routes } from "discord-api-types/v10";
 import { inspect } from "node:util";
 import type { HistoryEntry } from "../../auto-reply/reply/history.js";
 import type { OpenClawConfig, ReplyToMode } from "../../config/config.js";
+import type { DiscordGuildEntryResolved } from "./allow-list.js";
 import { resolveTextChunkLimit } from "../../auto-reply/chunk.js";
 import { listNativeCommandSpecsForConfig } from "../../auto-reply/commands-registry.js";
 import { listSkillCommandsForAgents } from "../../auto-reply/skill-commands.js";
@@ -72,6 +73,16 @@ function summarizeGuilds(entries?: Record<string, unknown>) {
   const sample = keys.slice(0, 4);
   const suffix = keys.length > sample.length ? ` (+${keys.length - sample.length})` : "";
   return `${sample.join(", ")}${suffix}`;
+}
+
+type DiscordGuildChannelsMap = NonNullable<DiscordGuildEntryResolved["channels"]>;
+
+function mergeGuildChannelEntries(
+  source?: DiscordGuildChannelsMap,
+  existing?: DiscordGuildChannelsMap,
+): DiscordGuildChannelsMap | undefined {
+  const merged: DiscordGuildChannelsMap = { ...source, ...existing };
+  return Object.keys(merged).length > 0 ? merged : undefined;
 }
 
 async function deployDiscordCommands(params: {
@@ -224,7 +235,8 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
             if (!source) {
               continue;
             }
-            const sourceGuild = guildEntries?.[source.guildKey] ?? {};
+            const sourceGuild = (guildEntries?.[source.guildKey] ??
+              {}) as DiscordGuildEntryResolved;
             if (!entry.resolved || !entry.guildId) {
               unresolved.push(entry.input);
               continue;
@@ -234,22 +246,31 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
                 ? `${entry.input}→${entry.guildId}/${entry.channelId}`
                 : `${entry.input}→${entry.guildId}`,
             );
-            const existing = nextGuilds[entry.guildId] ?? {};
-            const mergedChannels = { ...sourceGuild.channels, ...existing.channels };
-            const mergedGuild = { ...sourceGuild, ...existing, channels: mergedChannels };
+            const existing = (nextGuilds[entry.guildId] ?? {}) as DiscordGuildEntryResolved;
+            const mergedChannels = mergeGuildChannelEntries(
+              sourceGuild.channels,
+              existing.channels,
+            );
+            const mergedGuild: DiscordGuildEntryResolved = { ...sourceGuild, ...existing };
+            if (mergedChannels) {
+              mergedGuild.channels = mergedChannels;
+            } else {
+              delete mergedGuild.channels;
+            }
             nextGuilds[entry.guildId] = mergedGuild;
             if (source.channelKey && entry.channelId) {
               const sourceChannel = sourceGuild.channels?.[source.channelKey];
               if (sourceChannel) {
+                const nextChannels: DiscordGuildChannelsMap = {
+                  ...mergedChannels,
+                  [entry.channelId]: {
+                    ...sourceChannel,
+                    ...mergedChannels?.[entry.channelId],
+                  },
+                };
                 nextGuilds[entry.guildId] = {
                   ...mergedGuild,
-                  channels: {
-                    ...mergedChannels,
-                    [entry.channelId]: {
-                      ...sourceChannel,
-                      ...mergedChannels?.[entry.channelId],
-                    },
-                  },
+                  channels: nextChannels,
                 };
               }
             }
@@ -357,7 +378,7 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
               }
               nextGuild.users = mergeAllowlist({ existing: users, additions });
             }
-            const channels = (guildConfig as { channels?: Record<string, unknown> }).channels ?? {};
+            const channels = (guildConfig as { channels?: Record<string, unknown> }).channels;
             if (channels && typeof channels === "object") {
               const nextChannels: Record<string, unknown> = { ...channels };
               for (const [channelKey, channelConfig] of Object.entries(channels)) {
@@ -381,7 +402,11 @@ export async function monitorDiscordProvider(opts: MonitorDiscordOpts = {}) {
                   users: mergeAllowlist({ existing: channelUsers, additions }),
                 };
               }
-              nextGuild.channels = nextChannels;
+              if (Object.keys(nextChannels).length > 0) {
+                nextGuild.channels = nextChannels;
+              } else {
+                delete nextGuild.channels;
+              }
             }
             nextGuilds[guildKey] = nextGuild;
           }

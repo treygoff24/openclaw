@@ -3,7 +3,10 @@ import type { SubagentRunRecord } from "../../agents/subagent-registry.js";
 import type { CommandHandler } from "./commands-types.js";
 import { AGENT_LANE_SUBAGENT } from "../../agents/lanes.js";
 import { abortEmbeddedPiRun } from "../../agents/pi-embedded.js";
-import { listSubagentRunsForRequester } from "../../agents/subagent-registry.js";
+import {
+  listAllSubagentRuns,
+  listSubagentRunsForRequester,
+} from "../../agents/subagent-registry.js";
 import {
   extractAssistantText,
   resolveInternalSessionKey,
@@ -11,6 +14,7 @@ import {
   sanitizeTextContent,
   stripToolMessages,
 } from "../../agents/tools/sessions-helpers.js";
+import { getSubtreeLeafFirst } from "../../agents/tools/sessions-lineage.js";
 import { loadSessionStore, resolveStorePath, updateSessionStore } from "../../config/sessions.js";
 import { callGateway } from "../../gateway/call.js";
 import { logVerbose } from "../../globals.js";
@@ -28,7 +32,7 @@ type SubagentTargetResolution = {
 };
 
 const COMMAND = "/subagents";
-const ACTIONS = new Set(["list", "stop", "log", "send", "info", "help"]);
+const ACTIONS = new Set(["list", "tree", "stop", "log", "send", "info", "help"]);
 
 function formatTimestamp(valueMs?: number) {
   if (!valueMs || !Number.isFinite(valueMs) || valueMs <= 0) {
@@ -92,12 +96,13 @@ function buildSubagentsHelp() {
     "🧭 Subagents",
     "Usage:",
     "- /subagents list",
-    "- /subagents stop <id|#|all>",
+    "- /subagents tree",
+    "- /subagents stop <id|#|all> [--cascade]",
     "- /subagents log <id|#> [limit] [tools]",
     "- /subagents info <id|#>",
     "- /subagents send <id|#> <message>",
     "",
-    "Ids: use the list index (#), runId prefix, or full session key.",
+    "Ids: use the list index (#), runId prefix, tree index (1.2.1), or full session key.",
   ].join("\n");
 }
 
@@ -220,10 +225,67 @@ export const handleSubagentsCommand: CommandHandler = async (params, allowTextCo
     return { shouldContinue: false, reply: { text: lines.join("\n") } };
   }
 
+  if (action === "tree") {
+    const allRuns = listAllSubagentRuns();
+    if (allRuns.length === 0) {
+      return { shouldContinue: false, reply: { text: "🌳 Subagent Tree: no subagents." } };
+    }
+    const runByChild = new Map(allRuns.map((r) => [r.childSessionKey, r]));
+    const childrenOf = new Map<string, SubagentRunRecord[]>();
+    for (const r of allRuns) {
+      const list = childrenOf.get(r.requesterSessionKey) ?? [];
+      list.push(r);
+      childrenOf.set(r.requesterSessionKey, list);
+    }
+    const roots = sortSubagentRuns(allRuns.filter((r) => !runByChild.has(r.requesterSessionKey)));
+    const active = allRuns.filter((r) => !r.endedAt).length;
+    const statusIcon = (r: SubagentRunRecord) => {
+      if (!r.endedAt) {
+        return "🔄";
+      }
+      if (r.outcome?.status === "error") {
+        return "❌";
+      }
+      if (r.outcome?.status === "timeout") {
+        return "⏱️";
+      }
+      return "✅";
+    };
+    const runtimeStr = (r: SubagentRunRecord) => {
+      const start = typeof r.startedAt === "number" ? r.startedAt : r.createdAt;
+      const end = typeof r.endedAt === "number" ? r.endedAt : Date.now();
+      return formatDurationCompact(Math.max(0, end - start)) ?? "n/a";
+    };
+    const lines: string[] = [`🌳 Subagent Tree (${active} active, ${allRuns.length} total)`];
+    const treeIndexMap = new Map<string, string>();
+    const renderNode = (r: SubagentRunRecord, prefix: string, isLast: boolean, index: string) => {
+      const connector = isLast ? "└── " : "├── ";
+      const depth = typeof r.depth === "number" ? r.depth : 1;
+      const label = formatRunLabel(r, { maxLength: 40 });
+      lines.push(
+        `${prefix}${connector}${statusIcon(r)} [${index}] ${label} — ${runtimeStr(r)} [d${depth}]`,
+      );
+      treeIndexMap.set(index, r.childSessionKey);
+      const children = sortSubagentRuns(childrenOf.get(r.childSessionKey) ?? []);
+      const nextPrefix = prefix + (isLast ? "    " : "│   ");
+      children.forEach((child, i) => {
+        renderNode(child, nextPrefix, i === children.length - 1, `${index}.${i + 1}`);
+      });
+    };
+    roots.forEach((root, i) => {
+      renderNode(root, "", i === roots.length - 1, `${i + 1}`);
+    });
+    return { shouldContinue: false, reply: { text: lines.join("\n") } };
+  }
+
   if (action === "stop") {
     const target = restTokens[0];
+    const hasCascade = restTokens.includes("--cascade");
     if (!target) {
-      return { shouldContinue: false, reply: { text: "⚙️ Usage: /subagents stop <id|#|all>" } };
+      return {
+        shouldContinue: false,
+        reply: { text: "⚙️ Usage: /subagents stop <id|#|all> [--cascade]" },
+      };
     }
     if (target === "all" || target === "*") {
       const { stopped } = stopSubagentsForRequester({
@@ -269,6 +331,25 @@ export const handleSubagentsCommand: CommandHandler = async (params, allowTextCo
       await updateSessionStore(storePath, (nextStore) => {
         nextStore[childKey] = entry;
       });
+    }
+    if (hasCascade) {
+      const subtreeKeys = getSubtreeLeafFirst(childKey).filter((k) => k !== childKey);
+      let cascadeStopped = 0;
+      for (const subKey of subtreeKeys) {
+        const sub = loadSubagentSessionEntry(params, subKey);
+        const subSessionId = sub.entry?.sessionId;
+        if (subSessionId) {
+          abortEmbeddedPiRun(subSessionId);
+        }
+        clearSessionQueues([subKey, subSessionId]);
+        cascadeStopped++;
+      }
+      return {
+        shouldContinue: false,
+        reply: {
+          text: `⚙️ Stop requested for ${formatRunLabel(resolved.entry)} + ${cascadeStopped} descendant(s).`,
+        },
+      };
     }
     return {
       shouldContinue: false,

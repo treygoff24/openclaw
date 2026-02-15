@@ -61,6 +61,7 @@ Docs: https://docs.openclaw.ai
 - Cron: deliver text-only output directly when `delivery.to` is set so cron recipients get full output instead of summaries. (#16360) Thanks @rubyrunsstuff.
 - Cron: repair missing/corrupt `nextRunAtMs` for the updated job without globally recomputing unrelated due jobs during `cron update`. (#15750)
 - Discord: prefer gateway guild id when logging inbound messages so cached-miss guilds do not appear as `guild=dm`. Thanks @thewilloftheshadow.
+- Discord: ensure role allowlist matching uses raw role IDs for message routing authorization. Thanks @xinhuagu.
 - TUI: refactor searchable select list description layout and add regression coverage for ANSI-highlight width bounds.
 - Models/CLI: guard `models status` string trimming paths to prevent crashes from malformed non-string config values. (#16395) Thanks @BinHPdev.
 

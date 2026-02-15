@@ -13,7 +13,7 @@ import {
 import { DEFAULT_MEMORY_FLUSH_PROMPT } from "./memory-flush.js";
 
 describe("runReplyAgent memory flush", () => {
-  it("increments compaction count when flush compaction completes", async () => {
+  it("returns the turn reply before a pending memory flush finishes", async () => {
     const runEmbeddedPiAgentMock = getRunEmbeddedPiAgentMock();
     runEmbeddedPiAgentMock.mockReset();
     const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-flush-"));
@@ -28,13 +28,18 @@ describe("runReplyAgent memory flush", () => {
 
     await seedSessionStore({ storePath, sessionKey, entry: sessionEntry });
 
+    let resolveFlush:
+      | ((value: { payloads: unknown[]; meta: Record<string, unknown> }) => void)
+      | undefined;
+    const flushPromise = new Promise<{ payloads: unknown[]; meta: Record<string, unknown> }>(
+      (resolve) => {
+        resolveFlush = resolve;
+      },
+    );
+
     runEmbeddedPiAgentMock.mockImplementation(async (params: EmbeddedRunParams) => {
       if (params.prompt === DEFAULT_MEMORY_FLUSH_PROMPT) {
-        params.onAgentEvent?.({
-          stream: "compaction",
-          data: { phase: "end", willRetry: false },
-        });
-        return { payloads: [], meta: {} };
+        return await flushPromise;
       }
       return {
         payloads: [{ text: "ok" }],
@@ -47,7 +52,7 @@ describe("runReplyAgent memory flush", () => {
       sessionEntry,
     });
 
-    await runReplyAgentWithHarness({
+    const runPromise = runReplyAgentWithHarness({
       commandBody: "hello",
       followupRun,
       queueKey: "main",
@@ -72,9 +77,19 @@ describe("runReplyAgent memory flush", () => {
       typingMode: "instant",
     });
 
+    const settled = await Promise.race([
+      runPromise.then(() => "returned"),
+      new Promise<string>((resolve) => setTimeout(() => resolve("timed-out"), 1_200)),
+    ]);
+    expect(settled).toBe("returned");
+
+    const storedBeforeFlush = JSON.parse(await fs.readFile(storePath, "utf-8"));
+    expect(storedBeforeFlush[sessionKey].memoryFlushAt).toBeUndefined();
+
+    resolveFlush?.({ payloads: [], meta: {} });
     await waitForScheduledMemoryFlush(sessionKey);
-    const stored = JSON.parse(await fs.readFile(storePath, "utf-8"));
-    expect(stored[sessionKey].compactionCount).toBe(2);
-    expect(stored[sessionKey].memoryFlushCompactionCount).toBe(2);
+
+    const storedAfterFlush = JSON.parse(await fs.readFile(storePath, "utf-8"));
+    expect(storedAfterFlush[sessionKey].memoryFlushAt).toBeTypeOf("number");
   });
 });

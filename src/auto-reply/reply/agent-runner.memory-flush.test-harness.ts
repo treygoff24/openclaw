@@ -26,6 +26,18 @@ export function getRunCliAgentMock() {
 
 export type { EmbeddedRunParams };
 
+export async function waitForScheduledMemoryFlush(sessionKey: string): Promise<void> {
+  const { waitForScheduledMemoryFlush } = await import("./agent-runner-memory.js");
+  await waitForScheduledMemoryFlush(sessionKey);
+}
+
+type RunReplyAgentParams = Parameters<typeof import("./agent-runner.js").runReplyAgent>[0];
+
+export async function runReplyAgentWithHarness(params: RunReplyAgentParams) {
+  const { runReplyAgent } = await import("./agent-runner.js");
+  return await runReplyAgent(params);
+}
+
 vi.mock("../../agents/model-fallback.js", () => ({
   runWithModelFallback: async ({
     provider,

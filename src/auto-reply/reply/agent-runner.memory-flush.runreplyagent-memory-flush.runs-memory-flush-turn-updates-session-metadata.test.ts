@@ -2,11 +2,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { runReplyAgent } from "./agent-runner.js";
 import {
   createBaseRun,
   getRunEmbeddedPiAgentMock,
+  runReplyAgentWithHarness,
   seedSessionStore,
+  waitForScheduledMemoryFlush,
   type EmbeddedRunParams,
 } from "./agent-runner.memory-flush.test-harness.js";
 import { DEFAULT_MEMORY_FLUSH_PROMPT } from "./memory-flush.js";
@@ -44,7 +45,7 @@ describe("runReplyAgent memory flush", () => {
       sessionEntry,
     });
 
-    await runReplyAgent({
+    await runReplyAgentWithHarness({
       commandBody: "hello",
       followupRun,
       queueKey: "main",
@@ -69,7 +70,8 @@ describe("runReplyAgent memory flush", () => {
       typingMode: "instant",
     });
 
-    expect(calls.map((call) => call.prompt)).toEqual([DEFAULT_MEMORY_FLUSH_PROMPT, "hello"]);
+    await waitForScheduledMemoryFlush(sessionKey);
+    expect(calls.map((call) => call.prompt)).toEqual(["hello", DEFAULT_MEMORY_FLUSH_PROMPT]);
 
     const stored = JSON.parse(await fs.readFile(storePath, "utf-8"));
     expect(stored[sessionKey].memoryFlushAt).toBeTypeOf("number");
@@ -105,7 +107,7 @@ describe("runReplyAgent memory flush", () => {
       },
     });
 
-    await runReplyAgent({
+    await runReplyAgentWithHarness({
       commandBody: "hello",
       followupRun,
       queueKey: "main",

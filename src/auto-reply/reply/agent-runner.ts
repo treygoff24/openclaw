@@ -30,7 +30,7 @@ import {
   isAudioPayload,
   signalTypingIfNeeded,
 } from "./agent-runner-helpers.js";
-import { runMemoryFlushIfNeeded } from "./agent-runner-memory.js";
+import { scheduleMemoryFlushIfNeeded } from "./agent-runner-memory.js";
 import { buildReplyPayloads } from "./agent-runner-payloads.js";
 import { appendUsageLine, formatResponseUsageLine } from "./agent-runner-utils.js";
 import { createAudioAsVoiceBuffer, createBlockReplyPipeline } from "./block-reply-pipeline.js";
@@ -198,21 +198,6 @@ export async function runReplyAgent(params: {
 
   await typingSignals.signalRunStart();
 
-  activeSessionEntry = await runMemoryFlushIfNeeded({
-    cfg,
-    followupRun,
-    sessionCtx,
-    opts,
-    defaultModel,
-    agentCfgContextTokens,
-    resolvedVerboseLevel,
-    sessionEntry: activeSessionEntry,
-    sessionStore: activeSessionStore,
-    sessionKey,
-    storePath,
-    isHeartbeat,
-  });
-
   const runFollowupTurn = createFollowupRunner({
     opts,
     typing,
@@ -304,6 +289,7 @@ export async function runReplyAgent(params: {
         `Role ordering conflict (${reason}). Restarting session ${sessionKey} -> ${nextSessionId}.`,
       cleanupTranscripts: true,
     });
+  let shouldScheduleMemoryFlush = false;
   try {
     const runStartedAt = Date.now();
     const runOutcome = await runAgentTurnWithFallback({
@@ -329,6 +315,7 @@ export async function runReplyAgent(params: {
       storePath,
       resolvedVerboseLevel,
     });
+    shouldScheduleMemoryFlush = true;
 
     if (runOutcome.kind === "final") {
       return finalizeWithFollowup(runOutcome.payload, queueKey, runFollowupTurn);
@@ -523,6 +510,23 @@ export async function runReplyAgent(params: {
       runFollowupTurn,
     );
   } finally {
+    if (shouldScheduleMemoryFlush) {
+      void scheduleMemoryFlushIfNeeded({
+        cfg,
+        followupRun,
+        sessionCtx,
+        opts,
+        defaultModel,
+        agentCfgContextTokens,
+        resolvedVerboseLevel,
+        sessionEntry:
+          sessionKey && activeSessionStore ? activeSessionStore[sessionKey] : activeSessionEntry,
+        sessionStore: activeSessionStore,
+        sessionKey,
+        storePath,
+        isHeartbeat,
+      });
+    }
     blockReplyPipeline?.stop();
     typing.markRunComplete();
   }

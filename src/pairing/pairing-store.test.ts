@@ -1,10 +1,17 @@
 import crypto from "node:crypto";
+import fsNative from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { resolveOAuthDir } from "../config/paths.js";
-import { listChannelPairingRequests, upsertChannelPairingRequest } from "./pairing-store.js";
+import {
+  addChannelAllowFromStoreEntry,
+  approveChannelPairingCode,
+  listChannelPairingRequests,
+  readChannelAllowFromStore,
+  upsertChannelPairingRequest,
+} from "./pairing-store.js";
 
 async function withTempStateDir<T>(fn: (stateDir: string) => Promise<T>) {
   const previous = process.env.OPENCLAW_STATE_DIR;
@@ -19,6 +26,74 @@ async function withTempStateDir<T>(fn: (stateDir: string) => Promise<T>) {
       process.env.OPENCLAW_STATE_DIR = previous;
     }
     await fs.rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function writeAllowFromFile(params: {
+  stateDir: string;
+  channel: string;
+  allowFrom: string[];
+}) {
+  const oauthDir = resolveOAuthDir(process.env, params.stateDir);
+  const filePath = path.join(oauthDir, `${params.channel}-allowFrom.json`);
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  await fs.writeFile(
+    filePath,
+    `${JSON.stringify({ version: 1, allowFrom: params.allowFrom }, null, 2)}\n`,
+    "utf8",
+  );
+  return filePath;
+}
+
+function countReadCallsForPath(
+  spy: ReturnType<typeof vi.spyOn<typeof fsNative.promises, "readFile">>,
+  filePath: string,
+): number {
+  const expected = path.resolve(filePath);
+  return spy.mock.calls.filter(([inputPath]) => {
+    if (typeof inputPath !== "string") {
+      return false;
+    }
+    return path.resolve(inputPath) === expected;
+  }).length;
+}
+
+async function withAllowlistCacheEnv<T>(
+  env: Partial<
+    Record<
+      "OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE" | "OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS",
+      string
+    >
+  >,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const prevDisable = process.env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE;
+  const prevTtl = process.env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS;
+  if (env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE === undefined) {
+    delete process.env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE;
+  } else {
+    process.env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE =
+      env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE;
+  }
+  if (env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS === undefined) {
+    delete process.env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS;
+  } else {
+    process.env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS =
+      env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS;
+  }
+  try {
+    return await fn();
+  } finally {
+    if (prevDisable === undefined) {
+      delete process.env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE;
+    } else {
+      process.env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE = prevDisable;
+    }
+    if (prevTtl === undefined) {
+      delete process.env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS;
+    } else {
+      process.env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS = prevTtl;
+    }
   }
 }
 
@@ -129,6 +204,113 @@ describe("pairing store", () => {
       expect(listIds).toContain("+15550000002");
       expect(listIds).toContain("+15550000003");
       expect(listIds).not.toContain("+15550000004");
+    });
+  });
+
+  it("caches allowFrom reads and invalidates on allowFrom writes", async () => {
+    await withAllowlistCacheEnv({}, async () => {
+      await withTempStateDir(async (stateDir) => {
+        const filePath = await writeAllowFromFile({
+          stateDir,
+          channel: "discord",
+          allowFrom: ["u1"],
+        });
+        const readSpy = vi.spyOn(fsNative.promises, "readFile");
+        try {
+          const first = await readChannelAllowFromStore("discord");
+          const second = await readChannelAllowFromStore("discord");
+          expect(first).toEqual(["u1"]);
+          expect(second).toEqual(["u1"]);
+
+          await addChannelAllowFromStoreEntry({
+            channel: "discord",
+            entry: "u2",
+          });
+          const third = await readChannelAllowFromStore("discord");
+          expect(third).toEqual(["u1", "u2"]);
+
+          expect(countReadCallsForPath(readSpy, filePath)).toBe(3);
+        } finally {
+          readSpy.mockRestore();
+        }
+      });
+    });
+  });
+
+  it("invalidates allowFrom cache after pairing approval", async () => {
+    await withAllowlistCacheEnv({}, async () => {
+      await withTempStateDir(async (stateDir) => {
+        const filePath = await writeAllowFromFile({
+          stateDir,
+          channel: "telegram",
+          allowFrom: [],
+        });
+        const req = await upsertChannelPairingRequest({
+          channel: "telegram",
+          id: "123",
+        });
+        expect(req.created).toBe(true);
+
+        const readSpy = vi.spyOn(fsNative.promises, "readFile");
+        try {
+          await readChannelAllowFromStore("telegram");
+          await readChannelAllowFromStore("telegram");
+
+          const approved = await approveChannelPairingCode({
+            channel: "telegram",
+            code: req.code,
+          });
+          expect(approved?.id).toBe("123");
+
+          const allowFrom = await readChannelAllowFromStore("telegram");
+          expect(allowFrom).toEqual(["123"]);
+
+          expect(countReadCallsForPath(readSpy, filePath)).toBe(3);
+        } finally {
+          readSpy.mockRestore();
+        }
+      });
+    });
+  });
+
+  it("disables allowFrom cache when OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE is set", async () => {
+    await withAllowlistCacheEnv({ OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE: "1" }, async () => {
+      await withTempStateDir(async (stateDir) => {
+        const filePath = await writeAllowFromFile({
+          stateDir,
+          channel: "signal",
+          allowFrom: ["+1000"],
+        });
+        const readSpy = vi.spyOn(fsNative.promises, "readFile");
+        try {
+          await readChannelAllowFromStore("signal");
+          await readChannelAllowFromStore("signal");
+          expect(countReadCallsForPath(readSpy, filePath)).toBe(2);
+        } finally {
+          readSpy.mockRestore();
+        }
+      });
+    });
+  });
+
+  it("expires allowFrom cache entries using OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS", async () => {
+    await withAllowlistCacheEnv({ OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS: "5" }, async () => {
+      await withTempStateDir(async (stateDir) => {
+        const filePath = await writeAllowFromFile({
+          stateDir,
+          channel: "whatsapp",
+          allowFrom: ["+15550001111"],
+        });
+        const readSpy = vi.spyOn(fsNative.promises, "readFile");
+        try {
+          await readChannelAllowFromStore("whatsapp");
+          await new Promise((resolve) => setTimeout(resolve, 20));
+          await readChannelAllowFromStore("whatsapp");
+          expect(countReadCallsForPath(readSpy, filePath)).toBe(2);
+        } finally {
+          readSpy.mockRestore();
+        }
+      });
     });
   });
 });

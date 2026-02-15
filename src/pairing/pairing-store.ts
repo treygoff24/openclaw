@@ -13,6 +13,7 @@ const PAIRING_CODE_LENGTH = 8;
 const PAIRING_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 const PAIRING_PENDING_TTL_MS = 60 * 60 * 1000;
 const PAIRING_PENDING_MAX = 3;
+const DEFAULT_ALLOWLIST_CACHE_TTL_MS = 30_000;
 const PAIRING_STORE_LOCK_OPTIONS = {
   retries: {
     retries: 10,
@@ -43,6 +44,13 @@ type AllowFromStore = {
   version: 1;
   allowFrom: string[];
 };
+
+type AllowFromCacheEntry = {
+  allowFrom: string[];
+  loadedAt: number;
+};
+
+const ALLOW_FROM_CACHE = new Map<string, AllowFromCacheEntry>();
 
 function resolveCredentialsDir(env: NodeJS.ProcessEnv = process.env): string {
   const stateDir = resolveStateDir(env, () => resolveRequiredHomeDir(env, os.homedir));
@@ -204,17 +212,68 @@ function normalizeAllowEntry(channel: PairingChannel, entry: string): string {
   return String(normalized).trim();
 }
 
+function resolveAllowlistCacheTtlMs(env: NodeJS.ProcessEnv): number {
+  const raw = env.OPENCLAW_PAIRING_ALLOWLIST_CACHE_TTL_MS?.trim();
+  if (!raw) {
+    return DEFAULT_ALLOWLIST_CACHE_TTL_MS;
+  }
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) {
+    return DEFAULT_ALLOWLIST_CACHE_TTL_MS;
+  }
+  return Math.max(0, Math.trunc(parsed));
+}
+
+function isTruthyEnvValue(value: string | undefined): boolean {
+  if (!value) {
+    return false;
+  }
+  const normalized = value.trim().toLowerCase();
+  if (!normalized || normalized === "0" || normalized === "false" || normalized === "no") {
+    return false;
+  }
+  return true;
+}
+
+function isAllowlistCacheEnabled(env: NodeJS.ProcessEnv): boolean {
+  if (isTruthyEnvValue(env.OPENCLAW_DISABLE_PAIRING_ALLOWLIST_CACHE)) {
+    return false;
+  }
+  return resolveAllowlistCacheTtlMs(env) > 0;
+}
+
+function invalidateAllowlistCache(filePath: string): void {
+  ALLOW_FROM_CACHE.delete(filePath);
+}
+
 export async function readChannelAllowFromStore(
   channel: PairingChannel,
   env: NodeJS.ProcessEnv = process.env,
 ): Promise<string[]> {
   const filePath = resolveAllowFromPath(channel, env);
+  if (isAllowlistCacheEnabled(env)) {
+    const ttlMs = resolveAllowlistCacheTtlMs(env);
+    const cached = ALLOW_FROM_CACHE.get(filePath);
+    if (cached && Date.now() - cached.loadedAt <= ttlMs) {
+      return [...cached.allowFrom];
+    }
+  } else {
+    invalidateAllowlistCache(filePath);
+  }
+
   const { value } = await readJsonFile<AllowFromStore>(filePath, {
     version: 1,
     allowFrom: [],
   });
   const list = Array.isArray(value.allowFrom) ? value.allowFrom : [];
-  return list.map((v) => normalizeAllowEntry(channel, String(v))).filter(Boolean);
+  const normalized = list.map((v) => normalizeAllowEntry(channel, String(v))).filter(Boolean);
+  if (isAllowlistCacheEnabled(env)) {
+    ALLOW_FROM_CACHE.set(filePath, {
+      allowFrom: [...normalized],
+      loadedAt: Date.now(),
+    });
+  }
+  return normalized;
 }
 
 export async function addChannelAllowFromStoreEntry(params: {
@@ -247,6 +306,7 @@ export async function addChannelAllowFromStoreEntry(params: {
         version: 1,
         allowFrom: next,
       } satisfies AllowFromStore);
+      invalidateAllowlistCache(filePath);
       return { changed: true, allowFrom: next };
     },
   );
@@ -282,6 +342,7 @@ export async function removeChannelAllowFromStoreEntry(params: {
         version: 1,
         allowFrom: next,
       } satisfies AllowFromStore);
+      invalidateAllowlistCache(filePath);
       return { changed: true, allowFrom: next };
     },
   );
@@ -474,6 +535,7 @@ export async function approveChannelPairingCode(params: {
         entry: entry.id,
         env,
       });
+      invalidateAllowlistCache(resolveAllowFromPath(params.channel, env));
       return { id: entry.id, entry };
     },
   );

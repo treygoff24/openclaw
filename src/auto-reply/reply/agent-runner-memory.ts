@@ -24,7 +24,7 @@ import {
 } from "./memory-flush.js";
 import { incrementCompactionCount } from "./session-updates.js";
 
-export async function runMemoryFlushIfNeeded(params: {
+export type RunMemoryFlushParams = {
   cfg: OpenClawConfig;
   followupRun: FollowupRun;
   sessionCtx: TemplateContext;
@@ -37,7 +37,26 @@ export async function runMemoryFlushIfNeeded(params: {
   sessionKey?: string;
   storePath?: string;
   isHeartbeat: boolean;
-}): Promise<SessionEntry | undefined> {
+};
+
+const pendingMemoryFlushes = new Map<string, Promise<void>>();
+
+const resolveMemoryFlushKey = (params: RunMemoryFlushParams): string | undefined => {
+  const explicitKey = params.sessionKey?.trim();
+  if (explicitKey) {
+    return explicitKey;
+  }
+  const runSessionKey = params.followupRun.run.sessionKey?.trim();
+  if (runSessionKey) {
+    return runSessionKey;
+  }
+  const sessionId = params.followupRun.run.sessionId?.trim();
+  return sessionId || undefined;
+};
+
+export async function runMemoryFlushIfNeeded(
+  params: RunMemoryFlushParams,
+): Promise<SessionEntry | undefined> {
   const memoryFlushSettings = resolveMemoryFlushSettings(params.cfg);
   if (!memoryFlushSettings) {
     return params.sessionEntry;
@@ -199,4 +218,39 @@ export async function runMemoryFlushIfNeeded(params: {
   }
 
   return activeSessionEntry;
+}
+
+export function scheduleMemoryFlushIfNeeded(params: RunMemoryFlushParams): Promise<void> {
+  const key = resolveMemoryFlushKey(params);
+  if (key) {
+    const existing = pendingMemoryFlushes.get(key);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  let task: Promise<void>;
+  task = (async () => {
+    const updatedEntry = await runMemoryFlushIfNeeded(params);
+    if (updatedEntry && params.sessionStore && params.sessionKey) {
+      params.sessionStore[params.sessionKey] = updatedEntry;
+    }
+  })()
+    .catch((err) => {
+      logVerbose(`memory flush scheduler failed: ${String(err)}`);
+    })
+    .finally(() => {
+      if (key && pendingMemoryFlushes.get(key) === task) {
+        pendingMemoryFlushes.delete(key);
+      }
+    });
+
+  if (key) {
+    pendingMemoryFlushes.set(key, task);
+  }
+  return task;
+}
+
+export async function waitForScheduledMemoryFlush(key: string): Promise<void> {
+  await pendingMemoryFlushes.get(key);
 }

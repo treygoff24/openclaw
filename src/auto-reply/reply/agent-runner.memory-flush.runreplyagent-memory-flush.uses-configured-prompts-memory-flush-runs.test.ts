@@ -2,11 +2,12 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { runReplyAgent } from "./agent-runner.js";
 import {
   createBaseRun,
   getRunEmbeddedPiAgentMock,
+  runReplyAgentWithHarness,
   seedSessionStore,
+  waitForScheduledMemoryFlush,
   type EmbeddedRunParams,
 } from "./agent-runner.memory-flush.test-harness.js";
 import { DEFAULT_MEMORY_FLUSH_PROMPT } from "./memory-flush.js";
@@ -57,7 +58,7 @@ describe("runReplyAgent memory flush", () => {
       runOverrides: { extraSystemPrompt: "extra system" },
     });
 
-    await runReplyAgent({
+    await runReplyAgentWithHarness({
       commandBody: "hello",
       followupRun,
       queueKey: "main",
@@ -82,13 +83,14 @@ describe("runReplyAgent memory flush", () => {
       typingMode: "instant",
     });
 
-    const flushCall = calls[0];
+    await waitForScheduledMemoryFlush(sessionKey);
+    const flushCall = calls.find((call) => call.prompt !== "hello");
+    expect(calls.some((call) => call.prompt === "hello")).toBe(true);
     expect(flushCall?.prompt).toContain("Write notes.");
     expect(flushCall?.prompt).toContain("NO_REPLY");
     expect(flushCall?.extraSystemPrompt).toContain("extra system");
     expect(flushCall?.extraSystemPrompt).toContain("Flush memory now.");
     expect(flushCall?.extraSystemPrompt).toContain("NO_REPLY");
-    expect(calls[1]?.prompt).toBe("hello");
   });
   it("skips memory flush after a prior flush in the same compaction cycle", async () => {
     const runEmbeddedPiAgentMock = getRunEmbeddedPiAgentMock();
@@ -120,7 +122,7 @@ describe("runReplyAgent memory flush", () => {
       sessionEntry,
     });
 
-    await runReplyAgent({
+    await runReplyAgentWithHarness({
       commandBody: "hello",
       followupRun,
       queueKey: "main",

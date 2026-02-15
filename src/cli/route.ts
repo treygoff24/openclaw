@@ -7,13 +7,19 @@ import { ensurePluginRegistryLoaded } from "./plugin-registry.js";
 import { ensureConfigReady } from "./program/config-guard.js";
 import { findRoutedCommand } from "./program/routes.js";
 
+function shouldPrepareRoutedConfig(commandPath: string[]): boolean {
+  return commandPath[0] === "config" && commandPath[1] === "unset";
+}
+
 async function prepareRoutedCommand(params: {
   argv: string[];
   commandPath: string[];
   loadPlugins?: boolean;
 }) {
   emitCliBanner(VERSION, { argv: params.argv });
-  await ensureConfigReady({ runtime: defaultRuntime, commandPath: params.commandPath });
+  if (shouldPrepareRoutedConfig(params.commandPath)) {
+    await ensureConfigReady({ runtime: defaultRuntime, commandPath: params.commandPath });
+  }
   if (params.loadPlugins) {
     ensurePluginRegistryLoaded();
   }

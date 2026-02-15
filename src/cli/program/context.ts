@@ -9,11 +9,23 @@ export type ProgramContext = {
 };
 
 export function createProgramContext(): ProgramContext {
-  const channelOptions = resolveCliChannelOptions();
+  let resolvedChannelOptions: string[] | null = null;
+  const getChannelOptions = () => {
+    if (!resolvedChannelOptions) {
+      resolvedChannelOptions = resolveCliChannelOptions();
+    }
+    return resolvedChannelOptions;
+  };
   return {
     programVersion: VERSION,
-    channelOptions,
-    messageChannelOptions: channelOptions.join("|"),
-    agentChannelOptions: ["last", ...channelOptions].join("|"),
+    get channelOptions() {
+      return getChannelOptions();
+    },
+    get messageChannelOptions() {
+      return getChannelOptions().join("|");
+    },
+    get agentChannelOptions() {
+      return ["last", ...getChannelOptions()].join("|");
+    },
   };
 }

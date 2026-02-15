@@ -152,6 +152,8 @@ describe("runReplyAgent fallback reasoning tags", () => {
         compactionCount: 0,
       },
     });
+    const { waitForScheduledMemoryFlush } = await import("./agent-runner-memory.js");
+    await waitForScheduledMemoryFlush("main");
 
     const flushCall = runEmbeddedPiAgentMock.mock.calls.find(
       ([params]) =>

@@ -43,19 +43,30 @@ const registryCache = new Map<string, PluginRegistry>();
 
 const defaultLogger = () => createSubsystemLogger("plugins");
 
-const resolvePluginSdkAlias = (): string | null => {
+export function preferDistPluginSdkAliases(
+  modulePath: string,
+  nodeEnv: string | undefined = process.env.NODE_ENV,
+): boolean {
+  const normalized = path.normalize(modulePath);
+  if (normalized.includes(`${path.sep}dist${path.sep}`)) {
+    return true;
+  }
+  return nodeEnv === "production";
+}
+
+function resolvePluginSdkAliasFile(params: {
+  srcSegments: string[];
+  distSegments: string[];
+}): string | null {
   try {
     const modulePath = fileURLToPath(import.meta.url);
-    const isProduction = process.env.NODE_ENV === "production";
-    const isTest = process.env.VITEST || process.env.NODE_ENV === "test";
+    const preferDist = preferDistPluginSdkAliases(modulePath);
     let cursor = path.dirname(modulePath);
     for (let i = 0; i < 6; i += 1) {
-      const srcCandidate = path.join(cursor, "src", "plugin-sdk", "index.ts");
-      const distCandidate = path.join(cursor, "dist", "plugin-sdk", "index.js");
-      const orderedCandidates = isProduction
-        ? isTest
-          ? [distCandidate, srcCandidate]
-          : [distCandidate]
+      const srcCandidate = path.join(cursor, ...params.srcSegments);
+      const distCandidate = path.join(cursor, ...params.distSegments);
+      const orderedCandidates = preferDist
+        ? [distCandidate, srcCandidate]
         : [srcCandidate, distCandidate];
       for (const candidate of orderedCandidates) {
         if (fs.existsSync(candidate)) {
@@ -72,37 +83,20 @@ const resolvePluginSdkAlias = (): string | null => {
     // ignore
   }
   return null;
+}
+
+const resolvePluginSdkAlias = (): string | null => {
+  return resolvePluginSdkAliasFile({
+    srcSegments: ["src", "plugin-sdk", "index.ts"],
+    distSegments: ["dist", "plugin-sdk", "index.js"],
+  });
 };
 
 const resolvePluginSdkAccountIdAlias = (): string | null => {
-  try {
-    const modulePath = fileURLToPath(import.meta.url);
-    const isProduction = process.env.NODE_ENV === "production";
-    const isTest = process.env.VITEST || process.env.NODE_ENV === "test";
-    let cursor = path.dirname(modulePath);
-    for (let i = 0; i < 6; i += 1) {
-      const srcCandidate = path.join(cursor, "src", "plugin-sdk", "account-id.ts");
-      const distCandidate = path.join(cursor, "dist", "plugin-sdk", "account-id.js");
-      const orderedCandidates = isProduction
-        ? isTest
-          ? [distCandidate, srcCandidate]
-          : [distCandidate]
-        : [srcCandidate, distCandidate];
-      for (const candidate of orderedCandidates) {
-        if (fs.existsSync(candidate)) {
-          return candidate;
-        }
-      }
-      const parent = path.dirname(cursor);
-      if (parent === cursor) {
-        break;
-      }
-      cursor = parent;
-    }
-  } catch {
-    // ignore
-  }
-  return null;
+  return resolvePluginSdkAliasFile({
+    srcSegments: ["src", "plugin-sdk", "account-id.ts"],
+    distSegments: ["dist", "plugin-sdk", "account-id.js"],
+  });
 };
 
 function buildCacheKey(params: {

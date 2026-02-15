@@ -15,13 +15,32 @@ type GatewayEntry = {
   botUserId?: string;
 };
 
-const gatewayRegistry = new Map<string, GatewayEntry>();
+// Use globalThis to ensure a single shared registry across all module instances
+// (extensions loaded via jiti may get their own copy of this module otherwise)
+const GLOBAL_KEY = Symbol.for("openclaw.discord.gateway-registry");
+
+type RegistryGlobals = {
+  gatewayRegistry: Map<string, GatewayEntry>;
+  voiceStateListeners: Map<string, Set<VoiceStateUpdateListener>>;
+  voiceServerListeners: Map<string, Set<VoiceServerUpdateListener>>;
+};
 
 type VoiceStateUpdateListener = (event: GatewayVoiceStateUpdateDispatchData) => void;
 type VoiceServerUpdateListener = (event: GatewayVoiceServerUpdateDispatchData) => void;
 
-const voiceStateListeners = new Map<string, Set<VoiceStateUpdateListener>>();
-const voiceServerListeners = new Map<string, Set<VoiceServerUpdateListener>>();
+function getOrCreateGlobals(): RegistryGlobals {
+  const g = globalThis as unknown as Record<symbol, RegistryGlobals | undefined>;
+  if (!g[GLOBAL_KEY]) {
+    g[GLOBAL_KEY] = {
+      gatewayRegistry: new Map<string, GatewayEntry>(),
+      voiceStateListeners: new Map<string, Set<VoiceStateUpdateListener>>(),
+      voiceServerListeners: new Map<string, Set<VoiceServerUpdateListener>>(),
+    };
+  }
+  return g[GLOBAL_KEY];
+}
+
+const { gatewayRegistry, voiceStateListeners, voiceServerListeners } = getOrCreateGlobals();
 
 // Sentinel key for the default (unnamed) account. Uses a prefix that cannot
 // collide with user-configured account IDs.

@@ -8,7 +8,11 @@ import type { DiscordGuildEntryResolved } from "./allow-list.js";
 import { resolveTextChunkLimit } from "../../auto-reply/chunk.js";
 import { listNativeCommandSpecsForConfig } from "../../auto-reply/commands-registry.js";
 import { listSkillCommandsForAgents } from "../../auto-reply/skill-commands.js";
-import { mergeAllowlist, summarizeMapping } from "../../channels/allowlists/resolve-utils.js";
+import {
+  buildAllowlistResolutionSummary,
+  mergeAllowlist,
+  summarizeMapping,
+} from "../../channels/allowlists/resolve-utils.js";
 import {
   isNativeCommandsExplicitlyDisabled,
   resolveNativeCommandsEnabled,

@@ -1,20 +1,6 @@
 import type { DiscordGatewayAdapterCreator } from "@discordjs/voice";
-import type { GatewayVoiceStateUpdateDispatchData } from "discord-api-types/v10";
 import type { GatewayRequestHandlerOptions, OpenClawPluginApi } from "openclaw/plugin-sdk";
 import { Type } from "@sinclair/typebox";
-import {
-  jsonResult,
-  readStringParam,
-  resolveDefaultDiscordAccountId,
-  stringEnum,
-} from "openclaw/plugin-sdk";
-import { agentCommand } from "../../src/commands/agent.js";
-import {
-  getGateway,
-  getGatewayBotUserId,
-  subscribeGatewayVoiceServerUpdates,
-  subscribeGatewayVoiceStateUpdates,
-} from "../../src/discord/monitor/gateway-registry.js";
 import pluginManifest from "./openclaw.plugin.json" with { type: "json" };
 import { AgentBridge } from "./src/agent-bridge.js";
 import {
@@ -31,6 +17,21 @@ import { VoiceManager } from "./src/voice-manager.js";
 
 const TOOL_ACTIONS = ["join", "leave", "leave_all", "status"] as const;
 
+type DiscordVoiceRuntime = Pick<
+  typeof import("openclaw/plugin-sdk"),
+  | "agentCommand"
+  | "getGateway"
+  | "getGatewayBotUserId"
+  | "subscribeGatewayVoiceStateUpdates"
+  | "subscribeGatewayVoiceServerUpdates"
+>;
+
+type GatewayVoiceStateEvent = Parameters<
+  DiscordVoiceRuntime["subscribeGatewayVoiceStateUpdates"]
+>[1] extends (event: infer T) => void
+  ? T
+  : never;
+
 type AgentDispatchResult = {
   payloads?: Array<{ text?: string | null } | null>;
 };
@@ -45,6 +46,106 @@ type UserVoiceState = {
   channelId: string | null;
   isBot: boolean;
 };
+
+let discordVoiceRuntimePromise: Promise<DiscordVoiceRuntime> | null = null;
+
+async function loadDiscordVoiceRuntime(): Promise<DiscordVoiceRuntime> {
+  if (!discordVoiceRuntimePromise) {
+    discordVoiceRuntimePromise = import("openclaw/plugin-sdk").then((mod) => ({
+      agentCommand: mod.agentCommand,
+      getGateway: mod.getGateway,
+      getGatewayBotUserId: mod.getGatewayBotUserId,
+      subscribeGatewayVoiceStateUpdates: mod.subscribeGatewayVoiceStateUpdates,
+      subscribeGatewayVoiceServerUpdates: mod.subscribeGatewayVoiceServerUpdates,
+    }));
+  }
+  return await discordVoiceRuntimePromise;
+}
+
+function jsonResult(payload: unknown) {
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(payload, null, 2),
+      },
+    ],
+    details: payload,
+  };
+}
+
+function readStringParam(
+  params: Record<string, unknown>,
+  key: string,
+  options: {
+    required: true;
+    trim?: boolean;
+    label?: string;
+    allowEmpty?: boolean;
+  },
+): string;
+function readStringParam(
+  params: Record<string, unknown>,
+  key: string,
+  options?: {
+    required?: false;
+    trim?: boolean;
+    label?: string;
+    allowEmpty?: boolean;
+  },
+): string | undefined;
+function readStringParam(
+  params: Record<string, unknown>,
+  key: string,
+  options: {
+    required?: boolean;
+    trim?: boolean;
+    label?: string;
+    allowEmpty?: boolean;
+  } = {},
+): string | undefined {
+  const { required = false, trim = true, label = key, allowEmpty = false } = options;
+  const raw = params[key];
+  if (typeof raw !== "string") {
+    if (required) {
+      throw new Error(`${label} required`);
+    }
+    return undefined;
+  }
+  const value = trim ? raw.trim() : raw;
+  if (!value && !allowEmpty) {
+    if (required) {
+      throw new Error(`${label} required`);
+    }
+    return undefined;
+  }
+  return value;
+}
+
+function resolveDefaultDiscordAccountIdLocal(config: OpenClawPluginApi["config"]): string {
+  const accounts = config?.channels?.discord?.accounts;
+  if (!accounts || typeof accounts !== "object") {
+    return "default";
+  }
+  const ids = Object.keys(accounts)
+    .filter(Boolean)
+    .toSorted((a, b) => a.localeCompare(b));
+  if (ids.includes("default")) {
+    return "default";
+  }
+  return ids[0] ?? "default";
+}
+
+function stringEnum<const T extends readonly string[]>(
+  values: T,
+  options?: { description?: string },
+) {
+  return Type.Unsafe<T[number]>({
+    type: "string",
+    enum: [...values],
+    ...(options ?? {}),
+  });
+}
 
 const DiscordVoiceToolSchema = Type.Object(
   {
@@ -83,7 +184,7 @@ function resolveDiscordAccountId(
   input: Record<string, unknown>,
 ): string {
   const explicit = readStringParam(input, "accountId", { required: false })?.trim();
-  return explicit || resolveDefaultDiscordAccountId(config);
+  return explicit || resolveDefaultDiscordAccountIdLocal(config);
 }
 
 function resolveHumanCountInTrackedChannel(params: {
@@ -172,6 +273,8 @@ const plugin = {
     const activeChannels = new Map<string, ActiveVoiceChannel>();
     const guildVoiceStates = new Map<string, Map<string, UserVoiceState>>();
     const accountVoiceStateUnsubs = new Map<string, () => void>();
+    const pendingVoiceStateListenerInits = new Map<string, Promise<void>>();
+    const voiceSystemPrompt = config.voiceSystemPrompt.trim() || undefined;
 
     const getChannelStateMap = (guildId: string): Map<string, UserVoiceState> => {
       const existing = guildVoiceStates.get(guildId);
@@ -183,10 +286,7 @@ const plugin = {
       return next;
     };
 
-    const handleVoiceStateUpdate = (
-      accountId: string,
-      event: GatewayVoiceStateUpdateDispatchData,
-    ) => {
+    const handleVoiceStateUpdate = (accountId: string, event: GatewayVoiceStateEvent) => {
       const guildId = event.guild_id?.trim();
       const userId = event.user_id?.trim();
       if (!guildId || !userId) {
@@ -270,15 +370,29 @@ const plugin = {
         });
     };
 
-    const ensureVoiceStateListenerForAccount = (accountId: string): void => {
+    const ensureVoiceStateListenerForAccount = async (accountId: string): Promise<void> => {
       if (accountVoiceStateUnsubs.has(accountId)) {
         return;
       }
+      const pending = pendingVoiceStateListenerInits.get(accountId);
+      if (pending) {
+        await pending;
+        return;
+      }
 
-      const unsubscribe = subscribeGatewayVoiceStateUpdates(accountId, (event) => {
-        handleVoiceStateUpdate(accountId, event);
-      });
-      accountVoiceStateUnsubs.set(accountId, unsubscribe);
+      const init = (async () => {
+        const runtime = await loadDiscordVoiceRuntime();
+        const unsubscribe = runtime.subscribeGatewayVoiceStateUpdates(accountId, (event) => {
+          handleVoiceStateUpdate(accountId, event);
+        });
+        accountVoiceStateUnsubs.set(accountId, unsubscribe);
+      })();
+      pendingVoiceStateListenerInits.set(accountId, init);
+      try {
+        await init;
+      } finally {
+        pendingVoiceStateListenerInits.delete(accountId);
+      }
     };
 
     const clearVoiceStateListeners = () => {
@@ -288,18 +402,19 @@ const plugin = {
       accountVoiceStateUnsubs.clear();
     };
 
-    const createAdapterCreator = (params: {
+    const createAdapterCreator = async (params: {
       guildId: string;
       accountId: string;
-    }): { adapterCreator: DiscordGatewayAdapterCreator; botUserId: string } => {
-      const gateway = getGateway(params.accountId);
+    }): Promise<{ adapterCreator: DiscordGatewayAdapterCreator; botUserId: string }> => {
+      const runtime = await loadDiscordVoiceRuntime();
+      const gateway = runtime.getGateway(params.accountId);
       if (!gateway) {
         throw new Error(
           `Discord gateway for account "${params.accountId}" is unavailable. Is Discord monitor running?`,
         );
       }
 
-      const botUserId = getGatewayBotUserId(params.accountId);
+      const botUserId = runtime.getGatewayBotUserId(params.accountId);
       if (!botUserId) {
         throw new Error(
           `Discord bot user id for account "${params.accountId}" is unavailable. Wait for gateway ready and retry.`,
@@ -307,7 +422,7 @@ const plugin = {
       }
 
       const adapterCreator: DiscordGatewayAdapterCreator = (methods) => {
-        const unsubscribeVoiceState = subscribeGatewayVoiceStateUpdates(
+        const unsubscribeVoiceState = runtime.subscribeGatewayVoiceStateUpdates(
           params.accountId,
           (event) => {
             if (event.guild_id !== params.guildId) {
@@ -320,7 +435,7 @@ const plugin = {
           },
         );
 
-        const unsubscribeVoiceServer = subscribeGatewayVoiceServerUpdates(
+        const unsubscribeVoiceServer = runtime.subscribeGatewayVoiceServerUpdates(
           params.accountId,
           (event) => {
             if (event.guild_id !== params.guildId) {
@@ -333,7 +448,7 @@ const plugin = {
         return {
           sendPayload(payload: unknown): boolean {
             try {
-              gateway.send(payload, true);
+              gateway.send(payload as Parameters<typeof gateway.send>[0], true);
               return true;
             } catch (error) {
               const reason = error instanceof Error ? error.message : String(error);
@@ -358,8 +473,8 @@ const plugin = {
       const guildId = readStringParam(input, "guildId", { required: true });
       const accountId = resolveDiscordAccountId(api.config, input);
 
-      ensureVoiceStateListenerForAccount(accountId);
-      const { adapterCreator, botUserId } = createAdapterCreator({ guildId, accountId });
+      await ensureVoiceStateListenerForAccount(accountId);
+      const { adapterCreator, botUserId } = await createAdapterCreator({ guildId, accountId });
 
       await pipeline.startChannel({
         channelId,
@@ -383,7 +498,8 @@ const plugin = {
 
     agentBridge.setMessageHandler(async (params) => {
       try {
-        const result = (await agentCommand(
+        const runtime = await loadDiscordVoiceRuntime();
+        const result = (await runtime.agentCommand(
           {
             message: params.text,
             sessionKey: params.sessionKey,
@@ -391,6 +507,7 @@ const plugin = {
             deliver: false,
             json: true,
             lane: `voice:${params.guildId}:${params.channelId}`,
+            extraSystemPrompt: voiceSystemPrompt,
           },
           {
             log: () => {},

@@ -4,7 +4,11 @@ import type { SessionScope } from "../../config/sessions.js";
 import type { MonitorSlackOpts } from "./types.js";
 import { resolveTextChunkLimit } from "../../auto-reply/chunk.js";
 import { DEFAULT_GROUP_HISTORY_LIMIT } from "../../auto-reply/reply/history.js";
-import { mergeAllowlist, summarizeMapping } from "../../channels/allowlists/resolve-utils.js";
+import {
+  buildAllowlistResolutionSummary,
+  mergeAllowlist,
+  summarizeMapping,
+} from "../../channels/allowlists/resolve-utils.js";
 import { loadConfig } from "../../config/config.js";
 import { warn } from "../../globals.js";
 import { installRequestBodyLimitGuard } from "../../infra/http-body.js";
@@ -14,7 +18,7 @@ import { resolveSlackAccount } from "../accounts.js";
 import { resolveSlackWebClientOptions } from "../client.js";
 import { normalizeSlackWebhookPath, registerSlackHttpHandler } from "../http/index.js";
 import { resolveSlackChannelAllowlist } from "../resolve-channels.js";
-import { resolveSlackUserAllowlist } from "../resolve-users.js";
+import { resolveSlackUserAllowlist, type SlackUserResolution } from "../resolve-users.js";
 import { resolveSlackAppToken, resolveSlackBotToken } from "../token.js";
 import { normalizeAllowList } from "./allow-list.js";
 import { resolveSlackSlashCommandConfig } from "./commands.js";
@@ -281,7 +285,7 @@ export async function monitorSlackProvider(opts: MonitorSlackOpts = {}) {
           const { mapping, unresolved, additions } = buildAllowlistResolutionSummary(
             resolvedUsers,
             {
-              formatResolved: (entry) => {
+              formatResolved: (entry: SlackUserResolution) => {
                 const note = (entry as { note?: string }).note
                   ? ` (${(entry as { note?: string }).note})`
                   : "";

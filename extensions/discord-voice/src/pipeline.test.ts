@@ -243,6 +243,30 @@ describe("VoicePipeline", () => {
     expect(harness.playback.play).not.toHaveBeenCalled();
   });
 
+  it("skips processing when trigger names are configured and no trigger is mentioned", async () => {
+    const harness = createHarness({ triggerNames: ["ren"] });
+    harness.stt.transcribe.mockResolvedValue({ text: "what is the weather?" });
+
+    await harness.pipeline.startChannel({
+      guildId: "g1",
+      channelId: "c1",
+      adapterCreator: { sendPayload: vi.fn(), destroy: vi.fn() },
+    });
+
+    const audioPipeline = getAudioPipelineInstance();
+    audioPipeline.emit("utterance", {
+      userId: "user-1",
+      audio: Buffer.from("pcm"),
+      durationMs: 600,
+    });
+
+    await flushPipelineWork();
+
+    expect(harness.agentBridge.processUtterance).not.toHaveBeenCalled();
+    expect(harness.tts.synthesize).not.toHaveBeenCalled();
+    expect(harness.playback.play).not.toHaveBeenCalled();
+  });
+
   it("skips TTS and playback when agent returns null", async () => {
     const harness = createHarness();
     harness.agentBridge.processUtterance.mockResolvedValue(null);

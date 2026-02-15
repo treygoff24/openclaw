@@ -277,6 +277,14 @@ export class VoicePipeline extends EventEmitter {
       return;
     }
 
+    // Name-gating: only respond if a trigger name is mentioned
+    if (this.config.triggerNames.length > 0 && !this.containsTriggerName(text)) {
+      this.logger.debug?.(
+        `[discord-voice] Skipping utterance from ${event.userId} — no trigger name detected`,
+      );
+      return;
+    }
+
     let responseText = "";
     try {
       const response = await this.agentBridge.processUtterance({
@@ -308,6 +316,11 @@ export class VoicePipeline extends EventEmitter {
         `[discord-voice] TTS/playback failed for guild ${guildId} user ${event.userId}: ${reason}`,
       );
     }
+  }
+
+  private containsTriggerName(text: string): boolean {
+    const lower = text.toLowerCase();
+    return this.config.triggerNames.some((name) => lower.includes(name.toLowerCase()));
   }
 
   private isNoiseText(text: string): boolean {

@@ -43,6 +43,15 @@ export const DiscordVoiceConfigSchema = z
     stt: DiscordVoiceSttConfigSchema,
     tts: DiscordVoiceTtsConfigSchema,
     vad: DiscordVoiceVadConfigSchema,
+    /** Name(s) that must appear in the transcription to trigger a response. Empty = respond to everything. */
+    triggerNames: z
+      .array(z.string())
+      .default([])
+      .transform((names) => [
+        ...new Set(names.map((name) => name.trim()).filter((name) => name.length > 0)),
+      ]),
+    /** System prompt injected at the start of every voice session. */
+    voiceSystemPrompt: z.string().default(""),
     interruptible: z.boolean().default(true),
     maxConcurrentChannels: z.number().int().positive().default(2),
     allowedGuilds: z.array(z.string()).default([]),

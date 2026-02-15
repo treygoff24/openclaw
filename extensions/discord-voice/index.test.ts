@@ -33,6 +33,14 @@ vi.mock("../../src/discord/monitor/gateway-registry.js", () => ({
   subscribeGatewayVoiceServerUpdates: mocks.subscribeGatewayVoiceServerUpdates,
 }));
 
+vi.mock("openclaw/plugin-sdk", () => ({
+  agentCommand: mocks.agentCommand,
+  getGateway: mocks.getGateway,
+  getGatewayBotUserId: mocks.getGatewayBotUserId,
+  subscribeGatewayVoiceStateUpdates: mocks.subscribeGatewayVoiceStateUpdates,
+  subscribeGatewayVoiceServerUpdates: mocks.subscribeGatewayVoiceServerUpdates,
+}));
+
 vi.mock("./src/voice-manager.js", () => {
   class VoiceManager {
     on = vi.fn();
@@ -99,7 +107,7 @@ vi.mock("./src/playback.js", () => ({
 
 const { default: discordVoicePlugin } = await import("./index.js");
 
-function createApi() {
+function createApi(pluginConfig: Record<string, unknown> = {}) {
   const gatewayMethods = new Map<string, (options: unknown) => Promise<void>>();
   const api = {
     config: {
@@ -111,7 +119,7 @@ function createApi() {
         },
       },
     },
-    pluginConfig: {},
+    pluginConfig,
     logger: {
       info: vi.fn(),
       warn: vi.fn(),
@@ -202,6 +210,28 @@ describe("discord-voice index wiring", () => {
     expect(response).toEqual({ text: "Voice reply" });
   });
 
+  it("forwards voiceSystemPrompt when configured", async () => {
+    const { api } = createApi({ voiceSystemPrompt: "Keep responses concise." });
+    discordVoicePlugin.register(api as never);
+
+    const handler = mocks.agentBridgeHandlers[0];
+    await handler({
+      text: "[Voice] trey: hello",
+      sessionKey: "discord:voice:g1:c1",
+      userId: "u1",
+      userName: "trey",
+      channelId: "c1",
+      guildId: "g1",
+    });
+
+    expect(mocks.agentCommand).toHaveBeenCalledWith(
+      expect.objectContaining({
+        extraSystemPrompt: "Keep responses concise.",
+      }),
+      expect.any(Object),
+    );
+  });
+
   it("gateway join resolves adapter creator without requiring caller adapter", async () => {
     const { api, gatewayMethods } = createApi();
     discordVoicePlugin.register(api as never);
@@ -262,5 +292,29 @@ describe("discord-voice index wiring", () => {
 
     await Promise.resolve();
     expect(pipeline?.stopChannel).toHaveBeenCalledWith("g1");
+  });
+
+  it("initializes the per-account voice-state listener once under concurrent joins", async () => {
+    const { api, gatewayMethods } = createApi();
+    discordVoicePlugin.register(api as never);
+
+    const joinHandler = gatewayMethods.get("discord-voice.join");
+    expect(joinHandler).toBeTypeOf("function");
+
+    await Promise.all([
+      joinHandler?.({
+        params: { guildId: "g1", channelId: "c1", accountId: "default" },
+        respond: vi.fn(),
+      }),
+      joinHandler?.({
+        params: { guildId: "g2", channelId: "c2", accountId: "default" },
+        respond: vi.fn(),
+      }),
+    ]);
+
+    const accountScopedSubs = mocks.subscribeGatewayVoiceStateUpdates.mock.calls.filter(
+      (call) => call[0] === "default",
+    );
+    expect(accountScopedSubs.length).toBe(1);
   });
 });

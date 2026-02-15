@@ -71,6 +71,7 @@ export type {
   GatewayRequestHandlerOptions,
   RespondFn,
 } from "../gateway/server-methods/types.js";
+export { agentCommand } from "../commands/agent.js";
 export type { PluginRuntime, RuntimeLogger } from "../plugins/runtime/types.js";
 export { normalizePluginHttpPath } from "../plugins/http-path.js";
 export { registerPluginHttpRoute } from "../plugins/http-registry.js";
@@ -218,6 +219,12 @@ export {
   listWhatsAppDirectoryGroupsFromConfig,
   listWhatsAppDirectoryPeersFromConfig,
 } from "../channels/plugins/directory-config.js";
+export {
+  getGateway,
+  getGatewayBotUserId,
+  subscribeGatewayVoiceServerUpdates,
+  subscribeGatewayVoiceStateUpdates,
+} from "../discord/monitor/gateway-registry.js";
 export type { AllowlistMatch } from "../channels/plugins/allowlist-match.js";
 export { formatAllowlistMatchMeta } from "../channels/plugins/allowlist-match.js";
 export { optionalStringEnum, stringEnum } from "../agents/schema/typebox.js";

@@ -34,6 +34,8 @@
           "energyThreshold": { "type": "number" }
         }
       },
+      "triggerNames": { "type": "array", "items": { "type": "string" } },
+      "voiceSystemPrompt": { "type": "string" },
       "interruptible": { "type": "boolean" },
       "maxConcurrentChannels": { "type": "number" },
       "allowedGuilds": { "type": "array", "items": { "type": "string" } },

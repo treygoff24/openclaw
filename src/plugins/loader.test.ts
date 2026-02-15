@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, afterEach, describe, expect, it } from "vitest";
-import { loadOpenClawPlugins } from "./loader.js";
+import { loadOpenClawPlugins, preferDistPluginSdkAliases } from "./loader.js";
 
 type TempPlugin = { dir: string; file: string; id: string };
 
@@ -480,5 +480,23 @@ describe("loadOpenClawPlugins", () => {
     const overridden = entries.find((entry) => entry.status === "disabled");
     expect(loaded?.origin).toBe("config");
     expect(overridden?.origin).toBe("bundled");
+  });
+});
+
+describe("preferDistPluginSdkAliases", () => {
+  it("prefers dist aliases when running from dist runtime", () => {
+    expect(preferDistPluginSdkAliases("/tmp/openclaw/dist/entry.js", "development")).toBe(true);
+  });
+
+  it("prefers dist aliases in production runtime", () => {
+    expect(preferDistPluginSdkAliases("/tmp/openclaw/src/plugins/loader.ts", "production")).toBe(
+      true,
+    );
+  });
+
+  it("prefers source aliases for source runtime in non-production", () => {
+    expect(preferDistPluginSdkAliases("/tmp/openclaw/src/plugins/loader.ts", "development")).toBe(
+      false,
+    );
   });
 });

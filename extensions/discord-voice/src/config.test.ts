@@ -27,6 +27,8 @@ describe("DiscordVoiceConfigSchema", () => {
         minSpeechMs: 250,
         energyThreshold: 0.015,
       },
+      triggerNames: [],
+      voiceSystemPrompt: "",
       interruptible: true,
       maxConcurrentChannels: 2,
       allowedGuilds: [],
@@ -42,6 +44,8 @@ describe("DiscordVoiceConfigSchema", () => {
       stt: { provider: "openai", model: "whisper-1", language: "es" },
       tts: { provider: "elevenlabs", voiceId: "voice_123", modelId: "eleven_turbo_v2" },
       vad: { silenceThresholdMs: 1_200, minSpeechMs: 400, energyThreshold: 0.04 },
+      triggerNames: [" Ren ", "ren", "", "assistant"],
+      voiceSystemPrompt: "  keep it short  ",
       interruptible: false,
       maxConcurrentChannels: 6,
       allowedGuilds: ["guild-1"],
@@ -56,6 +60,8 @@ describe("DiscordVoiceConfigSchema", () => {
     expect(parsed.tts.provider).toBe("elevenlabs");
     expect(parsed.tts.voiceId).toBe("voice_123");
     expect(parsed.vad.silenceThresholdMs).toBe(1_200);
+    expect(parsed.triggerNames).toEqual(["Ren", "ren", "assistant"]);
+    expect(parsed.voiceSystemPrompt).toBe("  keep it short  ");
     expect(parsed.interruptible).toBe(false);
     expect(parsed.maxConcurrentChannels).toBe(6);
     expect(parsed.allowedGuilds).toEqual(["guild-1"]);

@@ -62,6 +62,7 @@ export async function handleDiscordMessageAction(
         accountId: accountId ?? undefined,
         to,
         content,
+        components,
         mediaUrl: mediaUrl ?? undefined,
         filename: filename ?? undefined,
         replyTo: replyTo ?? undefined,

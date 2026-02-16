@@ -55,4 +55,25 @@ describe("handleDiscordMessageAction", () => {
       expect.any(Object),
     );
   });
+
+  it("forwards components for send", async () => {
+    await handleDiscordMessageAction({
+      action: "send",
+      params: {
+        to: "channel:123456789",
+        components: { text: "hello", rows: [[{ type: "button", label: "Go", customId: "go" }]] },
+      },
+      cfg: {},
+    });
+    expect(handleDiscordAction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "sendMessage",
+        to: "channel:123456789",
+        components: expect.objectContaining({
+          text: "hello",
+        }),
+      }),
+      expect.any(Object),
+    );
+  });
 });

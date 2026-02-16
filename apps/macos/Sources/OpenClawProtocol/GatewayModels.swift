@@ -2063,6 +2063,7 @@ public struct CronJob: Codable, Sendable {
     public let name: String
     public let description: String?
     public let enabled: Bool
+    public let notify: Bool?
     public let deleteafterrun: Bool?
     public let createdatms: Int
     public let updatedatms: Int
@@ -2079,6 +2080,7 @@ public struct CronJob: Codable, Sendable {
         name: String,
         description: String?,
         enabled: Bool,
+        notify: Bool?,
         deleteafterrun: Bool?,
         createdatms: Int,
         updatedatms: Int,
@@ -2094,6 +2096,7 @@ public struct CronJob: Codable, Sendable {
         self.name = name
         self.description = description
         self.enabled = enabled
+        self.notify = notify
         self.deleteafterrun = deleteafterrun
         self.createdatms = createdatms
         self.updatedatms = updatedatms
@@ -2110,6 +2113,7 @@ public struct CronJob: Codable, Sendable {
         case name
         case description
         case enabled
+        case notify
         case deleteafterrun = "deleteAfterRun"
         case createdatms = "createdAtMs"
         case updatedatms = "updatedAtMs"
@@ -2143,6 +2147,7 @@ public struct CronAddParams: Codable, Sendable {
     public let agentid: AnyCodable?
     public let description: String?
     public let enabled: Bool?
+    public let notify: Bool?
     public let deleteafterrun: Bool?
     public let schedule: AnyCodable
     public let sessiontarget: AnyCodable
@@ -2155,6 +2160,7 @@ public struct CronAddParams: Codable, Sendable {
         agentid: AnyCodable?,
         description: String?,
         enabled: Bool?,
+        notify: Bool?,
         deleteafterrun: Bool?,
         schedule: AnyCodable,
         sessiontarget: AnyCodable,
@@ -2166,6 +2172,7 @@ public struct CronAddParams: Codable, Sendable {
         self.agentid = agentid
         self.description = description
         self.enabled = enabled
+        self.notify = notify
         self.deleteafterrun = deleteafterrun
         self.schedule = schedule
         self.sessiontarget = sessiontarget
@@ -2178,6 +2185,7 @@ public struct CronAddParams: Codable, Sendable {
         case agentid = "agentId"
         case description
         case enabled
+        case notify
         case deleteafterrun = "deleteAfterRun"
         case schedule
         case sessiontarget = "sessionTarget"

@@ -12,6 +12,8 @@ import { createGatewayTool } from "./tools/gateway-tool.js";
 import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createNodesTool } from "./tools/nodes-tool.js";
+import { createRequestOrchestratorTool } from "./tools/request-orchestrator-tool.js";
+import { createRespondOrchestratorRequestTool } from "./tools/respond-orchestrator-request-tool.js";
 import { createSessionStatusTool } from "./tools/session-status-tool.js";
 import { createSessionsHistoryTool } from "./tools/sessions-history-tool.js";
 import { createSessionsKillTool } from "./tools/sessions-kill-tool.js";
@@ -151,6 +153,12 @@ export function createOpenClawTools(options?: {
       agentGroupSpace: options?.agentGroupSpace,
       sandboxed: options?.sandboxed,
       requesterAgentIdOverride: options?.requesterAgentIdOverride,
+    }),
+    createRequestOrchestratorTool({
+      agentSessionKey: options?.agentSessionKey,
+    }),
+    createRespondOrchestratorRequestTool({
+      agentSessionKey: options?.agentSessionKey,
     }),
     createSessionStatusTool({
       agentSessionKey: options?.agentSessionKey,

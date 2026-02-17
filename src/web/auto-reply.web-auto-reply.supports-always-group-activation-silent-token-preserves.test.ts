@@ -2,8 +2,8 @@ import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import { describe, expect, it, vi } from "vitest";
 import { expectInboundContextContract } from "../../test/helpers/inbound-contract.js";
+import { SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import { setLoggerOverride } from "../logging.js";
-import { monitorWebChannel, SILENT_REPLY_TOKEN } from "./auto-reply.js";
 import {
   installWebAutoReplyTestHomeHooks,
   installWebAutoReplyUnitTestHooks,
@@ -11,6 +11,8 @@ import {
   resetLoadConfigMock,
   setLoadConfigMock,
 } from "./auto-reply.test-harness.js";
+
+const { monitorWebChannel } = await import("./auto-reply.js");
 
 installWebAutoReplyTestHomeHooks();
 

@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import { monitorWebChannel } from "./auto-reply.js";
 import {
   installWebAutoReplyTestHomeHooks,
   installWebAutoReplyUnitTestHooks,
   resetLoadConfigMock,
   setLoadConfigMock,
 } from "./auto-reply.test-harness.js";
+
+const { monitorWebChannel } = await import("./auto-reply.js");
 
 installWebAutoReplyTestHomeHooks();
 

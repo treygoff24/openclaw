@@ -30,7 +30,7 @@ const log = createSubsystemLogger("memory");
 
 const SNIPPET_HEADER_RE = /@@\s*-([0-9]+),([0-9]+)/;
 const SEARCH_PENDING_UPDATE_WAIT_MS = 500;
-const NUL_MARKER_RE = /\\x00|\\u0000|\u0000/;
+const NUL_MARKER_RE = /\\x00|\\u0000/;
 
 type CollectionRoot = {
   path: string;
@@ -346,7 +346,7 @@ export class QmdMemoryManager implements MemorySearchManager {
     const lower = message.toLowerCase();
     return (
       (lower.includes("enotdir") || lower.includes("not a directory")) &&
-      NUL_MARKER_RE.test(message)
+      (NUL_MARKER_RE.test(message) || message.includes("\u0000"))
     );
   }
 

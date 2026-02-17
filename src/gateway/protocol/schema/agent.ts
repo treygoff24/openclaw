@@ -73,6 +73,15 @@ export const AgentParamsSchema = Type.Object(
     timeout: Type.Optional(Type.Integer({ minimum: 0 })),
     lane: Type.Optional(Type.String()),
     extraSystemPrompt: Type.Optional(Type.String()),
+    toolOverrides: Type.Optional(
+      Type.Object(
+        {
+          allow: Type.Optional(Type.Array(Type.String())),
+          deny: Type.Optional(Type.Array(Type.String())),
+        },
+        { additionalProperties: false },
+      ),
+    ),
     inputProvenance: Type.Optional(
       Type.Object(
         {

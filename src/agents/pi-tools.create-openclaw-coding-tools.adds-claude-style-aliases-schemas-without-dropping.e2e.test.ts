@@ -333,6 +333,24 @@ describe("createOpenClawCodingTools", () => {
     expect(names.has("process")).toBe(true);
     expect(names.has("apply_patch")).toBe(false);
   });
+  it("exposes subagent reporting tools when running in a subagent session", () => {
+    const tools = createOpenClawCodingTools({
+      sessionKey: "agent:main:subagent:test",
+      runId: "run-subagent-reporting",
+    });
+    const names = new Set(tools.map((tool) => tool.name));
+    expect(names.has("report_completion")).toBe(true);
+    expect(names.has("report_progress")).toBe(true);
+  });
+  it("does not expose subagent reporting tools for non-subagent sessions", () => {
+    const tools = createOpenClawCodingTools({
+      sessionKey: "agent:main:main",
+      runId: "run-main",
+    });
+    const names = new Set(tools.map((tool) => tool.name));
+    expect(names.has("report_completion")).toBe(false);
+    expect(names.has("report_progress")).toBe(false);
+  });
   it("supports allow-only sub-agent tool policy", () => {
     const tools = createOpenClawCodingTools({
       sessionKey: "agent:main:subagent:test",
@@ -349,6 +367,32 @@ describe("createOpenClawCodingTools", () => {
       },
     });
     expect(tools.map((tool) => tool.name)).toEqual(["read"]);
+  });
+  it("applies toolOverrides allow-only filtering", () => {
+    const tools = createOpenClawCodingTools({
+      toolOverrides: { allow: ["read", "browser"] },
+    });
+    expect(tools.map((tool) => tool.name).toSorted()).toEqual(["browser", "read"]);
+  });
+  it("applies toolOverrides deny-only filtering", () => {
+    const tools = createOpenClawCodingTools({
+      toolOverrides: { deny: ["browser"] },
+    });
+    const names = new Set(tools.map((tool) => tool.name));
+    expect(names.has("browser")).toBe(false);
+    expect(names.has("read")).toBe(true);
+  });
+  it("applies toolOverrides allow+deny precedence (deny wins)", () => {
+    const tools = createOpenClawCodingTools({
+      toolOverrides: { allow: ["read", "browser"], deny: ["browser"] },
+    });
+    expect(tools.map((tool) => tool.name)).toEqual(["read"]);
+  });
+  it("treats toolOverrides allow: [] as strict deny-all", () => {
+    const tools = createOpenClawCodingTools({
+      toolOverrides: { allow: [] },
+    });
+    expect(tools).toEqual([]);
   });
 
   it("applies tool profiles before allow/deny policies", () => {

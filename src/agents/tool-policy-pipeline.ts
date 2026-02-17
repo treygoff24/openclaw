@@ -12,6 +12,7 @@ export type ToolPolicyPipelineStep = {
   policy: ToolPolicyLike | undefined;
   label: string;
   stripPluginOnlyAllowlist?: boolean;
+  strictAllowlist?: boolean;
 };
 
 export function buildDefaultToolPolicyPipelineSteps(params: {
@@ -83,6 +84,11 @@ export function applyToolPolicyPipeline(params: {
   let filtered = params.tools;
   for (const step of params.steps) {
     if (!step.policy) {
+      continue;
+    }
+
+    if (step.strictAllowlist && step.policy.allow?.length === 0) {
+      filtered = [];
       continue;
     }
 

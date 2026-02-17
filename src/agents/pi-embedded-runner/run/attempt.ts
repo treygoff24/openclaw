@@ -318,6 +318,7 @@ export async function runEmbeddedAttempt(
           runId: params.runId,
           runTimeoutMs: params.timeoutMs,
           runStartedAt,
+          toolOverrides: params.toolOverrides,
         });
     const tools = sanitizeToolsForGoogle({ tools: toolsRaw, provider: params.provider });
     logToolSchemasForGoogle({ tools, provider: params.provider });

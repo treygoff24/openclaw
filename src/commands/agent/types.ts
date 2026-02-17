@@ -74,6 +74,10 @@ export type AgentCommandOpts = {
   runId?: string;
   extraSystemPrompt?: string;
   inputProvenance?: InputProvenance;
+  toolOverrides?: {
+    allow?: string[];
+    deny?: string[];
+  };
   /** Per-call stream param overrides (best-effort). */
   streamParams?: AgentStreamParams;
 };

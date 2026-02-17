@@ -28,6 +28,8 @@ export const TOOL_GROUPS: Record<string, string[]> = {
     "sessions_kill",
     "sessions_send",
     "sessions_spawn",
+    "report_completion",
+    "report_progress",
     "session_status",
   ],
   // UI helpers
@@ -53,6 +55,8 @@ export const TOOL_GROUPS: Record<string, string[]> = {
     "sessions_kill",
     "sessions_send",
     "sessions_spawn",
+    "report_completion",
+    "report_progress",
     "session_status",
     "memory_search",
     "memory_get",

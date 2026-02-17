@@ -77,6 +77,10 @@ describe("sessions tools", () => {
     expect(schemaProp("sessions_spawn", "thinking").type).toBe("string");
     expect(schemaProp("sessions_spawn", "runTimeoutSeconds").type).toBe("number");
     expect(schemaProp("sessions_spawn", "timeoutSeconds").type).toBe("number");
+    expect(schemaProp("sessions_spawn", "toolOverrides").type).toBe("object");
+    expect(schemaProp("sessions_spawn", "completionReport").type).toBe("boolean");
+    expect(schemaProp("sessions_spawn", "progressReporting").type).toBe("boolean");
+    expect(schemaProp("sessions_spawn", "verification").type).toBe("object");
     expect(schemaProp("request_orchestrator", "timeoutSeconds").type).toBe("number");
     expect(schemaProp("request_orchestrator", "priority").type).toBe("string");
   });

@@ -22,6 +22,8 @@ export const DEFAULT_TOOL_ALLOW = [
   "sessions_history",
   "sessions_send",
   "sessions_spawn",
+  "report_completion",
+  "report_progress",
   "session_status",
 ] as const;
 

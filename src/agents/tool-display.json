@@ -266,10 +266,22 @@
         "agentId",
         "model",
         "thinking",
+        "completionReport",
+        "progressReporting",
         "runTimeoutSeconds",
         "cleanup",
         "timeoutSeconds"
       ]
+    },
+    "report_completion": {
+      "emoji": "✅",
+      "title": "Completion Report",
+      "detailKeys": ["status", "confidence", "summary"]
+    },
+    "report_progress": {
+      "emoji": "📈",
+      "title": "Progress Report",
+      "detailKeys": ["phase", "percentComplete", "level"]
     },
     "session_status": {
       "emoji": "📊",

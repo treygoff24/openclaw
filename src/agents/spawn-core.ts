@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { ThinkLevel } from "../auto-reply/thinking.js";
 import type { DeliveryContext } from "../utils/delivery-context.js";
+import type { VerificationContract } from "./spawn-verification.types.js";
 import { formatThinkingLevels, normalizeThinkLevel } from "../auto-reply/thinking.js";
 import { resolveSubagentProviderLimit } from "../config/agent-limits.js";
 import { loadConfig } from "../config/config.js";
@@ -12,6 +13,7 @@ import {
   parseAgentSessionKey,
 } from "../routing/session-key.js";
 import { listAgentIds, resolveAgentConfig } from "./agent-scope.js";
+import { compileGlobPatterns, matchesAnyGlobPattern } from "./glob-pattern.js";
 import { AGENT_LANE_SUBAGENT } from "./lanes.js";
 import {
   resolveAllowRecursiveSpawn,
@@ -30,6 +32,7 @@ import {
   reserveChildSlot,
   reserveProviderSlot,
 } from "./subagent-registry.js";
+import { expandToolGroups, normalizeToolName } from "./tool-policy.js";
 import {
   resolveDisplaySessionKey,
   resolveInternalSessionKey,
@@ -46,12 +49,19 @@ export type SpawnCoreParams = {
   modelOverride?: string;
   thinkingOverrideRaw?: string;
   explicitRunTimeoutSeconds?: number;
+  completionReport?: boolean;
+  progressReporting?: boolean;
   requesterSessionKey?: string;
   requesterOrigin?: DeliveryContext;
   requesterAgentIdOverride?: string;
   agentGroupId?: string | null;
   agentGroupChannel?: string | null;
   agentGroupSpace?: string | null;
+  toolOverrides?: {
+    allow?: string[];
+    deny?: string[];
+  };
+  verification?: VerificationContract;
 };
 
 export type SpawnCoreAcceptedResult = {
@@ -82,6 +92,10 @@ export type SpawnCoreBlockedResult =
 export type SpawnCoreErrorResult = {
   status: "error";
   error: string;
+  reason?: "invalid_tool_overrides_allow";
+  targetAgentId?: string;
+  invalidAllow?: string[];
+  availableTools?: string[];
   childSessionKey?: string;
   runId?: string;
 };
@@ -160,6 +174,76 @@ function normalizeOptionalTimeoutSeconds(value?: number): number | undefined {
   return Math.max(0, Math.floor(value));
 }
 
+function normalizeToolOverrideEntries(values?: string[]): string[] {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+  return values
+    .map((value) => (typeof value === "string" ? value.trim() : ""))
+    .filter((value): value is string => Boolean(value));
+}
+
+async function resolveTargetAgentToolNames(params: {
+  cfg: ReturnType<typeof loadConfig>;
+  targetAgentId: string;
+  requesterInternalKey: string;
+  requesterOrigin?: DeliveryContext;
+  resolvedProvider?: string;
+  resolvedModel?: string;
+  agentGroupId?: string | null;
+  agentGroupChannel?: string | null;
+  agentGroupSpace?: string | null;
+}): Promise<string[]> {
+  const { createOpenClawCodingTools } = await import("./pi-tools.js");
+  const modelProvider =
+    params.resolvedProvider?.trim() || splitModelRef(params.resolvedModel).provider;
+  const modelId =
+    splitModelRef(params.resolvedModel).model ?? params.resolvedModel?.trim() ?? undefined;
+  const toolSessionKey = `agent:${params.targetAgentId}:subagent:tool-override-validation`;
+  const tools = createOpenClawCodingTools({
+    config: params.cfg,
+    sessionKey: toolSessionKey,
+    spawnedBy: params.requesterInternalKey,
+    messageProvider: params.requesterOrigin?.channel,
+    agentAccountId: params.requesterOrigin?.accountId,
+    groupId: params.agentGroupId ?? null,
+    groupChannel: params.agentGroupChannel ?? null,
+    groupSpace: params.agentGroupSpace ?? null,
+    senderIsOwner: true,
+    modelProvider,
+    modelId,
+  });
+  return tools.map((tool) => normalizeToolName(tool.name));
+}
+
+function findInvalidAllowOverrides(params: {
+  allow: string[];
+  availableToolNames: string[];
+}): string[] {
+  const normalizedToolNames = new Set(
+    params.availableToolNames.map((value) => normalizeToolName(value)),
+  );
+  const invalid: string[] = [];
+  for (const entry of params.allow) {
+    const expanded = expandToolGroups([entry]);
+    if (expanded.length === 0) {
+      invalid.push(entry);
+      continue;
+    }
+    const matcher = compileGlobPatterns({
+      raw: expanded,
+      normalize: normalizeToolName,
+    });
+    const matches = Array.from(normalizedToolNames).some((name) =>
+      matchesAnyGlobPattern(name, matcher),
+    );
+    if (!matches) {
+      invalid.push(entry);
+    }
+  }
+  return invalid;
+}
+
 export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResult> {
   const cfg = loadConfig();
   const { mainKey, alias } = resolveMainSessionAlias(cfg);
@@ -188,16 +272,7 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
   const targetAgentId = params.requestedAgentId
     ? normalizeAgentId(params.requestedAgentId)
     : requesterAgentId;
-
-  if (targetAgentId !== requesterAgentId) {
-    const knownIds = new Set(listAgentIds(cfg).map((id) => normalizeAgentId(id)));
-    if (!knownIds.has(normalizeAgentId(targetAgentId))) {
-      throwSpawn({
-        status: "error",
-        error: `Unknown agent: "${targetAgentId}". Available: ${[...knownIds].join(", ")}`,
-      });
-    }
-  }
+  const isCrossAgentSpawn = targetAgentId !== requesterAgentId;
 
   const runTimeoutSeconds =
     normalizeOptionalTimeoutSeconds(params.explicitRunTimeoutSeconds) ??
@@ -224,7 +299,7 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
     }
   }
 
-  if (targetAgentId !== requesterAgentId) {
+  if (isCrossAgentSpawn) {
     const allowAgents = resolveAgentConfig(cfg, requesterAgentId)?.subagents?.allowAgents ?? [];
     const allowAny = allowAgents.some((value) => value.trim() === "*");
     const normalizedTargetId = targetAgentId.toLowerCase();
@@ -253,6 +328,34 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
     targetAgentId,
     modelOverride,
   });
+  const normalizedAllowOverrides = normalizeToolOverrideEntries(params.toolOverrides?.allow);
+  if (normalizedAllowOverrides.length > 0) {
+    const availableToolNames = await resolveTargetAgentToolNames({
+      cfg,
+      targetAgentId,
+      requesterInternalKey,
+      requesterOrigin: params.requesterOrigin,
+      resolvedProvider,
+      resolvedModel,
+      agentGroupId: params.agentGroupId,
+      agentGroupChannel: params.agentGroupChannel,
+      agentGroupSpace: params.agentGroupSpace,
+    });
+    const invalidAllow = findInvalidAllowOverrides({
+      allow: normalizedAllowOverrides,
+      availableToolNames,
+    });
+    if (invalidAllow.length > 0) {
+      throwSpawn({
+        status: "error",
+        reason: "invalid_tool_overrides_allow",
+        targetAgentId,
+        invalidAllow,
+        availableTools: Array.from(new Set(availableToolNames)).toSorted(),
+        error: `toolOverrides.allow has entries unavailable to target agent "${targetAgentId}": ${invalidAllow.join(", ")}`,
+      });
+    }
+  }
   const spawnProvider = resolvedProvider ?? "unknown";
   const providerLimit = resolveSubagentProviderLimit(cfg, spawnProvider);
 
@@ -372,6 +475,8 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
       childSessionKey,
       label,
       task: params.task,
+      completionReport: params.completionReport,
+      progressReporting: params.progressReporting,
     });
 
     const childIdem = crypto.randomUUID();
@@ -400,6 +505,7 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
           groupId: params.agentGroupId ?? undefined,
           groupChannel: params.agentGroupChannel ?? undefined,
           groupSpace: params.agentGroupSpace ?? undefined,
+          toolOverrides: params.toolOverrides,
         },
         timeoutMs: 10_000,
       });
@@ -428,6 +534,24 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
       depth: childDepth,
       provider: spawnProvider,
       providerReservation,
+      verification: params.verification,
+      originalSpawnParams: {
+        label,
+        requestedAgentId: params.requestedAgentId,
+        modelOverride,
+        thinkingOverrideRaw,
+        explicitRunTimeoutSeconds: normalizeOptionalTimeoutSeconds(
+          params.explicitRunTimeoutSeconds,
+        ),
+        completionReport: params.completionReport,
+        progressReporting: params.progressReporting,
+        requesterAgentIdOverride: params.requesterAgentIdOverride,
+        agentGroupId: params.agentGroupId ?? undefined,
+        agentGroupChannel: params.agentGroupChannel ?? undefined,
+        agentGroupSpace: params.agentGroupSpace ?? undefined,
+        toolOverrides: params.toolOverrides,
+        verification: params.verification,
+      },
     });
     registeredRun = true;
 

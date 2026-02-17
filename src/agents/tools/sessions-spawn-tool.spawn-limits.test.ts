@@ -42,6 +42,7 @@ vi.mock("../subagent-announce.js", () => ({
 import {
   addSubagentRunForTests,
   getActiveChildCount,
+  getRunById,
   releaseChildSlot,
   releaseProviderSlot,
   reserveChildSlot,
@@ -142,6 +143,45 @@ describe("sessions_spawn parent limits + target validation", () => {
       status: "accepted",
       runId: "run-after-complete",
     });
+  });
+
+  it("persists verification payload and original spawn params on the run record", async () => {
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string };
+      if (request.method === "agent") {
+        return { runId: "run-with-verification" };
+      }
+      if (request.method === "agent.wait") {
+        return { status: "timeout" };
+      }
+      return {};
+    });
+
+    const verification = {
+      artifacts: [{ path: "out/report.json", json: true, minItems: 1, requiredKeys: ["id"] }],
+      requireCompletionReport: true,
+      onFailure: "retry_once",
+      verificationTimeoutMs: 45000,
+    } as const;
+
+    const result = await createTool().execute("call-with-verification", {
+      task: "new verified task",
+      verification,
+      model: "openai/gpt-5",
+      thinking: "medium",
+    });
+
+    expect(result.details).toMatchObject({
+      status: "accepted",
+      runId: "run-with-verification",
+    });
+
+    const run = getRunById("run-with-verification");
+    expect(run?.verification).toMatchObject(verification);
+    expect(run?.verificationState).toBe("pending");
+    expect(run?.originalSpawnParams?.verification).toMatchObject(verification);
+    expect(run?.originalSpawnParams?.modelOverride).toBe("openai/gpt-5");
+    expect(run?.originalSpawnParams?.thinkingOverrideRaw).toBe("medium");
   });
 
   it("blocks spawn when provider concurrency cap is reached", async () => {
@@ -385,14 +425,14 @@ describe("sessions_spawn parent limits + target validation", () => {
     releaseProviderSlot(reservation);
   });
 
-  it("returns unknown agent error before recursive-spawn checks", async () => {
+  it("returns forbidden when requested agent is not allowed", async () => {
     configOverride = {
       session: {
         mainKey: "main",
         scope: "per-sender",
       },
       agents: {
-        list: [{ id: "main", subagents: { allowRecursiveSpawn: false, allowAgents: ["*"] } }],
+        list: [{ id: "main", subagents: { allowRecursiveSpawn: false, allowAgents: ["alpha"] } }],
       },
     };
 
@@ -402,13 +442,77 @@ describe("sessions_spawn parent limits + target validation", () => {
     });
 
     expect(result.details).toMatchObject({
-      status: "error",
+      status: "forbidden",
     });
-    expect(String((result.details as { error?: unknown }).error)).toContain(
-      'Unknown agent: "ghost"',
-    );
-    expect(String((result.details as { error?: unknown }).error)).toContain("Available: main");
     expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("fails fast when toolOverrides.allow includes tools unavailable to the target agent", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      tools: {
+        profile: "messaging",
+      },
+      agents: {
+        list: [{ id: "main", subagents: { maxChildrenPerAgent: 2 } }],
+      },
+    };
+
+    const result = await createTool().execute("call-invalid-allow", {
+      task: "new task",
+      toolOverrides: {
+        allow: ["read"],
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      status: "error",
+      reason: "invalid_tool_overrides_allow",
+      targetAgentId: "main",
+      invalidAllow: ["read"],
+    });
+    expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("accepts toolOverrides.allow entries that match target agent tools", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      tools: {
+        profile: "messaging",
+      },
+      agents: {
+        list: [{ id: "main", subagents: { maxChildrenPerAgent: 2 } }],
+      },
+    };
+
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string };
+      if (request.method === "agent") {
+        return { runId: "run-valid-allow" };
+      }
+      if (request.method === "agent.wait") {
+        return { status: "timeout" };
+      }
+      return {};
+    });
+
+    const result = await createTool().execute("call-valid-allow", {
+      task: "new task",
+      toolOverrides: {
+        allow: ["message"],
+      },
+    });
+
+    expect(result.details).toMatchObject({
+      status: "accepted",
+      runId: "run-valid-allow",
+    });
   });
 
   it("accepts explicit main target when agents.list is empty", async () => {

@@ -174,6 +174,11 @@ export function createOpenClawCodingTools(options?: {
   runTimeoutMs?: number;
   /** Run start timestamp (ms since epoch) for timeout-aware tools. */
   runStartedAt?: number;
+  /** Per-call tool override. */
+  toolOverrides?: {
+    allow?: string[];
+    deny?: string[];
+  };
 }): AnyAgentTool[] {
   const execToolName = "exec";
   const sandbox = options?.sandbox?.enabled ? options.sandbox : undefined;
@@ -416,6 +421,14 @@ export function createOpenClawCodingTools(options?: {
       }),
       { policy: sandbox?.tools, label: "sandbox tools.allow" },
       { policy: subagentPolicy, label: "subagent tools.allow" },
+      {
+        policy: {
+          allow: options?.toolOverrides?.allow,
+          deny: options?.toolOverrides?.deny,
+        },
+        label: "tool policy override",
+        strictAllowlist: true,
+      },
     ],
   });
   // Always normalize tool JSON Schemas before handing them to pi-agent/pi-ai.

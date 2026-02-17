@@ -3,6 +3,7 @@ import type { GatewayMessageChannel } from "../utils/message-channel.js";
 import type { SandboxFsBridge } from "./sandbox/fs-bridge.js";
 import type { AnyAgentTool } from "./tools/common.js";
 import { resolvePluginTools } from "../plugins/tools.js";
+import { isSubagentSessionKey } from "../routing/session-key.js";
 import { resolveSessionAgentId } from "./agent-scope.js";
 import { createAgentsListTool } from "./tools/agents-list-tool.js";
 import { createBrowserTool } from "./tools/browser-tool.js";
@@ -12,6 +13,8 @@ import { createGatewayTool } from "./tools/gateway-tool.js";
 import { createImageTool } from "./tools/image-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createNodesTool } from "./tools/nodes-tool.js";
+import { createReportCompletionTool } from "./tools/report-completion-tool.js";
+import { createReportProgressTool } from "./tools/report-progress-tool.js";
 import { createRequestOrchestratorTool } from "./tools/request-orchestrator-tool.js";
 import { createRespondOrchestratorRequestTool } from "./tools/respond-orchestrator-request-tool.js";
 import { createSessionStatusTool } from "./tools/session-status-tool.js";
@@ -105,6 +108,7 @@ export function createOpenClawTools(options?: {
         sandboxRoot: options?.sandboxRoot,
         requireExplicitTarget: options?.requireExplicitMessageTarget,
       });
+  const isSubagent = isSubagentSessionKey(options?.agentSessionKey);
   const tools: AnyAgentTool[] = [
     createBrowserTool({
       sandboxBridgeUrl: options?.sandboxBrowserBridgeUrl,
@@ -176,6 +180,8 @@ export function createOpenClawTools(options?: {
       agentSessionKey: options?.agentSessionKey,
       config: options?.config,
     }),
+    ...(isSubagent ? [createReportCompletionTool()] : []),
+    ...(isSubagent && options?.runId ? [createReportProgressTool({ runId: options.runId })] : []),
     ...(webSearchTool ? [webSearchTool] : []),
     ...(webFetchTool ? [webFetchTool] : []),
     ...(imageTool ? [imageTool] : []),

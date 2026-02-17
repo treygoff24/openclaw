@@ -242,6 +242,8 @@ export function buildAgentSystemPrompt(params: {
     sessions_history: "Fetch history for another session/sub-agent",
     sessions_send: "Send a message to another session/sub-agent",
     sessions_spawn: "Spawn a sub-agent session",
+    report_completion: "Report structured completion status for a spawned sub-agent run",
+    report_progress: "Report progress checkpoints for a spawned sub-agent run",
     session_status:
       "Show a /status-equivalent status card (usage + time + Reasoning/Verbose/Elevated); use for model-use questions (📊 session_status); optional per-session model override",
     image: "Analyze an image with the configured image model",
@@ -269,6 +271,8 @@ export function buildAgentSystemPrompt(params: {
     "sessions_list",
     "sessions_history",
     "sessions_send",
+    "report_completion",
+    "report_progress",
     "session_status",
     "image",
   ];

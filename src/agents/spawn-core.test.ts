@@ -5,6 +5,7 @@ const callGatewayMock = vi.fn();
 const onAgentEventMock = vi.fn(() => () => {});
 const loadSubagentRegistryFromDiskMock = vi.fn(() => new Map());
 const saveSubagentRegistryToDiskMock = vi.fn(() => {});
+const buildSubagentSystemPromptMock = vi.fn(() => "subagent-system-prompt");
 
 vi.mock("../gateway/call.js", () => ({
   callGateway: (opts: unknown) => callGatewayMock(opts),
@@ -35,7 +36,7 @@ vi.mock("./subagent-registry.store.js", () => ({
 }));
 
 vi.mock("./subagent-announce.js", () => ({
-  buildSubagentSystemPrompt: vi.fn(() => "subagent-system-prompt"),
+  buildSubagentSystemPrompt: (...args: unknown[]) => buildSubagentSystemPromptMock(...args),
   runSubagentAnnounceFlow: vi.fn(async () => true),
 }));
 
@@ -69,6 +70,8 @@ beforeEach(() => {
   loadSubagentRegistryFromDiskMock.mockReset();
   loadSubagentRegistryFromDiskMock.mockReturnValue(new Map());
   saveSubagentRegistryToDiskMock.mockReset();
+  buildSubagentSystemPromptMock.mockReset();
+  buildSubagentSystemPromptMock.mockReturnValue("subagent-system-prompt");
   resetSubagentRegistryForTests({ persist: false });
 });
 
@@ -78,6 +81,7 @@ afterEach(() => {
   onAgentEventMock.mockReset();
   loadSubagentRegistryFromDiskMock.mockReset();
   saveSubagentRegistryToDiskMock.mockReset();
+  buildSubagentSystemPromptMock.mockReset();
 });
 
 describe("spawnCore", () => {
@@ -108,14 +112,14 @@ describe("spawnCore", () => {
     expect(requesterRuns[0]?.runId).toBe("run-core-ok");
   });
 
-  it("throws SpawnError for unknown target agent", async () => {
+  it("throws SpawnError for disallowed target agent", async () => {
     configOverride = {
       session: {
         mainKey: "main",
         scope: "per-sender",
       },
       agents: {
-        list: [{ id: "main", subagents: { allowRecursiveSpawn: false, allowAgents: ["*"] } }],
+        list: [{ id: "main", subagents: { allowRecursiveSpawn: false, allowAgents: ["alpha"] } }],
       },
     };
 
@@ -128,7 +132,7 @@ describe("spawnCore", () => {
       }),
     ).rejects.toMatchObject({
       details: {
-        status: "error",
+        status: "forbidden",
       },
     });
 
@@ -238,5 +242,33 @@ describe("spawnCore", () => {
     const reservation = reserveProviderSlot("openai", 1);
     expect(reservation).not.toBeNull();
     releaseProviderSlot(reservation);
+  });
+
+  it("threads completion/progress reporting flags into subagent system prompt", async () => {
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string };
+      if (request.method === "agent") {
+        return { runId: "run-reporting-flags" };
+      }
+      if (request.method === "agent.wait") {
+        return { status: "timeout" };
+      }
+      return {};
+    });
+
+    await spawnCore({
+      task: "new task",
+      cleanup: "keep",
+      requesterSessionKey: "main",
+      completionReport: true,
+      progressReporting: true,
+    });
+
+    expect(buildSubagentSystemPromptMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        completionReport: true,
+        progressReporting: true,
+      }),
+    );
   });
 });

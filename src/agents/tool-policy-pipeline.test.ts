@@ -63,4 +63,86 @@ describe("tool-policy-pipeline", () => {
     });
     expect(filtered.map((t) => (t as unknown as DummyTool).name)).toEqual(["exec"]);
   });
+
+  test("supports deny-only policies", () => {
+    const tools = [{ name: "exec" }, { name: "process" }] as unknown as DummyTool[];
+    const filtered = applyToolPolicyPipeline({
+      // oxlint-disable-next-line typescript/no-explicit-any
+      tools: tools as any,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      toolMeta: () => undefined,
+      warn: () => {},
+      steps: [
+        {
+          policy: { deny: ["exec"] },
+          label: "tools.deny",
+        },
+      ],
+    });
+    expect(filtered.map((t) => (t as unknown as DummyTool).name)).toEqual(["process"]);
+  });
+
+  test("supports allow-and-deny policies", () => {
+    const tools = [
+      { name: "exec" },
+      { name: "process" },
+      { name: "browse" },
+    ] as unknown as DummyTool[];
+    const filtered = applyToolPolicyPipeline({
+      // oxlint-disable-next-line typescript/no-explicit-any
+      tools: tools as any,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      toolMeta: () => undefined,
+      warn: () => {},
+      steps: [
+        {
+          policy: { allow: ["exec", "process"], deny: ["process"] },
+          label: "tools.profile",
+        },
+      ],
+    });
+    expect(filtered.map((t) => (t as unknown as DummyTool).name)).toEqual(["exec"]);
+  });
+
+  test("supports strict allowlist empty override", () => {
+    const tools = [{ name: "exec" }, { name: "process" }] as unknown as DummyTool[];
+    const filtered = applyToolPolicyPipeline({
+      // oxlint-disable-next-line typescript/no-explicit-any
+      tools: tools as any,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      toolMeta: () => undefined,
+      warn: () => {},
+      steps: [
+        {
+          policy: { allow: [] },
+          label: "tool policy override",
+          strictAllowlist: true,
+        },
+      ],
+    });
+    expect(filtered).toEqual([]);
+  });
+
+  test("keeps allowlist narrowing from widening later steps", () => {
+    const tools = [{ name: "exec" }, { name: "process" }] as unknown as DummyTool[];
+    const filtered = applyToolPolicyPipeline({
+      // oxlint-disable-next-line typescript/no-explicit-any
+      tools: tools as any,
+      // oxlint-disable-next-line typescript/no-explicit-any
+      toolMeta: () => undefined,
+      warn: () => {},
+      steps: [
+        {
+          policy: { allow: [] },
+          label: "tool policy override",
+          strictAllowlist: true,
+        },
+        {
+          policy: { allow: ["*"] },
+          label: "tools.allow",
+        },
+      ],
+    });
+    expect(filtered).toEqual([]);
+  });
 });

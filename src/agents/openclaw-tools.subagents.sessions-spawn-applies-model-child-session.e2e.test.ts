@@ -96,6 +96,108 @@ describe("openclaw-tools: subagents", () => {
     });
   });
 
+  it("sessions_spawn forwards tool policy overrides to the agent call and does not patch with them", async () => {
+    resetSubagentRegistryForTests();
+    callGatewayMock.mockReset();
+    const calls: Array<{ method?: string; params?: unknown }> = [];
+
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string; params?: unknown };
+      calls.push(request);
+      if (request.method === "sessions.patch") {
+        return { ok: true };
+      }
+      if (request.method === "agent") {
+        return { runId: "run-tool-policy", status: "accepted" };
+      }
+      return {};
+    });
+
+    const tool = createOpenClawTools({
+      agentSessionKey: "agent:main:main",
+      agentChannel: "discord",
+    }).find((candidate) => candidate.name === "sessions_spawn");
+    if (!tool) {
+      throw new Error("missing sessions_spawn tool");
+    }
+
+    const result = await tool.execute("call-tool-policy", {
+      task: "do thing",
+      toolOverrides: {
+        allow: [],
+        deny: ["sessions_spawn"],
+      },
+    });
+    expect(result.details).toMatchObject({
+      status: "accepted",
+    });
+
+    const agentCall = calls.find((call) => call.method === "agent");
+    expect(agentCall).toBeDefined();
+    const agentParams = agentCall?.params as Record<string, unknown> | undefined;
+    expect(calls.some((call) => call.method === "sessions.patch")).toBe(false);
+    expect(agentParams?.toolOverrides).toMatchObject({
+      allow: [],
+      deny: ["sessions_spawn"],
+    });
+  });
+
+  it("sessions_spawn keeps toolOverrides isolated from sessions.patch calls", async () => {
+    resetSubagentRegistryForTests();
+    callGatewayMock.mockReset();
+    const calls: Array<{ method?: string; params?: unknown }> = [];
+
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string; params?: unknown };
+      calls.push(request);
+      if (request.method === "sessions.patch") {
+        return { ok: true };
+      }
+      if (request.method === "agent") {
+        return { runId: "run-tool-policy-isolated", status: "accepted" };
+      }
+      return {};
+    });
+
+    const tool = createOpenClawTools({
+      agentSessionKey: "agent:main:main",
+      agentChannel: "discord",
+    }).find((candidate) => candidate.name === "sessions_spawn");
+    if (!tool) {
+      throw new Error("missing sessions_spawn tool");
+    }
+
+    const result = await tool.execute("call-tool-policy-isolated", {
+      task: "do thing",
+      model: "claude-haiku-4-5",
+      toolOverrides: {
+        allow: ["read"],
+        deny: ["browser"],
+      },
+    });
+    expect(result.details).toMatchObject({
+      status: "accepted",
+      modelApplied: true,
+    });
+
+    const patchCalls = calls.filter((call) => call.method === "sessions.patch");
+    expect(patchCalls.length).toBeGreaterThan(0);
+    for (const patchCall of patchCalls) {
+      const patchParams = patchCall.params as Record<string, unknown> | undefined;
+      expect(patchParams?.model).toBe("claude-haiku-4-5");
+      expect(patchParams).not.toHaveProperty("toolOverrides");
+      expect(patchParams).not.toHaveProperty("allow");
+      expect(patchParams).not.toHaveProperty("deny");
+    }
+
+    const agentCall = calls.find((call) => call.method === "agent");
+    const agentParams = agentCall?.params as Record<string, unknown> | undefined;
+    expect(agentParams?.toolOverrides).toEqual({
+      allow: ["read"],
+      deny: ["browser"],
+    });
+  });
+
   it("sessions_spawn forwards thinking overrides to the agent run", async () => {
     resetSubagentRegistryForTests();
     callGatewayMock.mockReset();
@@ -130,6 +232,44 @@ describe("openclaw-tools: subagents", () => {
     expect(agentCall?.params).toMatchObject({
       thinking: "high",
     });
+  });
+
+  it("sessions_spawn reporting flags nudge subagent instructions when enabled", async () => {
+    resetSubagentRegistryForTests();
+    callGatewayMock.mockReset();
+    const calls: Array<{ method?: string; params?: unknown }> = [];
+
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string; params?: unknown };
+      calls.push(request);
+      if (request.method === "agent") {
+        return { runId: "run-reporting-flags", status: "accepted" };
+      }
+      return {};
+    });
+
+    const tool = createOpenClawTools({
+      agentSessionKey: "discord:group:req",
+      agentChannel: "discord",
+    }).find((candidate) => candidate.name === "sessions_spawn");
+    if (!tool) {
+      throw new Error("missing sessions_spawn tool");
+    }
+
+    const result = await tool.execute("call-reporting-flags", {
+      task: "do thing",
+      completionReport: true,
+      progressReporting: true,
+    });
+    expect(result.details).toMatchObject({
+      status: "accepted",
+    });
+
+    const agentCall = calls.find((call) => call.method === "agent");
+    const extraSystemPrompt =
+      (agentCall?.params as { extraSystemPrompt?: string } | undefined)?.extraSystemPrompt ?? "";
+    expect(extraSystemPrompt).toContain("report_completion");
+    expect(extraSystemPrompt).toContain("report_progress");
   });
 
   it("sessions_spawn rejects invalid thinking levels", async () => {

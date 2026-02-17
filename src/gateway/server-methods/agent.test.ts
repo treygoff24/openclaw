@@ -132,6 +132,60 @@ describe("gateway agent handler", () => {
     expect(capturedEntry?.claudeCliSessionId).toBe(existingClaudeCliSessionId);
   });
 
+  it("forwards toolOverrides to agentCommand without persisting them to sessions", async () => {
+    mocks.loadSessionEntry.mockReturnValue({
+      cfg: {},
+      storePath: "/tmp/sessions.json",
+      entry: {
+        sessionId: "existing-session-id",
+        updatedAt: Date.now(),
+      },
+      canonicalKey: "agent:main:main",
+    });
+
+    let capturedEntry: Record<string, unknown> | undefined;
+    mocks.updateSessionStore.mockImplementation(async (_path, updater) => {
+      const store: Record<string, unknown> = {};
+      await updater(store);
+      capturedEntry = store["agent:main:main"] as Record<string, unknown>;
+    });
+
+    mocks.agentCommand.mockResolvedValue({
+      payloads: [{ text: "ok" }],
+      meta: { durationMs: 100 },
+    });
+
+    const respond = vi.fn();
+    await agentHandlers.agent({
+      params: {
+        message: "test",
+        agentId: "main",
+        sessionKey: "agent:main:main",
+        idempotencyKey: "test-tool-overrides",
+        toolOverrides: {
+          allow: [],
+          deny: ["browser"],
+        },
+      },
+      respond,
+      context: makeContext(),
+      req: { type: "req", id: "tool-overrides-1", method: "agent" },
+      client: null,
+      isWebchatConnect: () => false,
+    });
+
+    expect(mocks.updateSessionStore).toHaveBeenCalled();
+    expect(capturedEntry).toBeDefined();
+    expect(capturedEntry).not.toHaveProperty("toolOverrides");
+
+    await vi.waitFor(() => expect(mocks.agentCommand).toHaveBeenCalled());
+    const callArgs = mocks.agentCommand.mock.calls.at(-1)?.[0] as { toolOverrides?: unknown };
+    expect(callArgs.toolOverrides).toEqual({
+      allow: [],
+      deny: ["browser"],
+    });
+  });
+
   it("injects a timestamp into the message passed to agentCommand", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-29T01:30:00.000Z")); // Wed Jan 28, 8:30 PM EST

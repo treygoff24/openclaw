@@ -227,13 +227,18 @@ export class QmdMemoryManager implements MemorySearchManager {
     }
 
     for (const collection of this.qmd.collections) {
-      const listed = existing.get(collection.name);
+      let listedName = collection.name;
+      let listed = existing.get(collection.name);
+      if (!listed && collection.kind === "sessions" && existing.has("sessions")) {
+        listedName = "sessions";
+        listed = existing.get(listedName);
+      }
       if (listed && !this.shouldRebindCollection(collection, listed)) {
         continue;
       }
       if (listed) {
         try {
-          await this.removeCollection(collection.name);
+          await this.removeCollection(listedName);
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
           if (!this.isCollectionMissingError(message)) {

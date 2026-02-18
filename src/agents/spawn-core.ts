@@ -13,7 +13,6 @@ import {
   parseAgentSessionKey,
 } from "../routing/session-key.js";
 import { listAgentIds, resolveAgentConfig } from "./agent-scope.js";
-import { compileGlobPatterns, matchesAnyGlobPattern } from "./glob-pattern.js";
 import { AGENT_LANE_SUBAGENT } from "./lanes.js";
 import {
   resolveAllowRecursiveSpawn,
@@ -25,6 +24,7 @@ import { buildSubagentSystemPrompt } from "./subagent-announce.js";
 import { resolveSpawnProvider } from "./subagent-provider-limits.js";
 import {
   getActiveChildCount,
+  getRunByChildKey,
   getProviderUsage,
   registerSubagentRun,
   releaseChildSlot,
@@ -32,7 +32,7 @@ import {
   reserveChildSlot,
   reserveProviderSlot,
 } from "./subagent-registry.js";
-import { expandToolGroups, normalizeToolName } from "./tool-policy.js";
+import { validateToolOverridesAllowForTargetAgent } from "./tool-overrides-allow.js";
 import {
   resolveDisplaySessionKey,
   resolveInternalSessionKey,
@@ -122,6 +122,8 @@ export class SpawnError extends Error {
   }
 }
 
+const VALID_AGENT_ID_RE = /^[a-z0-9][a-z0-9_-]{0,63}$/i;
+
 function splitModelRef(ref?: string) {
   if (!ref) {
     return { provider: undefined, model: undefined };
@@ -174,76 +176,6 @@ function normalizeOptionalTimeoutSeconds(value?: number): number | undefined {
   return Math.max(0, Math.floor(value));
 }
 
-function normalizeToolOverrideEntries(values?: string[]): string[] {
-  if (!Array.isArray(values)) {
-    return [];
-  }
-  return values
-    .map((value) => (typeof value === "string" ? value.trim() : ""))
-    .filter((value): value is string => Boolean(value));
-}
-
-async function resolveTargetAgentToolNames(params: {
-  cfg: ReturnType<typeof loadConfig>;
-  targetAgentId: string;
-  requesterInternalKey: string;
-  requesterOrigin?: DeliveryContext;
-  resolvedProvider?: string;
-  resolvedModel?: string;
-  agentGroupId?: string | null;
-  agentGroupChannel?: string | null;
-  agentGroupSpace?: string | null;
-}): Promise<string[]> {
-  const { createOpenClawCodingTools } = await import("./pi-tools.js");
-  const modelProvider =
-    params.resolvedProvider?.trim() || splitModelRef(params.resolvedModel).provider;
-  const modelId =
-    splitModelRef(params.resolvedModel).model ?? params.resolvedModel?.trim() ?? undefined;
-  const toolSessionKey = `agent:${params.targetAgentId}:subagent:tool-override-validation`;
-  const tools = createOpenClawCodingTools({
-    config: params.cfg,
-    sessionKey: toolSessionKey,
-    spawnedBy: params.requesterInternalKey,
-    messageProvider: params.requesterOrigin?.channel,
-    agentAccountId: params.requesterOrigin?.accountId,
-    groupId: params.agentGroupId ?? null,
-    groupChannel: params.agentGroupChannel ?? null,
-    groupSpace: params.agentGroupSpace ?? null,
-    senderIsOwner: true,
-    modelProvider,
-    modelId,
-  });
-  return tools.map((tool) => normalizeToolName(tool.name));
-}
-
-function findInvalidAllowOverrides(params: {
-  allow: string[];
-  availableToolNames: string[];
-}): string[] {
-  const normalizedToolNames = new Set(
-    params.availableToolNames.map((value) => normalizeToolName(value)),
-  );
-  const invalid: string[] = [];
-  for (const entry of params.allow) {
-    const expanded = expandToolGroups([entry]);
-    if (expanded.length === 0) {
-      invalid.push(entry);
-      continue;
-    }
-    const matcher = compileGlobPatterns({
-      raw: expanded,
-      normalize: normalizeToolName,
-    });
-    const matches = Array.from(normalizedToolNames).some((name) =>
-      matchesAnyGlobPattern(name, matcher),
-    );
-    if (!matches) {
-      invalid.push(entry);
-    }
-  }
-  return invalid;
-}
-
 export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResult> {
   const cfg = loadConfig();
   const { mainKey, alias } = resolveMainSessionAlias(cfg);
@@ -269,10 +201,28 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
   const requesterAgentId = normalizeAgentId(
     params.requesterAgentIdOverride ?? parseAgentSessionKey(requesterInternalKey)?.agentId,
   );
-  const targetAgentId = params.requestedAgentId
-    ? normalizeAgentId(params.requestedAgentId)
-    : requesterAgentId;
-  const isCrossAgentSpawn = targetAgentId !== requesterAgentId;
+  const requesterRun = getRunByChildKey(requesterInternalKey);
+  const inheritedPolicyAgentId =
+    requesterRun && isSubagentSessionKey(requesterInternalKey)
+      ? normalizeAgentId(
+          requesterRun.originalSpawnParams?.requesterAgentIdOverride ??
+            parseAgentSessionKey(requesterRun.requesterSessionKey)?.agentId,
+        )
+      : undefined;
+  const policyAgentId = inheritedPolicyAgentId ?? requesterAgentId;
+
+  const explicitRequestedAgentIdRaw = normalizeOptionalLabel(params.requestedAgentId);
+  if (explicitRequestedAgentIdRaw && !VALID_AGENT_ID_RE.test(explicitRequestedAgentIdRaw)) {
+    throwSpawn({
+      status: "error",
+      error: `Invalid requested agentId "${explicitRequestedAgentIdRaw}". Use letters, numbers, "_" or "-".`,
+    });
+  }
+  const explicitRequestedAgentId = explicitRequestedAgentIdRaw
+    ? normalizeAgentId(explicitRequestedAgentIdRaw)
+    : undefined;
+  const targetAgentId = explicitRequestedAgentId ?? requesterAgentId;
+  const isCrossAgentSpawn = targetAgentId !== policyAgentId;
 
   const runTimeoutSeconds =
     normalizeOptionalTimeoutSeconds(params.explicitRunTimeoutSeconds) ??
@@ -280,8 +230,15 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
 
   if (typeof requesterSessionKey === "string" && isSubagentSessionKey(requesterSessionKey)) {
     const currentDepth = getSubagentDepth(requesterSessionKey);
-    const allowRecursive = resolveAllowRecursiveSpawn(cfg, requesterAgentId);
-    const maxDepth = resolveMaxSpawnDepth(cfg, requesterAgentId);
+    const allowRecursive = resolveAllowRecursiveSpawn(cfg, policyAgentId);
+    const maxDepth = resolveMaxSpawnDepth(cfg, policyAgentId);
+
+    if (currentDepth >= maxDepth) {
+      throwSpawn({
+        status: "forbidden",
+        error: `Maximum subagent depth (${maxDepth}) reached at current depth ${currentDepth}. Cannot spawn deeper.`,
+      });
+    }
 
     if (!allowRecursive) {
       throwSpawn({
@@ -290,17 +247,10 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
           "Recursive spawning is not enabled. Set subagents.allowRecursiveSpawn: true in config.",
       });
     }
-
-    if (currentDepth >= maxDepth) {
-      throwSpawn({
-        status: "forbidden",
-        error: `Maximum subagent depth (${maxDepth}) reached. Cannot spawn deeper.`,
-      });
-    }
   }
 
   if (isCrossAgentSpawn) {
-    const allowAgents = resolveAgentConfig(cfg, requesterAgentId)?.subagents?.allowAgents ?? [];
+    const allowAgents = resolveAgentConfig(cfg, policyAgentId)?.subagents?.allowAgents ?? [];
     const allowAny = allowAgents.some((value) => value.trim() === "*");
     const normalizedTargetId = targetAgentId.toLowerCase();
     const allowSet = new Set(
@@ -322,44 +272,48 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
     }
   }
 
+  if (explicitRequestedAgentId) {
+    const knownAgentIds = new Set(listAgentIds(cfg).map((value) => normalizeAgentId(value)));
+    if (!knownAgentIds.has(explicitRequestedAgentId)) {
+      throwSpawn({
+        status: "error",
+        error: `Unknown requested agentId "${explicitRequestedAgentId}". Add it under agents.list before spawning.`,
+      });
+    }
+  }
+
   const targetAgentConfig = resolveAgentConfig(cfg, targetAgentId);
   const { model: resolvedModel, provider: resolvedProvider } = resolveSpawnProvider({
     cfg,
     targetAgentId,
     modelOverride,
   });
-  const normalizedAllowOverrides = normalizeToolOverrideEntries(params.toolOverrides?.allow);
-  if (normalizedAllowOverrides.length > 0) {
-    const availableToolNames = await resolveTargetAgentToolNames({
-      cfg,
+  const { invalidAllow, availableToolNames } = await validateToolOverridesAllowForTargetAgent({
+    cfg,
+    targetAgentId,
+    allow: params.toolOverrides?.allow,
+    requesterInternalKey,
+    requesterOrigin: params.requesterOrigin,
+    resolvedProvider,
+    resolvedModel,
+    agentGroupId: params.agentGroupId,
+    agentGroupChannel: params.agentGroupChannel,
+    agentGroupSpace: params.agentGroupSpace,
+  });
+  if (invalidAllow.length > 0) {
+    throwSpawn({
+      status: "error",
+      reason: "invalid_tool_overrides_allow",
       targetAgentId,
-      requesterInternalKey,
-      requesterOrigin: params.requesterOrigin,
-      resolvedProvider,
-      resolvedModel,
-      agentGroupId: params.agentGroupId,
-      agentGroupChannel: params.agentGroupChannel,
-      agentGroupSpace: params.agentGroupSpace,
+      invalidAllow,
+      availableTools: Array.from(new Set(availableToolNames)).toSorted(),
+      error: `toolOverrides.allow has entries unavailable to target agent "${targetAgentId}": ${invalidAllow.join(", ")}`,
     });
-    const invalidAllow = findInvalidAllowOverrides({
-      allow: normalizedAllowOverrides,
-      availableToolNames,
-    });
-    if (invalidAllow.length > 0) {
-      throwSpawn({
-        status: "error",
-        reason: "invalid_tool_overrides_allow",
-        targetAgentId,
-        invalidAllow,
-        availableTools: Array.from(new Set(availableToolNames)).toSorted(),
-        error: `toolOverrides.allow has entries unavailable to target agent "${targetAgentId}": ${invalidAllow.join(", ")}`,
-      });
-    }
   }
   const spawnProvider = resolvedProvider ?? "unknown";
   const providerLimit = resolveSubagentProviderLimit(cfg, spawnProvider);
 
-  const maxChildren = resolveMaxChildrenPerAgent(cfg, requesterAgentId);
+  const maxChildren = resolveMaxChildrenPerAgent(cfg, policyAgentId);
   const reservedChild = reserveChildSlot(requesterInternalKey, maxChildren);
   if (!reservedChild) {
     const active = getActiveChildCount(requesterInternalKey);
@@ -537,7 +491,7 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
       verification: params.verification,
       originalSpawnParams: {
         label,
-        requestedAgentId: params.requestedAgentId,
+        requestedAgentId: explicitRequestedAgentId,
         modelOverride,
         thinkingOverrideRaw,
         explicitRunTimeoutSeconds: normalizeOptionalTimeoutSeconds(
@@ -545,7 +499,7 @@ export async function spawnCore(params: SpawnCoreParams): Promise<SpawnCoreResul
         ),
         completionReport: params.completionReport,
         progressReporting: params.progressReporting,
-        requesterAgentIdOverride: params.requesterAgentIdOverride,
+        requesterAgentIdOverride: policyAgentId,
         agentGroupId: params.agentGroupId ?? undefined,
         agentGroupChannel: params.agentGroupChannel ?? undefined,
         agentGroupSpace: params.agentGroupSpace ?? undefined,

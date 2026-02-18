@@ -93,7 +93,9 @@ function asText(text) {
 function collectTextSegments(content) {
   const parts = [];
   for (const block of content) {
-    if (block.type === "text") parts.push(block.text);
+    if (block.type === "text") {
+      parts.push(block.text);
+    }
   }
   return parts;
 }
@@ -159,7 +161,9 @@ function takeTailFromJoinedText(parts, maxChars) {
 }
 function hasImageBlocks(content) {
   for (const block of content) {
-    if (block.type === "image") return true;
+    if (block.type === "image") {
+      return true;
+    }
   }
   return false;
 }
@@ -234,7 +238,9 @@ function findAssistantCutoffIndex(messages, keepLastAssistants) {
 }
 function findFirstUserIndex(messages) {
   for (let i = 0; i < messages.length; i++) {
-    if (messages[i]?.role === "user") return i;
+    if (messages[i]?.role === "user") {
+      return i;
+    }
   }
   return null;
 }

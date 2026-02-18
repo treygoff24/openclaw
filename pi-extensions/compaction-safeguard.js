@@ -342,7 +342,9 @@ async function summarizeWithFallback(params) {
       oversizedNotes.push(
         `[Large ${role} (~${Math.round(tokens / 1e3)}K tokens) omitted from summary]`,
       );
-    } else smallMessages.push(msg);
+    } else {
+      smallMessages.push(msg);
+    }
   }
   if (smallMessages.length > 0) {
     try {
@@ -557,8 +559,10 @@ function formatToolFailuresSection(failures) {
 function computeFileLists(fileOps) {
   const modified = new Set([...fileOps.edited, ...fileOps.written]);
   return {
-    readFiles: [...fileOps.read].filter((f) => !modified.has(f)).toSorted(),
-    modifiedFiles: [...modified].toSorted(),
+    readFiles: [...fileOps.read]
+      .filter((f) => !modified.has(f))
+      .toSorted((a, b) => a.localeCompare(b)),
+    modifiedFiles: [...modified].toSorted((a, b) => a.localeCompare(b)),
   };
 }
 function formatFileOperations(readFiles, modifiedFiles) {
@@ -640,8 +644,9 @@ function serializeLastTurn(messages, maxTokens) {
         const textParts = [];
         const toolCalls = [];
         for (const block of content) {
-          if (block.type === "text" && block.text) textParts.push(block.text);
-          else if (block.type === "toolCall" && block.name) {
+          if (block.type === "text" && block.text) {
+            textParts.push(block.text);
+          } else if (block.type === "toolCall" && block.name) {
             const args = block.arguments ?? {};
             const argsStr = Object.entries(args)
               .map(([k, v]) => `${k}=${JSON.stringify(v)}`)

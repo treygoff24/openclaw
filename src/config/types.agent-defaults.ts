@@ -262,6 +262,10 @@ export type AgentCompactionConfig = {
   reserveTokensFloor?: number;
   /** Max share of context window for history during safeguard pruning (0.1–0.9, default 0.5). */
   maxHistoryShare?: number;
+  /** Inject the verbatim last exchange into compaction output (default: true). */
+  lastTurnInjection?: boolean;
+  /** Max tokens budget for serialized last exchange injection (default: 4000). */
+  lastTurnMaxTokens?: number;
   /** Pre-compaction memory flush (agentic turn). Default: enabled. */
   memoryFlush?: AgentCompactionMemoryFlushConfig;
 };

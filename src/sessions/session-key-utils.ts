@@ -79,22 +79,15 @@ export function getSubagentDepth(sessionKey: string | undefined | null): number 
   if (!rest.startsWith("subagent:")) {
     return 0;
   }
+  const segments = getValidatedSubagentSegments(raw);
+  if (!segments) {
+    return 0;
+  }
   const registryRecord = getRunByChildKeyGlobal?.(raw);
   if (registryRecord?.depth != null && registryRecord.depth > 0) {
     return registryRecord.depth;
   }
-  const parts = rest.split(":");
-  let depth = 1;
-  let i = 2;
-  while (i + 1 < parts.length) {
-    if (parts[i] === "sub") {
-      depth++;
-      i += 2;
-    } else {
-      break;
-    }
-  }
-  return depth;
+  return segments.length;
 }
 
 /**
@@ -118,11 +111,62 @@ export function getParentSubagentKey(sessionKey: string | undefined | null): str
     }
     return `agent:${parsed.agentId}:main`;
   }
-  const lastSubIdx = raw.lastIndexOf(":sub:");
+  const normalized = raw.toLowerCase();
+  const lastSubIdx = normalized.lastIndexOf(":sub:");
   if (lastSubIdx <= 0) {
     return null;
   }
   return raw.substring(0, lastSubIdx);
+}
+
+const SUBAGENT_MARKER = "subagent";
+const SUB_MARKER = "sub";
+
+function getValidatedSubagentSegments(raw: string): string[] | null {
+  const restStart = findNthColonIndex(raw, 2);
+  if (restStart === null) {
+    return null;
+  }
+  const rest = raw.slice(restStart + 1);
+  if (!rest) {
+    return null;
+  }
+  const tokens = rest.toLowerCase().split(":");
+  if (tokens[0] !== SUBAGENT_MARKER) {
+    return null;
+  }
+  const firstId = tokens[1]?.trim();
+  if (!firstId) {
+    return null;
+  }
+  const segments = [firstId];
+  let i = 2;
+  while (i < tokens.length) {
+    const marker = tokens[i]?.trim();
+    if (marker !== SUB_MARKER) {
+      break;
+    }
+    const child = tokens[i + 1]?.trim();
+    if (!child) {
+      return null;
+    }
+    segments.push(child);
+    i += 2;
+  }
+  return segments;
+}
+
+function findNthColonIndex(raw: string, n: number): number | null {
+  let count = 0;
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i] === ":") {
+      count++;
+      if (count === n) {
+        return i;
+      }
+    }
+  }
+  return null;
 }
 
 const THREAD_SESSION_MARKERS = [":thread:", ":topic:"];

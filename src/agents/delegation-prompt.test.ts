@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import * as capabilityRouting from "./capability-routing.js";
 import { buildDelegationPrompt } from "./delegation-prompt.js";
 import { buildSubagentSystemPrompt } from "./subagent-announce.js";
 
@@ -202,5 +203,39 @@ describe("buildSubagentSystemPrompt", () => {
     expect(prompt).not.toContain("## Reporting Tools");
     expect(prompt).not.toContain("report_completion");
     expect(prompt).not.toContain("report_progress");
+  });
+
+  it("uses suggestAgents to build ranked fleet for delegation prompts", () => {
+    const suggestSpy = vi.spyOn(capabilityRouting, "suggestAgents").mockReturnValue([
+      {
+        id: "writer",
+        model: "openai/gpt-4.1-mini",
+        description: "Documentation worker",
+        routing: {
+          score: 9,
+          matchedCardTitle: "Capabilities",
+          matchedTerms: ["release", "changelog"],
+          costTier: "cheap",
+          typicalLatency: "45s",
+        },
+      },
+    ]);
+
+    const prompt = buildSubagentSystemPrompt({
+      requesterSessionKey: "agent:main:subagent:parent",
+      childSessionKey: "agent:main:subagent:parent:sub:child",
+      task: "Draft release notes and changelog update",
+    });
+
+    expect(suggestSpy).toHaveBeenCalledWith(
+      { hint: "Draft release notes and changelog update" },
+      expect.any(Object),
+    );
+    expect(prompt).toContain("## Capability Routing");
+    expect(prompt).toContain(
+      "| 1 | writer | 9 | cheap | 45s | Capabilities | release, changelog |",
+    );
+
+    suggestSpy.mockRestore();
   });
 });

@@ -23,7 +23,7 @@ type KillResult = {
 
 type AgentAbortResponse = {
   aborted?: boolean;
-  via?: "embedded" | "none" | string;
+  via?: string;
 };
 
 function resolveKillList(targetKey: string, cascade: boolean): string[] {

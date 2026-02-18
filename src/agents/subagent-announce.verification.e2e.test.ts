@@ -14,6 +14,18 @@ let configOverride: ReturnType<(typeof import("../config/config.js"))["loadConfi
   },
 };
 
+function getLastAgentMessage(): string {
+  const message = agentCalls.at(-1)?.params?.message;
+  if (typeof message === "string") {
+    return message;
+  }
+  if (message == null) {
+    return "";
+  }
+  const serialized = JSON.stringify(message);
+  return typeof serialized === "string" ? serialized : "";
+}
+
 vi.mock("../gateway/call.js", () => ({
   callGateway: vi.fn(async (req: unknown) => {
     const typed = req as { method?: string; params?: Record<string, unknown> };
@@ -146,7 +158,7 @@ describe("subagent announce verification integration", () => {
       ]),
     );
 
-    const message = String(agentCalls.at(-1)?.params?.message ?? "");
+    const message = getLastAgentMessage();
     expect(message).toContain("failed verification");
     expect(message).toContain("completion_report_missing");
     expect(sessionsDeleteSpy).not.toHaveBeenCalled();
@@ -205,7 +217,7 @@ describe("subagent announce verification integration", () => {
     const updated = getRunById("run-verify-retry");
     expect(typeof updated?.retryAttemptedAt).toBe("number");
     expect(updated?.verificationState).toBe("failed");
-    const message = String(agentCalls.at(-1)?.params?.message ?? "");
+    const message = getLastAgentMessage();
     expect(message).toContain("retry started");
     expect(message).toContain("retry-run-1");
 
@@ -225,7 +237,7 @@ describe("subagent announce verification integration", () => {
 
     expect(didAnnounceSecond).toBe(true);
     expect(spawnCoreMock).not.toHaveBeenCalled();
-    const secondMessage = String(agentCalls.at(-1)?.params?.message ?? "");
+    const secondMessage = getLastAgentMessage();
     expect(secondMessage).toContain("already attempted");
   });
 });

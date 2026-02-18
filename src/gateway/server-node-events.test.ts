@@ -36,6 +36,7 @@ import { agentCommand } from "../commands/agent.js";
 import { updateSessionStore } from "../config/sessions.js";
 import { requestHeartbeatNow } from "../infra/heartbeat-wake.js";
 import { enqueueSystemEvent } from "../infra/system-events.js";
+import { DEDUPE_MAX, DEDUPE_TTL_MS } from "./server-constants.js";
 import { handleNodeEvent } from "./server-node-events.js";
 import { loadSessionEntry } from "./session-utils.js";
 
@@ -225,6 +226,44 @@ describe("voice transcript events", () => {
     expect(updateSessionStoreMock).toHaveBeenCalledTimes(2);
   });
 
+  it("prunes stale dedupe entries before accepting a transcript", async () => {
+    const ctx = buildCtx();
+    const staleKey = "voice-prune-stale";
+    ctx.dedupe.set(staleKey, { ts: Date.now() - DEDUPE_TTL_MS - 10, ok: true });
+
+    await handleNodeEvent(ctx, "node-v1", {
+      event: "voice.transcript",
+      payloadJSON: JSON.stringify({
+        text: "ttl text",
+        sessionKey: "voice-ttl-session",
+      }),
+    });
+
+    expect(ctx.dedupe.has(staleKey)).toBe(false);
+    expect(ctx.dedupe.has("voice-ttl-session|ttl text")).toBe(true);
+    expect(ctx.dedupe.size).toBe(1);
+  });
+
+  it("drops oldest dedupe entries when the cache is over capacity", async () => {
+    const ctx = buildCtx();
+    const baseTs = Date.now();
+    for (let i = 0; i <= DEDUPE_MAX; i++) {
+      ctx.dedupe.set(`frame-${i}`, { ts: baseTs + i, ok: true });
+    }
+
+    await handleNodeEvent(ctx, "node-v1", {
+      event: "voice.transcript",
+      payloadJSON: JSON.stringify({
+        text: "cap text",
+        sessionKey: "voice-cap-session",
+      }),
+    });
+
+    expect(ctx.dedupe.size).toBe(DEDUPE_MAX);
+    expect(ctx.dedupe.has("frame-0")).toBe(false);
+    expect(ctx.dedupe.has("voice-cap-session|cap text")).toBe(true);
+  });
+
   it("forwards transcript with voice provenance", async () => {
     const ctx = buildCtx();
 
@@ -261,6 +300,27 @@ describe("voice transcript events", () => {
       payloadJSON: JSON.stringify({
         text: "continue anyway",
         sessionKey: "voice-store-fail-session",
+      }),
+    });
+    await Promise.resolve();
+
+    expect(agentCommandMock).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("voice session-store update failed"));
+  });
+
+  it("logs and continues when session-store update throws synchronously", async () => {
+    const warn = vi.fn();
+    const ctx = buildCtx();
+    ctx.logGateway = { warn };
+    updateSessionStoreMock.mockImplementationOnce(() => {
+      throw new Error("sync failure");
+    });
+
+    await handleNodeEvent(ctx, "node-v3", {
+      event: "voice.transcript",
+      payloadJSON: JSON.stringify({
+        text: "sync fail transcript",
+        sessionKey: "voice-session-store-sync",
       }),
     });
     await Promise.resolve();

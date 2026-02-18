@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { GatewayRequestContext } from "./types.js";
 import { agentHandlers } from "./agent.js";
 
@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   abortEmbeddedPiRun: vi.fn(),
   registerAgentRunContext: vi.fn(),
   getAgentRunContext: vi.fn(),
+  validateToolOverridesAllowForTargetAgent: vi.fn(),
   loadConfigReturn: {} as Record<string, unknown>,
 }));
 
@@ -47,6 +48,10 @@ vi.mock("../../agents/pi-embedded.js", () => ({
   abortEmbeddedPiRun: mocks.abortEmbeddedPiRun,
 }));
 
+vi.mock("../../agents/tool-overrides-allow.js", () => ({
+  validateToolOverridesAllowForTargetAgent: mocks.validateToolOverridesAllowForTargetAgent,
+}));
+
 vi.mock("../../config/config.js", () => ({
   loadConfig: () => mocks.loadConfigReturn,
 }));
@@ -83,6 +88,15 @@ const makeContext = (): GatewayRequestContext =>
   }) as unknown as GatewayRequestContext;
 
 describe("gateway agent handler", () => {
+  beforeEach(() => {
+    mocks.validateToolOverridesAllowForTargetAgent.mockReset();
+    mocks.validateToolOverridesAllowForTargetAgent.mockResolvedValue({
+      normalizedAllow: [],
+      invalidAllow: [],
+      availableToolNames: [],
+    });
+  });
+
   it("preserves cliSessionIds from existing session entry", async () => {
     const existingCliSessionIds = { "claude-cli": "abc-123-def" };
     const existingClaudeCliSessionId = "abc-123-def";
@@ -184,6 +198,53 @@ describe("gateway agent handler", () => {
       allow: [],
       deny: ["browser"],
     });
+  });
+
+  it("fails fast for invalid toolOverrides.allow and skips agentCommand", async () => {
+    mocks.agentCommand.mockReset();
+    mocks.validateToolOverridesAllowForTargetAgent.mockResolvedValue({
+      normalizedAllow: ["missing_tool"],
+      invalidAllow: ["missing_tool"],
+      availableToolNames: ["message"],
+    });
+    mocks.loadSessionEntry.mockReturnValue({
+      cfg: {},
+      storePath: "/tmp/sessions.json",
+      entry: {
+        sessionId: "existing-session-id",
+        updatedAt: Date.now(),
+      },
+      canonicalKey: "agent:main:main",
+    });
+
+    const respond = vi.fn();
+    await agentHandlers.agent({
+      params: {
+        message: "test",
+        agentId: "main",
+        sessionKey: "agent:main:main",
+        idempotencyKey: "test-tool-overrides-invalid-allow",
+        toolOverrides: {
+          allow: ["missing_tool"],
+        },
+      },
+      respond,
+      context: makeContext(),
+      req: { type: "req", id: "tool-overrides-invalid", method: "agent" },
+      client: null,
+      isWebchatConnect: () => false,
+    });
+
+    expect(mocks.agentCommand).not.toHaveBeenCalled();
+    expect(respond).toHaveBeenCalledTimes(1);
+    expect(respond).toHaveBeenCalledWith(
+      false,
+      undefined,
+      expect.objectContaining({
+        code: "INVALID_REQUEST",
+        message: 'toolOverrides.allow has entries unavailable to target agent "main": missing_tool',
+      }),
+    );
   });
 
   it("injects a timestamp into the message passed to agentCommand", async () => {

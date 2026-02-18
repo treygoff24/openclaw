@@ -1,3 +1,7 @@
+import type { MMRConfig } from "./mmr.js";
+import { applyMMRToHybridResults } from "./mmr.js";
+import { applyTemporalDecayToHybridResults, type TemporalDecayConfig } from "./temporal-decay.js";
+
 export type HybridSource = string;
 
 export type HybridVectorResult = {
@@ -20,6 +24,26 @@ export type HybridKeywordResult = {
   textScore: number;
 };
 
+export type HybridMergedResult = {
+  path: string;
+  startLine: number;
+  endLine: number;
+  score: number;
+  snippet: string;
+  source: HybridSource;
+};
+
+export type MergeHybridResultsParams = {
+  vector: HybridVectorResult[];
+  keyword: HybridKeywordResult[];
+  vectorWeight: number;
+  textWeight: number;
+  temporalDecay?: Partial<TemporalDecayConfig>;
+  mmr?: Partial<MMRConfig>;
+  nowMs?: number;
+  workspaceDir?: string;
+};
+
 export function buildFtsQuery(raw: string): string | null {
   const tokens =
     raw
@@ -38,19 +62,9 @@ export function bm25RankToScore(rank: number): number {
   return 1 / (1 + normalized);
 }
 
-export function mergeHybridResults(params: {
-  vector: HybridVectorResult[];
-  keyword: HybridKeywordResult[];
-  vectorWeight: number;
-  textWeight: number;
-}): Array<{
-  path: string;
-  startLine: number;
-  endLine: number;
-  score: number;
-  snippet: string;
-  source: HybridSource;
-}> {
+export async function mergeHybridResults(
+  params: MergeHybridResultsParams,
+): Promise<HybridMergedResult[]> {
   const byId = new Map<
     string,
     {
@@ -99,7 +113,7 @@ export function mergeHybridResults(params: {
     }
   }
 
-  const merged = Array.from(byId.values()).map((entry) => {
+  let merged = Array.from(byId.values()).map((entry) => {
     const score = params.vectorWeight * entry.vectorScore + params.textWeight * entry.textScore;
     return {
       path: entry.path,
@@ -111,5 +125,20 @@ export function mergeHybridResults(params: {
     };
   });
 
-  return merged.toSorted((a, b) => b.score - a.score);
+  if (params.temporalDecay?.enabled) {
+    merged = await applyTemporalDecayToHybridResults({
+      results: merged,
+      temporalDecay: params.temporalDecay,
+      workspaceDir: params.workspaceDir,
+      nowMs: params.nowMs,
+    });
+  }
+
+  merged = merged.toSorted((a, b) => b.score - a.score);
+
+  if (params.mmr?.enabled) {
+    merged = applyMMRToHybridResults(merged, params.mmr);
+  }
+
+  return merged;
 }

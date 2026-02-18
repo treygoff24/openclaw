@@ -1,6 +1,5 @@
 import type { AgentMessage } from "@mariozechner/pi-agent-core";
 import type { ExtensionAPI, FileOperations } from "@mariozechner/pi-coding-agent";
-import { estimateTokens } from "@mariozechner/pi-coding-agent";
 import {
   BASE_CHUNK_RATIO,
   MIN_CHUNK_RATIO,
@@ -58,6 +57,17 @@ function formatToolFailureMeta(details: unknown): string | undefined {
     parts.push(`exitCode=${exitCode}`);
   }
   return parts.length > 0 ? parts.join(" ") : undefined;
+}
+
+function blockText(block: unknown): string {
+  if (!block || typeof block !== "object") {
+    return "";
+  }
+  const typed = block as { type?: unknown; text?: unknown };
+  if (typed.type === "image") {
+    return "[image]";
+  }
+  return typeof typed.text === "string" ? typed.text : "";
 }
 
 function extractToolResultText(content: unknown): string {
@@ -197,6 +207,12 @@ export function extractLastTurn(messages: AgentMessage[]): AgentMessage[] {
   return [];
 }
 
+function lastTurnHasUser(lastTurn: AgentMessage[]): boolean {
+  return lastTurn.some(
+    (msg) => msg && typeof msg === "object" && (msg as { role?: unknown }).role === "user",
+  );
+}
+
 /**
  * Serialize a set of messages (typically the last turn) into human-readable text.
  * Truncates if the estimated token count exceeds maxTokens.
@@ -209,7 +225,8 @@ export function serializeLastTurn(messages: AgentMessage[], maxTokens: number): 
     return "";
   }
 
-  const parts: string[] = [];
+  type SerializedPart = { label: string; text: string };
+  const parts: SerializedPart[] = [];
   for (const msg of messages) {
     if (!msg || typeof msg !== "object") {
       continue;
@@ -221,13 +238,10 @@ export function serializeLastTurn(messages: AgentMessage[], maxTokens: number): 
         typeof content === "string"
           ? content
           : Array.isArray(content)
-            ? (content as Array<{ type?: string; text?: string }>)
-                .filter((c) => c.type === "text")
-                .map((c) => c.text ?? "")
-                .join("")
+            ? (content as Array<{ type?: unknown }>).map((block) => blockText(block)).join("")
             : "";
       if (text) {
-        parts.push(`[User]: ${text}`);
+        parts.push({ label: "User", text });
       }
     } else if (role === "assistant") {
       const content = (msg as { content?: unknown }).content;
@@ -236,36 +250,33 @@ export function serializeLastTurn(messages: AgentMessage[], maxTokens: number): 
         const toolCalls: string[] = [];
         for (const block of content as Array<{
           type?: string;
-          text?: string;
           name?: string;
-          arguments?: Record<string, unknown>;
+          text?: unknown;
         }>) {
-          if (block.type === "text" && block.text) {
-            textParts.push(block.text);
-          } else if (block.type === "toolCall" && block.name) {
-            const args = block.arguments ?? {};
-            const argsStr = Object.entries(args)
-              .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
-              .join(", ");
-            toolCalls.push(`${block.name}(${argsStr})`);
+          if (block.type === "toolCall" && block.name) {
+            toolCalls.push(block.name);
+            continue;
+          }
+          const rendered = blockText(block);
+          if (rendered) {
+            textParts.push(rendered);
           }
         }
         if (textParts.length > 0) {
-          parts.push(`[Assistant]: ${textParts.join("\n")}`);
+          parts.push({ label: "Assistant", text: textParts.join("\n") });
         }
         if (toolCalls.length > 0) {
-          parts.push(`[Assistant tool calls]: ${toolCalls.join("; ")}`);
+          parts.push({ label: "Assistant tool calls", text: toolCalls.join("; ") });
         }
       }
     } else if (role === "toolResult") {
       const content = (msg as { content?: unknown }).content;
       if (Array.isArray(content)) {
-        const text = (content as Array<{ type?: string; text?: string }>)
-          .filter((c) => c.type === "text")
-          .map((c) => c.text ?? "")
-          .join("");
+        const text = (content as Array<{ type?: unknown }>)
+          .map((block) => blockText(block))
+          .join("\n");
         if (text) {
-          parts.push(`[Tool result]: ${text}`);
+          parts.push({ label: "Tool result", text });
         }
       }
     }
@@ -275,17 +286,33 @@ export function serializeLastTurn(messages: AgentMessage[], maxTokens: number): 
     return "";
   }
 
-  let serialized = parts.join("\n\n");
+  const formatQuotedPart = ({ label, text }: SerializedPart): string => {
+    const lines = text.split("\n");
+    const [firstLine = "", ...rest] = lines;
+    const rendered = [`> ${label}: ${firstLine}`];
+    for (const line of rest) {
+      rendered.push(`> ${line}`);
+    }
+    return rendered.join("\n");
+  };
+  let serialized = parts.map((part) => formatQuotedPart(part)).join("\n\n");
 
   // Estimate tokens and truncate if needed
   // estimateTokens uses chars/4 heuristic, so maxTokens * 4 ≈ max chars
   const maxChars = maxTokens * 4;
   if (serialized.length > maxChars) {
     const truncated = serialized.slice(0, Math.max(0, maxChars - 20));
-    serialized = truncated + "\n\n[truncated]";
+    serialized = `${truncated}\n\n> [truncated]`;
   }
 
   return serialized;
+}
+
+export function formatLastExchangeSection(lastTurnText: string, enabled: boolean): string {
+  if (!enabled || !lastTurnText) {
+    return "";
+  }
+  return `\n\n## Last Exchange (Verbatim)\n\n${lastTurnText}`;
 }
 
 export default function compactionSafeguardExtension(api: ExtensionAPI): void {
@@ -440,12 +467,17 @@ export default function compactionSafeguardExtension(api: ExtensionAPI): void {
       // This preserves the exact last exchange so the agent doesn't lose track
       // of where the conversation was when compaction fired.
       const allSummarizedMessages = [...messagesToSummarize, ...turnPrefixMessages];
+      const lastTurnInjection = runtime?.lastTurnInjection ?? true;
+      const lastTurnMaxTokens =
+        typeof runtime?.lastTurnMaxTokens === "number" && Number.isFinite(runtime.lastTurnMaxTokens)
+          ? Math.max(1, Math.floor(runtime.lastTurnMaxTokens))
+          : MAX_LAST_TURN_TOKENS;
       const lastTurn = extractLastTurn(allSummarizedMessages);
-      if (lastTurn.length > 0) {
-        const lastTurnText = serializeLastTurn(lastTurn, MAX_LAST_TURN_TOKENS);
-        if (lastTurnText) {
-          summary += `\n\n---\n\n<last-turn>\n${lastTurnText}\n</last-turn>`;
-        }
+      const shouldInjectLastTurn =
+        lastTurnInjection && lastTurn.length > 0 && lastTurnHasUser(lastTurn);
+      if (shouldInjectLastTurn) {
+        const lastTurnText = serializeLastTurn(lastTurn, lastTurnMaxTokens);
+        summary += formatLastExchangeSection(lastTurnText, lastTurnInjection);
       }
 
       summary += toolFailureSection;
@@ -484,8 +516,10 @@ export const __testing = {
   isOversizedForSummary,
   extractLastTurn,
   serializeLastTurn,
+  formatLastExchangeSection,
   BASE_CHUNK_RATIO,
   MIN_CHUNK_RATIO,
   SAFETY_MARGIN,
   MAX_LAST_TURN_TOKENS,
+  lastTurnHasUser,
 } as const;

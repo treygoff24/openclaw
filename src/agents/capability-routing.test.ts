@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
+import type { OpenClawConfig } from "../config/types.openclaw.js";
 import {
   parseAgentCapabilities,
   parseCapabilityCards,
   rankAgentsForTask,
+  suggestAgents,
   type DelegationFleetEntry,
 } from "./capability-routing.js";
 
@@ -148,5 +150,81 @@ describe("capability-routing", () => {
       "zulu-expensive",
     ]);
     expect(new Set(ranked.map((entry) => entry.routing?.score)).size).toBe(1);
+  });
+
+  it("suggests agents from config using a routing hint", () => {
+    const config: OpenClawConfig = {
+      agents: {
+        list: [
+          {
+            id: "writer",
+            model: "openai/gpt-4.1-mini",
+            description: "Documentation specialist",
+            capabilities: {
+              tags: ["release notes", "changelog"],
+              costTier: "cheap",
+              typicalLatency: "45s",
+            },
+          },
+          {
+            id: "engineer",
+            model: "anthropic/claude-opus-4",
+            description: "Implementation specialist",
+            capabilities: { tags: ["bugfix"], costTier: "medium" },
+          },
+        ],
+      },
+    };
+
+    const ranked = suggestAgents("Draft release notes and changelog summary", config);
+
+    expect(ranked.map((entry) => entry.id)).toEqual(["writer", "engineer"]);
+    expect(ranked[0].routing?.matchedTags).toEqual(["changelog", "release notes"]);
+    expect(ranked[0].model).toBe("openai/gpt-4.1-mini");
+  });
+
+  it("supports filtering suggested agents by id allowlist", () => {
+    const config: OpenClawConfig = {
+      agents: {
+        list: [
+          { id: "writer", description: "release notes writer" },
+          { id: "engineer", description: "release notes engineer" },
+          { id: "ops", description: "release notes ops" },
+        ],
+      },
+    };
+
+    const ranked = suggestAgents(
+      {
+        hint: "Need release notes support",
+        filter: ["engineer", "ops"],
+      },
+      config,
+    );
+
+    expect(ranked.map((entry) => entry.id)).toEqual(["engineer", "ops"]);
+  });
+
+  it("supports maxMatches limit for top suggestions", () => {
+    const config: OpenClawConfig = {
+      agents: {
+        list: [
+          { id: "writer", description: "release notes writer" },
+          { id: "engineer", description: "release notes engineer" },
+          { id: "ops", description: "release notes ops" },
+        ],
+      },
+    };
+
+    const ranked = suggestAgents(
+      {
+        hint: "Need release notes support",
+        maxMatches: 1,
+      },
+      config,
+    );
+
+    expect(ranked).toHaveLength(1);
+    expect(ranked[0]?.id).toBe("engineer");
   });
 });

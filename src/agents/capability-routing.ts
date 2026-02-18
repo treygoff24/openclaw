@@ -2,8 +2,10 @@ import type {
   AgentCapabilitiesConfig,
   AgentCapabilityCard,
   AgentCapabilityCostTier,
+  AgentModelConfig,
 } from "../config/types.agents.js";
 import type { OpenClawConfig } from "../config/types.openclaw.js";
+import { listAgentIds, resolveAgentConfig } from "./agent-scope.js";
 
 export type DelegationFleetEntry = {
   id: string;
@@ -26,6 +28,14 @@ export type DelegationFleetRouting = {
 export type RankedDelegationFleetEntry = DelegationFleetEntry & {
   routing?: DelegationFleetRouting;
 };
+
+export type SuggestAgentsHint =
+  | string
+  | {
+      hint?: string;
+      filter?: string[];
+      maxMatches?: number;
+    };
 
 const DEFAULT_MAX_MATCHED_TERMS = 6;
 const MIN_TERM_LENGTH = 3;
@@ -389,6 +399,83 @@ function parseLatencyMs(value?: string): number | undefined {
     return Math.round(amount * 60_000);
   }
   return Math.round(amount * 3_600_000);
+}
+
+function resolveModelLabel(value?: AgentModelConfig): string | undefined {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed || undefined;
+  }
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+  const primary = value.primary;
+  if (typeof primary === "string" && primary.trim()) {
+    return primary.trim();
+  }
+  return undefined;
+}
+
+function buildDelegationFleetFromConfig(cfg: OpenClawConfig): DelegationFleetEntry[] {
+  const rawEntries = Array.isArray(cfg.agents?.list) ? cfg.agents?.list : [];
+  return listAgentIds(cfg).map((id) => {
+    const agentConfig = resolveAgentConfig(cfg, id);
+    const fallbackDescription = rawEntries.find(
+      (entry) => entry?.id?.trim().toLowerCase() === id.toLowerCase(),
+    )?.description;
+    return {
+      id,
+      model: resolveModelLabel(agentConfig?.model),
+      description: fallbackDescription ?? agentConfig?.name,
+      capabilities: resolveAgentCapabilitiesFromConfig({ cfg, agentId: id }),
+      capabilityCards: resolveCapabilityCardsFromConfig({ cfg, agentId: id }),
+    };
+  });
+}
+
+function resolveSuggestionHintText(hint: SuggestAgentsHint): string {
+  if (typeof hint === "string") {
+    return hint;
+  }
+  return typeof hint?.hint === "string" ? hint.hint : "";
+}
+
+function resolveSuggestionFilter(hint: SuggestAgentsHint): Set<string> | undefined {
+  if (!hint || typeof hint === "string" || !Array.isArray(hint.filter)) {
+    return undefined;
+  }
+  const normalized = hint.filter
+    .map((entry) => normalizeText(entry))
+    .filter((entry) => entry.length > 0);
+  return normalized.length > 0 ? new Set(normalized) : new Set();
+}
+
+function resolveSuggestionLimit(hint: SuggestAgentsHint): number | undefined {
+  if (!hint || typeof hint === "string") {
+    return undefined;
+  }
+  if (typeof hint.maxMatches !== "number" || !Number.isFinite(hint.maxMatches)) {
+    return undefined;
+  }
+  return Math.max(1, Math.floor(hint.maxMatches));
+}
+
+export function suggestAgents(
+  hint: SuggestAgentsHint,
+  cfg: OpenClawConfig,
+): RankedDelegationFleetEntry[] {
+  const fleet = buildDelegationFleetFromConfig(cfg ?? {});
+  const ranked = rankAgentsForTask({
+    task: resolveSuggestionHintText(hint),
+    fleet,
+  });
+  const filter = resolveSuggestionFilter(hint);
+  const filtered = filter ? ranked.filter((entry) => filter.has(normalizeText(entry.id))) : ranked;
+  const maxMatches = resolveSuggestionLimit(hint);
+  if (maxMatches == null) {
+    return filtered;
+  }
+  return filtered.slice(0, maxMatches);
 }
 
 export function rankAgentsForTask(params: {

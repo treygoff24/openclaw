@@ -243,11 +243,15 @@ export class MemoryIndexManager implements MemorySearchManager {
       return vectorResults.filter((entry) => entry.score >= minScore).slice(0, maxResults);
     }
 
-    const merged = this.mergeHybridResults({
+    const merged = await this.mergeHybridResults({
       vector: vectorResults,
       keyword: keywordResults,
       vectorWeight: hybrid.vectorWeight,
       textWeight: hybrid.textWeight,
+      temporalDecay: hybrid.temporalDecay,
+      mmr: hybrid.mmr,
+      workspaceDir: this.workspaceDir,
+      nowMs: Date.now(),
     });
 
     return merged.filter((entry) => entry.score >= minScore).slice(0, maxResults);
@@ -297,13 +301,17 @@ export class MemoryIndexManager implements MemorySearchManager {
     return results.map((entry) => entry as MemorySearchResult & { id: string; textScore: number });
   }
 
-  private mergeHybridResults(params: {
+  private async mergeHybridResults(params: {
     vector: Array<MemorySearchResult & { id: string }>;
     keyword: Array<MemorySearchResult & { id: string; textScore: number }>;
     vectorWeight: number;
     textWeight: number;
-  }): MemorySearchResult[] {
-    const merged = mergeHybridResults({
+    temporalDecay?: Partial<import("./temporal-decay.js").TemporalDecayConfig>;
+    mmr?: Partial<import("./mmr.js").MMRConfig>;
+    workspaceDir?: string;
+    nowMs?: number;
+  }): Promise<MemorySearchResult[]> {
+    const merged = await mergeHybridResults({
       vector: params.vector.map((r) => ({
         id: r.id,
         path: r.path,
@@ -324,6 +332,10 @@ export class MemoryIndexManager implements MemorySearchManager {
       })),
       vectorWeight: params.vectorWeight,
       textWeight: params.textWeight,
+      temporalDecay: params.temporalDecay,
+      mmr: params.mmr,
+      workspaceDir: params.workspaceDir,
+      nowMs: params.nowMs,
     });
     return merged.map((entry) => entry as MemorySearchResult);
   }

@@ -1,17 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { OpenClawConfig } from "../config/config.js";
 import type { SandboxToolPolicy } from "./sandbox/types.js";
-import type { AnyAgentTool } from "./tools/common.js";
 import { isToolAllowed, resolveSandboxToolPolicyForAgent } from "./sandbox/tool-policy.js";
-import { TOOL_POLICY_CONFORMANCE } from "./tool-policy.conformance.js";
-import {
-  applyOwnerOnlyToolPolicy,
-  expandToolGroups,
-  isOwnerOnlyToolName,
-  normalizeToolName,
-  resolveToolProfilePolicy,
-  TOOL_GROUPS,
-} from "./tool-policy.js";
+import { expandToolGroups, resolveToolProfilePolicy, TOOL_GROUPS } from "./tool-policy.js";
 
 describe("tool-policy", () => {
   it("expands groups and normalizes aliases", () => {

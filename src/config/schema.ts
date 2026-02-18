@@ -266,6 +266,8 @@ const FIELD_LABELS: Record<string, string> = {
   "agents.defaults.humanDelay.minMs": "Human Delay Min (ms)",
   "agents.defaults.humanDelay.maxMs": "Human Delay Max (ms)",
   "agents.defaults.cliBackends": "CLI Backends",
+  "agents.defaults.compaction.lastTurnInjection": "Inject Last Exchange",
+  "agents.defaults.compaction.lastTurnMaxTokens": "Last Exchange Max Tokens",
   "commands.native": "Native Commands",
   "commands.nativeSkills": "Native Skill Commands",
   "commands.text": "Text Commands",
@@ -639,6 +641,10 @@ const FIELD_HELP: Record<string, string> = {
   "agents.defaults.humanDelay.mode": 'Delay style for block replies ("off", "natural", "custom").',
   "agents.defaults.humanDelay.minMs": "Minimum delay in ms for custom humanDelay (default: 800).",
   "agents.defaults.humanDelay.maxMs": "Maximum delay in ms for custom humanDelay (default: 2500).",
+  "agents.defaults.compaction.lastTurnInjection":
+    "When true, append the last user/assistant exchange verbatim to safeguard compaction summaries.",
+  "agents.defaults.compaction.lastTurnMaxTokens":
+    "Token budget for the serialized last exchange section (default: 4000).",
   "commands.native":
     "Register native commands with channels that support it (Discord/Slack/Telegram).",
   "commands.nativeSkills":
@@ -761,6 +767,19 @@ const SENSITIVE_PATTERNS = [/token/i, /password/i, /secret/i, /api.?key/i];
 function isSensitivePath(path: string): boolean {
   return SENSITIVE_PATTERNS.some((pattern) => pattern.test(path));
 }
+
+// Keep legacy hint tables/functions referenced in-module until they are
+// either wired back in or removed in a dedicated cleanup.
+const LEGACY_UI_HINT_REFERENCES = [
+  GROUP_LABELS,
+  GROUP_ORDER,
+  FIELD_LABELS,
+  FIELD_HELP,
+  FIELD_PLACEHOLDERS,
+  isSensitivePath,
+] as const;
+void LEGACY_UI_HINT_REFERENCES;
+
 type JsonSchemaObject = JsonSchemaNode & {
   type?: string | string[];
   properties?: Record<string, JsonSchemaObject>;

@@ -271,4 +271,218 @@ describe("spawnCore", () => {
       }),
     );
   });
+
+  it("inherits recursive-spawn policy from parent agent for subagent sessions", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      agents: {
+        list: [
+          { id: "main", subagents: { allowRecursiveSpawn: false } },
+          { id: "beta", subagents: { allowRecursiveSpawn: true, maxDepth: 4 } },
+        ],
+      },
+    };
+
+    addSubagentRunForTests({
+      runId: "parent-beta-run",
+      childSessionKey: "agent:beta:subagent:parent-beta",
+      requesterSessionKey: "main",
+      requesterDisplayKey: "main",
+      task: "seed",
+      cleanup: "keep",
+      createdAt: Date.now(),
+      originalSpawnParams: {
+        requesterAgentIdOverride: "main",
+      },
+    });
+
+    await expect(
+      spawnCore({
+        task: "nested task",
+        cleanup: "keep",
+        requesterSessionKey: "agent:beta:subagent:parent-beta",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        status: "forbidden",
+      },
+    });
+
+    await expect(
+      spawnCore({
+        task: "nested task",
+        cleanup: "keep",
+        requesterSessionKey: "agent:beta:subagent:parent-beta",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        error: expect.stringContaining("Recursive spawning is not enabled"),
+      },
+    });
+    expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("inherits parent-agent allowlist for cross-agent recursive spawns", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      agents: {
+        list: [
+          {
+            id: "main",
+            subagents: { allowRecursiveSpawn: true, maxDepth: 4, allowAgents: ["beta"] },
+          },
+          {
+            id: "beta",
+            subagents: { allowRecursiveSpawn: true, maxDepth: 4, allowAgents: ["gamma"] },
+          },
+          { id: "gamma", subagents: { allowRecursiveSpawn: true, maxDepth: 4 } },
+        ],
+      },
+    };
+
+    addSubagentRunForTests({
+      runId: "parent-beta-run-allowlist",
+      childSessionKey: "agent:beta:subagent:parent-beta-allowlist",
+      requesterSessionKey: "main",
+      requesterDisplayKey: "main",
+      task: "seed",
+      cleanup: "keep",
+      createdAt: Date.now(),
+      originalSpawnParams: {
+        requesterAgentIdOverride: "main",
+      },
+    });
+
+    await expect(
+      spawnCore({
+        task: "cross-agent nested task",
+        cleanup: "keep",
+        requesterSessionKey: "agent:beta:subagent:parent-beta-allowlist",
+        requestedAgentId: "gamma",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        status: "forbidden",
+        error: expect.stringContaining("allowed: beta"),
+      },
+    });
+
+    expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("returns max-depth error before recursive-toggle error when already at cap", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      agents: {
+        list: [{ id: "main", subagents: { allowRecursiveSpawn: false, maxDepth: 1 } }],
+      },
+    };
+
+    await expect(
+      spawnCore({
+        task: "too deep",
+        cleanup: "keep",
+        requesterSessionKey: "agent:main:subagent:parent",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        status: "forbidden",
+        error: expect.stringContaining("Maximum subagent depth (1) reached"),
+      },
+    });
+
+    await expect(
+      spawnCore({
+        task: "too deep",
+        cleanup: "keep",
+        requesterSessionKey: "agent:main:subagent:parent",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        error: expect.not.stringContaining("Recursive spawning is not enabled"),
+      },
+    });
+    expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects unknown explicitly requested agent ids without fallback", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      agents: {
+        list: [{ id: "main", subagents: { allowAgents: ["*"] } }],
+      },
+    };
+
+    await expect(
+      spawnCore({
+        task: "unknown target",
+        cleanup: "keep",
+        requesterSessionKey: "main",
+        requestedAgentId: "ghost",
+      }),
+    ).rejects.toMatchObject({
+      details: {
+        status: "error",
+        error: expect.stringContaining('Unknown requested agentId "ghost"'),
+      },
+    });
+
+    expect(callGatewayMock).not.toHaveBeenCalled();
+  });
+
+  it("stores normalized requestedAgentId in original spawn params", async () => {
+    configOverride = {
+      session: {
+        mainKey: "main",
+        scope: "per-sender",
+      },
+      agents: {
+        list: [
+          { id: "main", subagents: { allowAgents: ["research"] } },
+          { id: "research", subagents: {} },
+        ],
+      },
+    };
+
+    callGatewayMock.mockImplementation(async (opts: unknown) => {
+      const request = opts as { method?: string };
+      if (request.method === "agent") {
+        return { runId: "run-requested-agent-normalized" };
+      }
+      if (request.method === "agent.wait") {
+        return { status: "timeout" };
+      }
+      return {};
+    });
+
+    const result = await spawnCore({
+      task: "cross-agent spawn",
+      cleanup: "keep",
+      requesterSessionKey: "main",
+      requestedAgentId: "Research",
+    });
+
+    expect(result).toMatchObject({
+      status: "accepted",
+      runId: "run-requested-agent-normalized",
+    });
+
+    const run = listSubagentRunsForRequester("main").find(
+      (entry) => entry.runId === "run-requested-agent-normalized",
+    );
+    expect(run?.originalSpawnParams?.requestedAgentId).toBe("research");
+    expect(run?.childSessionKey.startsWith("agent:research:subagent:")).toBe(true);
+  });
 });

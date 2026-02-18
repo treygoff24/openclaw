@@ -13,6 +13,8 @@ const {
   isOversizedForSummary,
   extractLastTurn,
   serializeLastTurn,
+  formatLastExchangeSection,
+  lastTurnHasUser,
   BASE_CHUNK_RATIO,
   MIN_CHUNK_RATIO,
   SAFETY_MARGIN,
@@ -310,6 +312,32 @@ describe("extractLastTurn", () => {
   });
 });
 
+describe("lastTurnHasUser", () => {
+  it("returns true when the turn contains a user message", () => {
+    const turn: AgentMessage[] = [
+      { role: "assistant", content: "Hello", timestamp: 1 },
+      { role: "user", content: "Need help", timestamp: 2 },
+    ];
+    expect(lastTurnHasUser(turn)).toBe(true);
+  });
+
+  it("returns false when no user message present", () => {
+    const turn: AgentMessage[] = [
+      {
+        role: "assistant",
+        content: [{ type: "text", text: "Still waiting" }],
+        timestamp: 1,
+      },
+      {
+        role: "toolResult",
+        content: [{ type: "text", text: "output" }],
+        timestamp: 2,
+      },
+    ];
+    expect(lastTurnHasUser(turn)).toBe(false);
+  });
+});
+
 describe("serializeLastTurn", () => {
   it("serializes user text and assistant text", () => {
     const messages: AgentMessage[] = [
@@ -322,10 +350,10 @@ describe("serializeLastTurn", () => {
     ];
 
     const result = serializeLastTurn(messages, 4000);
-    expect(result).toContain("[User]:");
-    expect(result).toContain("What is 2+2?");
-    expect(result).toContain("[Assistant]:");
-    expect(result).toContain("The answer is 4.");
+    expect(result).toContain("> User: What is 2+2?");
+    expect(result).toContain("> Assistant: The answer is 4.");
+    expect(result).not.toContain("[User]:");
+    expect(result).not.toContain("[Assistant]:");
   });
 
   it("truncates when exceeding maxTokens", () => {
@@ -369,12 +397,25 @@ describe("serializeLastTurn", () => {
     ];
 
     const result = serializeLastTurn(messages, 4000);
-    expect(result).toContain("[User]:");
-    expect(result).toContain("List files");
-    expect(result).toContain("[Assistant]:");
-    expect(result).toContain("Let me check");
-    expect(result).toContain("[Tool result]:");
-    expect(result).toContain("file.txt");
+    expect(result).toContain("> User: List files");
+    expect(result).toContain("> Assistant: Let me check");
+    expect(result).toContain("> Assistant tool calls: exec");
+    expect(result).not.toContain("command=");
+    expect(result).toContain("> Tool result: file.txt");
+  });
+
+  it("renders placeholders for image content", () => {
+    const messages: AgentMessage[] = [
+      { role: "user", content: "Share image", timestamp: 1 },
+      {
+        role: "assistant",
+        content: [{ type: "image", data: "abc", mimeType: "image/png" }],
+        timestamp: 2,
+      },
+    ];
+
+    const result = serializeLastTurn(messages, 4000);
+    expect(result).toContain("> Assistant: [image]");
   });
 
   it("returns empty string for empty input", () => {
@@ -383,6 +424,18 @@ describe("serializeLastTurn", () => {
 
   it("respects MAX_LAST_TURN_TOKENS default", () => {
     expect(MAX_LAST_TURN_TOKENS).toBe(4000);
+  });
+});
+
+describe("formatLastExchangeSection", () => {
+  it("returns empty output when disabled", () => {
+    expect(formatLastExchangeSection("> User: hi", false)).toBe("");
+  });
+
+  it("wraps serialized text in the Last Exchange heading when enabled", () => {
+    const result = formatLastExchangeSection("> User: hi", true);
+    expect(result).toContain("## Last Exchange (Verbatim)");
+    expect(result).toContain("> User: hi");
   });
 });
 

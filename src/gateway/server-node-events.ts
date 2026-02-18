@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { NodeEvent, NodeEventContext } from "./server-node-events-types.js";
+import type { DedupeEntry } from "./server-shared.js";
 import { normalizeChannelId } from "../channels/plugins/index.js";
 import { agentCommand } from "../commands/agent.js";
 import { loadConfig } from "../config/config.js";
@@ -8,6 +9,7 @@ import { requestHeartbeatNow } from "../infra/heartbeat-wake.js";
 import { enqueueSystemEvent } from "../infra/system-events.js";
 import { normalizeMainKey } from "../routing/session-key.js";
 import { defaultRuntime } from "../runtime.js";
+import { DEDUPE_MAX, DEDUPE_TTL_MS } from "./server-constants.js";
 import {
   loadSessionEntry,
   pruneLegacyStoreKeys,
@@ -16,6 +18,50 @@ import {
 import { formatForLog } from "./ws-log.js";
 
 const EXEC_OUTPUT_MAX_LEN = 200;
+
+type SessionStoreUpdater = Parameters<typeof updateSessionStore>[1];
+
+function sweepDedupeCache(
+  cache: Map<string, DedupeEntry>,
+  now: number,
+  reservedSlots: number = 0,
+): void {
+  for (const [key, entry] of cache) {
+    if (now - entry.ts > DEDUPE_TTL_MS) {
+      cache.delete(key);
+    }
+  }
+  const effectiveMax = Math.max(0, DEDUPE_MAX - reservedSlots);
+  if (cache.size <= effectiveMax) {
+    return;
+  }
+  const entries = [...cache.entries()].toSorted((a, b) => a[1].ts - b[1].ts);
+  const overshoot = cache.size - effectiveMax;
+  for (let i = 0; i < overshoot; i++) {
+    cache.delete(entries[i][0]);
+  }
+}
+
+function safeUpdateSessionStore(
+  ctx: NodeEventContext,
+  storePath: string,
+  updater: SessionStoreUpdater,
+  label: string,
+): Promise<void> {
+  const logFailure = (err: unknown) => {
+    ctx.logGateway.warn(`${label} failed: ${formatForLog(err)}`);
+  };
+  try {
+    return updateSessionStore(storePath, updater)
+      .then(() => undefined)
+      .catch((err) => {
+        logFailure(err);
+      });
+  } catch (err) {
+    logFailure(err);
+    return Promise.resolve();
+  }
+}
 
 export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt: NodeEvent) => {
   switch (evt.event) {
@@ -43,6 +89,8 @@ export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt
       const rawMainKey = normalizeMainKey(cfg.session?.mainKey);
       const sessionKey = sessionKeyRaw.length > 0 ? sessionKeyRaw : rawMainKey;
 
+      const now = Date.now();
+      sweepDedupeCache(ctx.dedupe, now, 1);
       // Deduplicate: if no eventId, use sessionKey+text as dedupe key.
       // If eventId is present, use it as the key (unique per distinct event).
       const eventId =
@@ -51,33 +99,36 @@ export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt
       if (ctx.dedupe.has(dedupeKey)) {
         return;
       }
-      ctx.dedupe.set(dedupeKey, { ts: Date.now(), ok: true });
+      ctx.dedupe.set(dedupeKey, { ts: now, ok: true });
+      sweepDedupeCache(ctx.dedupe, now);
 
       const { storePath, entry, canonicalKey } = loadSessionEntry(sessionKey);
-      const now = Date.now();
       const sessionId = entry?.sessionId ?? randomUUID();
       if (storePath) {
-        updateSessionStore(storePath, (store) => {
-          const target = resolveGatewaySessionStoreTarget({ cfg, key: sessionKey, store });
-          pruneLegacyStoreKeys({
-            store,
-            canonicalKey: target.canonicalKey,
-            candidates: target.storeKeys,
-          });
-          store[canonicalKey] = {
-            sessionId,
-            updatedAt: now,
-            thinkingLevel: entry?.thinkingLevel,
-            verboseLevel: entry?.verboseLevel,
-            reasoningLevel: entry?.reasoningLevel,
-            systemSent: entry?.systemSent,
-            sendPolicy: entry?.sendPolicy,
-            lastChannel: entry?.lastChannel,
-            lastTo: entry?.lastTo,
-          };
-        }).catch((err: unknown) => {
-          ctx.logGateway.warn(`voice session-store update failed: ${formatForLog(err)}`);
-        });
+        void safeUpdateSessionStore(
+          ctx,
+          storePath,
+          (store) => {
+            const target = resolveGatewaySessionStoreTarget({ cfg, key: sessionKey, store });
+            pruneLegacyStoreKeys({
+              store,
+              canonicalKey: target.canonicalKey,
+              candidates: target.storeKeys,
+            });
+            store[canonicalKey] = {
+              sessionId,
+              updatedAt: now,
+              thinkingLevel: entry?.thinkingLevel,
+              verboseLevel: entry?.verboseLevel,
+              reasoningLevel: entry?.reasoningLevel,
+              systemSent: entry?.systemSent,
+              sendPolicy: entry?.sendPolicy,
+              lastChannel: entry?.lastChannel,
+              lastTo: entry?.lastTo,
+            };
+          },
+          "voice session-store update",
+        );
       }
 
       // Ensure chat UI clients refresh when this run completes (even though it wasn't started via chat.send).
@@ -183,25 +234,30 @@ export const handleNodeEvent = async (ctx: NodeEventContext, nodeId: string, evt
       }
 
       if (storePath) {
-        await updateSessionStore(storePath, (store) => {
-          const target = resolveGatewaySessionStoreTarget({ cfg, key: sessionKey, store });
-          pruneLegacyStoreKeys({
-            store,
-            canonicalKey: target.canonicalKey,
-            candidates: target.storeKeys,
-          });
-          store[canonicalKey] = {
-            sessionId,
-            updatedAt: now,
-            thinkingLevel: entry?.thinkingLevel,
-            verboseLevel: entry?.verboseLevel,
-            reasoningLevel: entry?.reasoningLevel,
-            systemSent: entry?.systemSent,
-            sendPolicy: entry?.sendPolicy,
-            lastChannel: entry?.lastChannel,
-            lastTo: entry?.lastTo,
-          };
-        });
+        await safeUpdateSessionStore(
+          ctx,
+          storePath,
+          (store) => {
+            const target = resolveGatewaySessionStoreTarget({ cfg, key: sessionKey, store });
+            pruneLegacyStoreKeys({
+              store,
+              canonicalKey: target.canonicalKey,
+              candidates: target.storeKeys,
+            });
+            store[canonicalKey] = {
+              sessionId,
+              updatedAt: now,
+              thinkingLevel: entry?.thinkingLevel,
+              verboseLevel: entry?.verboseLevel,
+              reasoningLevel: entry?.reasoningLevel,
+              systemSent: entry?.systemSent,
+              sendPolicy: entry?.sendPolicy,
+              lastChannel: entry?.lastChannel,
+              lastTo: entry?.lastTo,
+            };
+          },
+          "agent session-store update",
+        );
       }
 
       void agentCommand(

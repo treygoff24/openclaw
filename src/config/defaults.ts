@@ -446,7 +446,17 @@ export function applyCompactionDefaults(cfg: OpenClawConfig): OpenClawConfig {
     return cfg;
   }
   const compaction = defaults?.compaction;
-  if (compaction?.mode) {
+  const nextCompaction = {
+    ...compaction,
+    mode: compaction?.mode ?? "safeguard",
+    lastTurnInjection: compaction?.lastTurnInjection ?? true,
+    lastTurnMaxTokens: compaction?.lastTurnMaxTokens ?? 4000,
+  };
+  if (
+    compaction?.mode === nextCompaction.mode &&
+    compaction?.lastTurnInjection === nextCompaction.lastTurnInjection &&
+    compaction?.lastTurnMaxTokens === nextCompaction.lastTurnMaxTokens
+  ) {
     return cfg;
   }
 
@@ -456,10 +466,7 @@ export function applyCompactionDefaults(cfg: OpenClawConfig): OpenClawConfig {
       ...cfg.agents,
       defaults: {
         ...defaults,
-        compaction: {
-          ...compaction,
-          mode: "safeguard",
-        },
+        compaction: nextCompaction,
       },
     },
   };

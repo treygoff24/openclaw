@@ -91,6 +91,8 @@ export function buildEmbeddedExtensionPaths(params: {
     setCompactionSafeguardRuntime(params.sessionManager, {
       maxHistoryShare: compactionCfg?.maxHistoryShare,
       contextWindowTokens: contextWindowInfo.tokens,
+      lastTurnInjection: compactionCfg?.lastTurnInjection,
+      lastTurnMaxTokens: compactionCfg?.lastTurnMaxTokens,
     });
     paths.push(resolvePiExtensionPath("compaction-safeguard"));
   }

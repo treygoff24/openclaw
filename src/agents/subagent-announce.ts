@@ -22,12 +22,7 @@ import {
   mergeDeliveryContext,
   normalizeDeliveryContext,
 } from "../utils/delivery-context.js";
-import { listAgentIds, resolveAgentConfig } from "./agent-scope.js";
-import {
-  rankAgentsForTask,
-  resolveAgentCapabilitiesFromConfig,
-  resolveCapabilityCardsFromConfig,
-} from "./capability-routing.js";
+import { suggestAgents } from "./capability-routing.js";
 import { parseCompletionReport } from "./completion-report-parser.js";
 import { buildDelegationPrompt } from "./delegation-prompt.js";
 import {
@@ -374,21 +369,6 @@ async function readLatestAssistantReplyWithRetry(params: {
   return reply;
 }
 
-function resolveModelLabel(value: unknown): string | undefined {
-  if (typeof value === "string") {
-    const trimmed = value.trim();
-    return trimmed || undefined;
-  }
-  if (!value || typeof value !== "object") {
-    return undefined;
-  }
-  const primary = (value as { primary?: unknown }).primary;
-  if (typeof primary === "string" && primary.trim()) {
-    return primary.trim();
-  }
-  return undefined;
-}
-
 export function buildSubagentSystemPrompt(params: {
   requesterSessionKey?: string;
   requesterOrigin?: DeliveryContext;
@@ -476,24 +456,12 @@ export function buildSubagentSystemPrompt(params: {
   const activeGlobal = listAllSubagentRuns().filter((entry) => !entry.endedAt).length;
   const globalSlotsAvailable = Math.max(0, maxConcurrent - activeGlobal);
 
-  const fleet = listAgentIds(cfg).map((id) => {
-    const agentConfig = resolveAgentConfig(cfg, id);
-    const model = resolveModelLabel(agentConfig?.model);
-    const fallbackDescription = cfg.agents?.list?.find(
-      (entry) => entry?.id?.trim().toLowerCase() === id.toLowerCase(),
-    )?.description;
-    return {
-      id,
-      model,
-      description: fallbackDescription ?? agentConfig?.name,
-      capabilities: resolveAgentCapabilitiesFromConfig({ cfg, agentId: id }),
-      capabilityCards: resolveCapabilityCardsFromConfig({ cfg, agentId: id }),
-    };
-  });
-  const rankedFleet = rankAgentsForTask({
-    task: params.task ?? "",
-    fleet,
-  });
+  const rankedFleet = suggestAgents(
+    {
+      hint: params.task ?? "",
+    },
+    cfg,
+  );
 
   const parentKey = params.requesterSessionKey?.trim() || "unknown";
   const providerSlots = buildProviderUsageSummary(cfg);

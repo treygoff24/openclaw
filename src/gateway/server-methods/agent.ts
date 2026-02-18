@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { GatewayRequestHandlers } from "./types.js";
 import { listAgentIds } from "../../agents/agent-scope.js";
 import { abortEmbeddedPiRun } from "../../agents/pi-embedded.js";
+import { validateToolOverridesAllowForTargetAgent } from "../../agents/tool-overrides-allow.js";
 import { agentCommand } from "../../commands/agent.js";
 import { loadConfig } from "../../config/config.js";
 import {
@@ -384,6 +385,37 @@ export const agentHandlers: GatewayRequestHandlers = {
     }
 
     const deliver = request.deliver === true && resolvedChannel !== INTERNAL_MESSAGE_CHANNEL;
+    const targetAgentId = resolveAgentIdFromSessionKey(resolvedSessionKey ?? requestedSessionKey);
+    const toolOverrideValidation = await validateToolOverridesAllowForTargetAgent({
+      cfg,
+      targetAgentId,
+      allow: request.toolOverrides?.allow,
+      requesterInternalKey:
+        spawnedByValue ||
+        resolvedSessionKey ||
+        requestedSessionKey ||
+        resolveAgentMainSessionKey({ cfg, agentId: targetAgentId }),
+      requesterOrigin: {
+        channel: resolvedChannel,
+        to: resolvedTo,
+        accountId: resolvedAccountId,
+        threadId: explicitThreadId ?? deliveryPlan.resolvedThreadId,
+      },
+      agentGroupId: resolvedGroupId,
+      agentGroupChannel: resolvedGroupChannel,
+      agentGroupSpace: resolvedGroupSpace,
+    });
+    if (toolOverrideValidation.invalidAllow.length > 0) {
+      respond(
+        false,
+        undefined,
+        errorShape(
+          ErrorCodes.INVALID_REQUEST,
+          `toolOverrides.allow has entries unavailable to target agent "${targetAgentId}": ${toolOverrideValidation.invalidAllow.join(", ")}`,
+        ),
+      );
+      return;
+    }
 
     const accepted = {
       runId,

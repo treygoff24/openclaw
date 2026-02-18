@@ -130,19 +130,28 @@ export function resetBaileysMocks() {
 
   const makeWASocket = vi.mocked(baileys.makeWASocket);
   makeWASocket.mockReset();
-  makeWASocket.mockImplementation(recreated.mod.makeWASocket as any);
+  makeWASocket.mockImplementation(
+    recreated.mod.makeWASocket as unknown as typeof baileys.makeWASocket,
+  );
 
   const useMultiFileAuthState = vi.mocked(baileys.useMultiFileAuthState);
   useMultiFileAuthState.mockReset();
-  useMultiFileAuthState.mockImplementation(recreated.mod.useMultiFileAuthState as any);
+  useMultiFileAuthState.mockImplementation(
+    recreated.mod.useMultiFileAuthState as unknown as typeof baileys.useMultiFileAuthState,
+  );
 
   const fetchLatestBaileysVersion = vi.mocked(baileys.fetchLatestBaileysVersion);
   fetchLatestBaileysVersion.mockReset();
-  fetchLatestBaileysVersion.mockImplementation(recreated.mod.fetchLatestBaileysVersion as any);
+  fetchLatestBaileysVersion.mockImplementation(
+    recreated.mod.fetchLatestBaileysVersion as unknown as typeof baileys.fetchLatestBaileysVersion,
+  );
 
   const makeCacheableSignalKeyStore = vi.mocked(baileys.makeCacheableSignalKeyStore);
   makeCacheableSignalKeyStore.mockReset();
-  makeCacheableSignalKeyStore.mockImplementation(recreated.mod.makeCacheableSignalKeyStore as any);
+  makeCacheableSignalKeyStore.mockImplementation(
+    recreated.mod
+      .makeCacheableSignalKeyStore as unknown as typeof baileys.makeCacheableSignalKeyStore,
+  );
 }
 
 export function getLastSocket(): MockBaileysSocket {

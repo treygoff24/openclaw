@@ -82,6 +82,14 @@ describe("getSubagentDepth", () => {
   it("stops counting at unexpected segments", () => {
     expect(getSubagentDepth("agent:main:subagent:abc:thread:xyz")).toBe(1);
   });
+
+  it("returns 0 when subagent sequence is malformed", () => {
+    expect(getSubagentDepth("agent:main:subagent")).toBe(0);
+    expect(getSubagentDepth("agent:main:subagent:")).toBe(0);
+    expect(getSubagentDepth("agent:main:subagent:abc:sub")).toBe(0);
+    expect(getSubagentDepth("agent:main:subagent::sub:def")).toBe(0);
+    expect(getSubagentDepth("agent:main:subagent:abc:sub:")).toBe(0);
+  });
 });
 
 describe("getSubagentDepth registry metadata", () => {
@@ -131,5 +139,11 @@ describe("getParentSubagentKey", () => {
     expect(getParentSubagentKey("agent:main:subagent:abc:sub:def:sub:ghi")).toBe(
       "agent:main:subagent:abc:sub:def",
     );
+  });
+
+  it("returns null for malformed sub sequences", () => {
+    expect(getParentSubagentKey("agent:main:subagent:abc:sub")).toBeNull();
+    expect(getParentSubagentKey("agent:main:subagent:abc:sub:")).toBeNull();
+    expect(getParentSubagentKey("agent:main:subagent")).toBeNull();
   });
 });

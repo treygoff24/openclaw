@@ -48,8 +48,6 @@ type ListedCollection = {
   pattern?: string;
 };
 
-type QmdManagerMode = "full" | "status";
-
 export class QmdMemoryManager implements MemorySearchManager {
   static async create(params: {
     cfg: OpenClawConfig;

@@ -38,6 +38,7 @@ struct ServeCommand: ParsableCommand {
         let logger = Logger(level: LogLevel(configValue: cfg.logging.level) ?? .info)
         logger.info("swabble serve starting (wake: \(cfg.wake.enabled ? cfg.wake.word : "disabled"))")
         let pipeline = SpeechPipeline()
+        let executor = HookExecutor(config: cfg, logger: logger)
         do {
             let stream = try await pipeline.start(
                 localeIdentifier: cfg.speech.localeIdentifier,
@@ -48,7 +49,6 @@ struct ServeCommand: ParsableCommand {
                 }
                 let stripped = Self.stripWake(text: seg.text, cfg: cfg)
                 let job = HookJob(text: stripped, timestamp: Date())
-                let executor = HookExecutor(config: cfg)
                 try await executor.run(job: job)
                 if cfg.transcripts.enabled {
                     await TranscriptsStore.shared.append(text: stripped)

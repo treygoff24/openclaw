@@ -14,9 +14,11 @@ public actor HookExecutor {
     private let config: SwabbleConfig
     private var lastRun: Date?
     private let hostname: String
+    private let logger: Logger
 
-    public init(config: SwabbleConfig) {
+    public init(config: SwabbleConfig, logger: Logger? = nil) {
         self.config = config
+        self.logger = logger ?? Logger(level: LogLevel(configValue: config.logging.level) ?? .info)
         hostname = Host.current().localizedName ?? "host"
     }
 
@@ -30,20 +32,26 @@ public actor HookExecutor {
 
     public func run(job: HookJob) async throws {
         guard shouldRun() else { return }
+        let text = Self.normalized(job.text)
+        let minCharacters = max(config.hook.minCharacters, 0)
+        guard text.count >= minCharacters else {
+            logger.info("hook skipped: text shorter than minCharacters (\(text.count)/\(minCharacters))")
+            return
+        }
         guard !config.hook.command.isEmpty else { throw NSError(
             domain: "Hook",
             code: 1,
             userInfo: [NSLocalizedDescriptionKey: "hook command not set"]) }
 
         let prefix = config.hook.prefix.replacingOccurrences(of: "${hostname}", with: hostname)
-        let payload = prefix + job.text
+        let payload = prefix + text
 
         let process = Process()
         process.executableURL = URL(fileURLWithPath: config.hook.command)
         process.arguments = config.hook.args + [payload]
 
         var env = ProcessInfo.processInfo.environment
-        env["SWABBLE_TEXT"] = job.text
+        env["SWABBLE_TEXT"] = text
         env["SWABBLE_PREFIX"] = prefix
         for (k, v) in config.hook.env {
             env[k] = v
@@ -71,5 +79,9 @@ public actor HookExecutor {
             group.cancelAll()
         }
         lastRun = Date()
+    }
+
+    nonisolated private static func normalized(_ text: String) -> String {
+        text.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

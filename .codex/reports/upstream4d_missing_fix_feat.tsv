@@ -1,0 +1,397 @@
+95aa5480a0ef4a6ad43266f93eceba745f15ced8	95aa5480a	2026-02-18T17:48:02Z	fix(telegram): correct onboarding import for chat lookup helper
+fedebc245ea0b5cba59ec91b07171e35ec883fcf	fedebc245	2026-02-18T17:47:13Z	fix(protocol): align bool-first AnyCodable equality/hash dispatch (#20233)
+e9b4d86e37bf1c210700f2e4071551d0fa4b8316	e9b4d86e3	2026-02-18T17:39:54Z	fix(protocol): preserve AnyCodable booleans from JSON bridge (#20220)
+d16621f608ef68c1632921ae307a35b7144224ce	d16621f60	2026-02-18T17:33:25Z	fix(test): annotate mock web listener return type
+33f30367e1baba8fa347949cca84d82b27274192	33f30367e	2026-02-18T13:39:40Z	fix(cli): include model and thinking fields in cron edit patch type
+e71e9a55abeca90ba7e1c5fc0ffd73ad54b32bc3	e71e9a55a	2026-02-18T13:34:03Z	fix(cli): align runtime capture helper with RuntimeEnv signature
+28b8101eef7458f7b8910c7c93cb8313491c098f	28b8101ee	2026-02-18T13:15:00Z	fix(browser): handle IPv6 loopback auth and dedupe fetch auth tests
+bb84452c625eafa53064c169c901125ac9010770	bb84452c6	2026-02-18T12:43:46Z	fix(signal): restore mention-gating helper map typing
+cb34e80f984e5ae5161d7ea7ee12f52977f2105a	cb34e80f9	2026-02-18T19:38:23+08:00	fix(ios): restore auto-selected team for local signing (#19993)
+d833dcd731875262cdffe3fc60137dfaf53e16b3	d833dcd73	2026-02-18T15:31:01+05:30	fix(telegram): cron and heartbeat messages land in wrong chat instead of target topic (#19367)
+5c69e625f58dd012c0765430becdffc4dc175f03	5c69e625f	2026-02-17T23:59:20-05:00	fix(cli): display correct model for sub-agents in sessions list (#18660)
+35016a380c009d04cfed5289890cf6af79b5e1ce	35016a380	2026-02-18T04:55:40+01:00	fix(sandbox): serialize registry mutations and lock usage
+28bac46c92069dc728524fbf383024c1b64e5c23	28bac46c9	2026-02-18T04:55:31+01:00	fix(security): harden safeBins path trust
+442fdbf3d897e61e06d2ab308ed2048ef45fc85c	442fdbf3d	2026-02-18T04:53:09+01:00	fix(security): block SSRF IPv6 transition bypasses
+50e5553533dd36a1e84d46d5f2fcb1fed610fcaf	50e555353	2026-02-18T04:53:09+01:00	fix: align retry backoff semantics and test mock signatures
+516046dba86360b6b7724230cb00eb9621a13470	516046dba	2026-02-18T04:51:25+01:00	fix: avoid doctor token regeneration on invalid repairs
+99db4d13e5c139883ef0def9ff963e9273179655	99db4d13e	2026-02-18T04:48:08+01:00	fix(gateway): guard cron webhook delivery against SSRF
+cc29be8c9bcdfaecb90f0ab13124c8f5362a6741	cc29be8c9	2026-02-18T04:44:56+01:00	fix: serialize sandbox registry writes
+8278903f0ae24a7272294138b804cd096f57bc96	8278903f0	2026-02-18T04:40:42+01:00	fix: update deep links handling
+f25bbbc37eb412b35093d8c1dfe44f714d2ecbe2	f25bbbc37	2026-02-18T04:37:58+01:00	feat: switch anthropic onboarding defaults to sonnet
+ca43efa96589dc3c32b9ccedf2f8a01ed735773f	ca43efa96	2026-02-18T03:25:14Z	fix(ci): force npm install path in smoke docker tests
+8984f31876d30b523383e2cfd2f21027adc03255	8984f3187	2026-02-18T03:07:47Z	fix(agents): correct completion announce retry backoff schedule
+a420fa04173826c4369bd64b8f101131ef6ade11	a420fa041	2026-02-18T03:02:20Z	fix(test): align subagent announce chat history mock typing
+289f215b3160015588789f6345ee11569ac5c1cf	289f215b3	2026-02-18T03:00:27Z	fix(agents): make manual subagent completion announce deterministic
+34851a78b2bbe517d6f5e6acc13a6db666bb2f6d	34851a78b	2026-02-18T03:48:18+01:00	fix: route manual subagent spawn replies via OriginatingTo fallback
+4134875c311fbb7f677fb9181a883431444cf3e9	4134875c3	2026-02-18T02:42:52Z	fix: route discord native subagent announce to channel target
+c1928845ac9321259afc7012afcb23083f4aaba9	c1928845a	2026-02-18T02:35:58Z	fix: route native subagent spawns to target session
+c90b09cb02b2a1387d4e23d73c9afe3a26c0bb87	c90b09cb0	2026-02-18T03:29:48+01:00	feat(agents): support Anthropic 1M context beta header
+d1c00dbb7c64a39e205464dae7f2a068420e91c1	d1c00dbb7	2026-02-18T03:27:16+01:00	fix: harden include confinement edge cases (#18652) (thanks @aether-ai-agent)
+b5f551d71698b96a6849f26cf280ab88bc24188c	b5f551d71	2026-02-18T03:27:16+01:00	fix(security): OC-06 prevent path traversal in config includes
+edf7d6af61568eade21d302e268c252858bbf8ec	edf7d6af6	2026-02-18T03:19:50+01:00	fix: harden subagent completion announce retries
+81db05962752ae152c9fe3c4946e81b13237ba14	81db05962	2026-02-18T02:59:40+01:00	fix(subagents): always read latest assistant/tool output on subagent completion
+0dd97feb41f847ee754b599caa5f763b1b865251	0dd97feb4	2026-02-18T02:57:33+01:00	fix(subagents): include tool role in subagent completion output
+fa4f66255ce1bb3235de9ec1b3eaccb0a04832a0	fa4f66255	2026-02-18T02:52:35+01:00	fix(subagents): return completion message for manual session spawns
+e2dd827ca4bac832c16865c42082a6455a588c3b	e2dd827ca	2026-02-18T02:45:05+01:00	fix: guarantee manual subagent spawn sends completion message
+5bd95bef5a05eeb7d65c6bc5bdc2ef3ec237a91d	5bd95bef5	2026-02-18T01:37:34Z	fix(protocol): regenerate swift gateway models
+638853c6d2608b122be63526b721aa359452af40	638853c6d	2026-02-18T02:18:05+01:00	fix(security): sanitize sandbox env vars before docker launch
+5487c9adebb0a5a8b7bf12e106d3bc2923df0485	5487c9ade	2026-02-18T02:18:02+01:00	feat(security): add sandbox env sanitization helpers + tests
+6dcc052bb4407fe440a4e53aef8eeefb5903cab4	6dcc052bb	2026-02-18T02:09:40+01:00	fix: stabilize model catalog and pi discovery auth storage compatibility
+414b996b0cbf46e6c5b1a01a26126a2328f410a1	414b996b0	2026-02-18T01:58:33+01:00	fix(agents): make image resize logs single-line with size
+f42e13c17cf6414655ccb8157c3797543e0e72f1	f42e13c17	2026-02-18T01:38:44+01:00	feat(telegram): add forum topic creation support (#17035)
+76949001ea213ac988816209d652cc583408bb11	76949001e	2026-02-18T01:35:37+01:00	fix: compact skill paths in prompt (#14776) (thanks @bitfish3)
+4f2c57eb4eb034867134f20cd53679de7a6a3fa3	4f2c57eb4	2026-02-18T01:35:37+01:00	feat(skills): compact skill paths with ~ to reduce prompt tokens
+cfd384ead21b1268bfc09adfb16eab8d5ef588ca	cfd384ead	2026-02-18T01:31:28+01:00	feat(skills): improve descriptions with routing logic (#14577)
+2e91552f097555773dbfd43e7b84efea6c280571	2e91552f0	2026-02-18T01:31:11+01:00	feat(agents): add generic provider api key rotation (#19587)
+9cce40d123725a1cdd9b1624b0ca533d5b869211	9cce40d12	2026-02-18T01:28:20+01:00	feat(skills): Add 'Use when / Don't use when' routing blocks (#14521)
+b05e89e5e6051fbc5d455f8cdbc8c57fc1acf1fe	b05e89e5e	2026-02-18T00:54:20+01:00	fix(agents): make image sanitization dimension configurable
+1d23934c098a64e5c33c868a8c0cd06dda8e9013	1d23934c0	2026-02-18T00:50:22+01:00	fix: follow-up slack streaming routing/tests (#9972) (thanks @natedenh)
+b2acfd606a0d69205ea25c28b7055b63e8f86852	b2acfd606	2026-02-17T15:49:22-08:00	fix(subagent): update SUBAGENT_SPAWN_ACCEPTED_NOTE for clarity on auto-announcement behavior
+f07bb8e8fc1ceaea474148d5cce86fbf8a5eb81d	f07bb8e8f	2026-02-18T00:35:41+01:00	fix(hooks): backport internal message hook bridge with safe delivery semantics
+087dca8fa9f597eb968d51299fd04b16f3d01fea	087dca8fa	2026-02-17T15:32:52-08:00	fix(subagent): harden read-tool overflow guards and sticky reply threading (#19508)
+5acec7f79b7c0461e7c0f3ada3add5bdcd09072a	5acec7f79	2026-02-18T00:08:27+01:00	fix: wire agents.defaults.imageModel into media understanding auto-discovery
+ae2c8f2cf03ff5c00126875760c40cacb54de7fe	ae2c8f2cf	2026-02-18T00:00:31+01:00	feat(models): support anthropic sonnet 4.6
+dd4eb8bf6320faeebf2c9b3486f1f43050c5a507	dd4eb8bf6	2026-02-17T23:48:14+01:00	fix(cron): retry next-second schedule compute on undefined
+c26cf6aa830c739e009e93d6b44162407ea1fb25	c26cf6aa8	2026-02-17T23:48:14+01:00	feat(cron): add default stagger controls for scheduled jobs
+b98b113b889f60db5cb463da66f662202e3b754c	b98b113b8	2026-02-17T23:47:34+01:00	fix(ios): harden share relay routing and delivery guards
+442b45e54ecaeb0feca23e03c0fbd4180010b92b	442b45e54	2026-02-17T23:47:29+01:00	fix(gateway): make health monitor checks single-flight
+96f7d35dd74b87880fcd4f6bdedd7e504f70d5fc	96f7d35dd	2026-02-17T23:47:24+01:00	fix(gateway): block cross-session fallback in node event delivery
+b20339a2329639a23fca6cc0d317619f21064bbb	b20339a23	2026-02-17T14:17:22-08:00	fix(signal): canonicalize message targets in tool and inbound flows
+bfc9736366561aa8ba87ee43cd5a2b195195892a	bfc973636	2026-02-17T20:08:50Z	feat: share to openclaw ios app (#19424)
+e1015a51975552185b077b8bd6e3c4391b859ed5	e1015a519	2026-02-17T11:39:58-08:00	fix(bluebubbles): recover outbound message IDs and include sender metadata
+98962ed81d266bd9d0bcd359a8d24d2f6d5b0c9c	98962ed81	2026-02-18T03:16:10+08:00	feat(ios): auto-select local signing team (#18421)
+c4e9bb3b99dbc90b5964fc810c00a598e8c0a628	c4e9bb3b9	2026-02-17T23:20:36+05:30	fix: sanitize native command names for Telegram API (#19257)
+9f261f592df8386e2de222c6329b4dda2f2022f5	9f261f592	2026-02-17T10:05:29-05:00	revert: PR 18288 accidental merge (#19224)
+11fcbadec8ee16aa3b46fd6f4149c2a90cb68700	11fcbadec	2026-02-17T10:01:54-05:00	fix(daemon): guard preferred node selection
+4536a6e05f0303b203b4db2e4e9e4158cc7dae5d	4536a6e05	2026-02-17T09:58:39-05:00	revert(agents): revert base64 image validation (#19221)
+f44e3b2a340cf4f5c7bbaf8da18c49491ed506b6	f44e3b2a3	2026-02-17T09:43:41-05:00	revert: fix models set catalog validation (#19194)
+dd0b789669c0a430207e2c437ac8e777641fe267	dd0b78966	2026-02-17T09:30:50-05:00	fix(mattermost): surface reactions support
+ae93bc9f51fc1b1aab5623f822cc3256909250e3	ae93bc9f5	2026-02-17T14:29:41Z	fix(gateway): make stale token cleanup non-fatal
+3211280bed557b4648ce94431b83ad1c0dd8e444	3211280be	2026-02-17T09:25:18-05:00	revert: per-model thinkingDefault override (#19195)
+afd78133bade01cef39035763cab7737e90930ca	afd78133b	2026-02-17T09:16:13-05:00	fix(ui): revert PR #18093 directive tags (#19188)
+d54e4af4a12323bb28b152cfebe6b16b6c5faa30	d54e4af4a	2026-02-17T09:15:01-05:00	revert(agents): remove llms.txt discovery prompt (#19192)
+b0d4c9b7219896c470c2959f1bdcef8a567b02f1	b0d4c9b72	2026-02-17T13:56:30Z	fix(discord): preserve DM lastRoute user target
+e74ec2acd3c7252bfcdf7ee82196791bef171447	e74ec2acd	2026-02-17T08:48:11-05:00	fix(cron): add spin-loop regression coverage
+366da7569a3fe8cae340d9e6c2923e36f68fb044	366da7569	2026-02-17T08:47:25-05:00	fix(cli): honor update restart overrides
+dff8692613d586dd9e4759b6a3efe66509d811a9	dff869261	2026-02-17T08:45:41-05:00	fix(discord): normalize command allowFrom prefixes
+111a24d55cb1bc863d1c2cb5e34d15a616a4220b	111a24d55	2026-02-17T08:44:24-05:00	fix(daemon): scope token drift warnings
+32d12fcae9e1a4d4165d217037dfcbece6e2953d	32d12fcae	2026-02-17T14:44:18+05:30	feat(telegram): add channel_post support for bot-to-bot communication (#17857)
+5db95cd8d52f30af5535ad6794c4f0b1b3d4be15	5db95cd8d	2026-02-17T10:40:13+02:00	fix(extensions): revert openai codex auth plugin (PR #18009)
+19f8b6bf4fd8de34e25077080908c6975756eb6c	19f8b6bf4	2026-02-17T09:15:55+01:00	fix: searchable model picker in configure (#19010) (thanks @bjesuiter)
+7be63ec74a6aad250d08051a9dab091f5972beb1	7be63ec74	2026-02-17T13:30:29+05:30	fix: align tool execute arg parsing for hooks
+9d9630c83a41adb82632e13d5349fff3330a3e29	9d9630c83	2026-02-17T13:30:29+05:30	fix: preserve telegram dm topic thread ids
+60dc3741c0362a5a64adf6c12634986fa430ed7e	60dc3741c	2026-02-17T12:53:54+05:30	fix: before_tool_call hook double-fires with abort signal (#16852)
+583844ecf6c153a8b3748523d68f654224875467	583844ecf	2026-02-17T12:36:15+05:30	fix(telegram): avoid duplicate preview bubbles in partial stream mode (#18956)
+7ffc8f9f7ccf0fa80d9708102344932a9a62b93d	7ffc8f9f7	2026-02-17T11:21:49+05:30	fix(telegram): add initial message debounce for better push notifications (#18147)
+4b40bdb98e9c5df2fdbe8c01ff78d3aaa18eec7d	4b40bdb98	2026-02-16T23:07:26-05:00	fix(telegram): clear offsets on token change
+67014228cffa6c686f30d5a07345cf658fa890cc	67014228c	2026-02-16T22:57:15-05:00	fix(subagents): harden announce retry guards
+759c7fc18e4883a1068944793c0ea4bb310b119d	759c7fc18	2026-02-16T22:35:28-05:00	revert(voice-call): remove cached inbound greeting
+950f36feff3486fb65d611f544c537e73351533a	950f36fef	2026-02-16T22:35:28-05:00	revert(voice-call): undo oxfmt formatting pass
+ffe1ba68b92af39c0ba97eacfa3a135e38075adf	ffe1ba68b	2026-02-16T22:35:28-05:00	revert(voice-call): undo cached greeting note
+1486eb66fd17c08e284cf819585511bafaf9d33e	1486eb66f	2026-02-16T22:35:27-05:00	revert(gateway): restore loopback auth setup
+826e62a3bce109ca899590c24c35b6bc913576cd	826e62a3b	2026-02-16T22:35:27-05:00	fix(sessions): purge deleted transcript archives
+52b624ccae8921608004d586dd7183e529897786	52b624cca	2026-02-16T22:35:27-05:00	fix(doctor): audit env-only gateway tokens
+7a00f056af0ea6a167c175ff50c317c3eee65af9	7a00f056a	2026-02-16T22:03:41-05:00	revert(sandbox): revert SHA-1 slug restoration
+81fd771cb9989dbafea74f8912016a2cf8017ff2	81fd771cb	2026-02-16T21:50:01-05:00	fix(gateway): preserve chat.history context under hard caps
+6070116382aab73e41138f1d48b516cf05f17207	607011638	2026-02-16T21:47:18-05:00	revert(exec): undo accidental merge of PR #18521
+ae82371d8a541c49931598c0ade3e10ba869f07d	ae82371d8	2026-02-16T21:46:45-05:00	revert(docs): undo accidental merge of #18516
+3df8305cb6a29f7fe7ba00008fde4d4fbd2b16f0	3df8305cb	2026-02-16T21:46:04-05:00	fix(ui): gate sessions refresh on successful delete
+391796a3fb219aef54b13a02f15d36b18d2a532c	391796a3f	2026-02-16T21:34:27-05:00	fix(agents): restore multi-image image tool schema contract
+966e5560f837e43879c72078433366b7cee4a79e	966e5560f	2026-02-16T21:29:00-05:00	revert(telegram): undo accidental merge of PR #18564
+a75e95be02fe6b7b6bcc59e5b96b5d2514afe4d2	a75e95be0	2026-02-17T03:27:23+01:00	fix(reply): track messaging media aliases for dedupe
+1f850374f6e7bc8e178f548bddb8095f32ef2f9a	1f850374f	2026-02-17T03:26:26+01:00	fix(gateway): harden channel health monitor recovery
+f7e75d2c5c53e8d16d6385b2ebc2b88ce0f34ee3	f7e75d2c5	2026-02-16T21:25:35-05:00	fix(doctor): repair googlechat open dm wildcard auto-fix
+81741c37fd5ae2942e2904b3e1cee608a04d60ee	81741c37f	2026-02-17T11:24:08+09:00	fix(gateway): remove watch-mode build/start race (#18782)
+0aa28c71cabbfd055d14644ee570b1f290e0c692	0aa28c71c	2026-02-16T21:20:05-05:00	fix(doctor): move forced exit to top-level command
+901d4cb310a07bcabfe802d86a500c54cd822452	901d4cb31	2026-02-17T03:19:42+01:00	revert: accidental merge of OC-09 sandbox env sanitization change
+f79cf3a01d8fab852740be838d2c4917b3e45732	f79cf3a01	2026-02-16T21:16:29-05:00	revert: remove accidentally merged video-quote-finder skill (#18550)
+bb8df6ab8d33eec4e9744cb3190ef880544a0d03	bb8df6ab8	2026-02-16T21:13:48-05:00	revert(tools): finish rollback of PR #18584
+f924ab40d83546a892ddebdea92c77c7d6c99581	f924ab40d	2026-02-16T21:13:48-05:00	revert(tools): undo accidental merge of PR #18584
+fb6e415d0c52abd30aba211a1f3fda49a7453d1e	fb6e415d0	2026-02-17T03:10:36+01:00	fix(agents): align session lock hold budget with run timeouts
+ce4b4d947ce9523f01db12c07cd5b601d0eb6027	ce4b4d947	2026-02-16T21:09:49-05:00	revert(doctor): undo accidental merge of PR #18591
+9789dfd95b1798f20cc6b980f58d783c0c80edba	9789dfd95	2026-02-17T03:04:00+01:00	fix(ui): correct usage range totals and muted styles
+4ca75bed56047e283da18eb28aa6d310356f3456	4ca75bed5	2026-02-16T21:00:59-05:00	fix(models): sync auth-profiles before availability checks
+fbda9a93fda35558d57d3273dceffe05d9de10db	fbda9a93f	2026-02-16T21:00:27-05:00	fix(failover): align abort timeout detection and regressions
+f242246839a66d534ea5ed4419c40c04a34cd01b	f24224683	2026-02-17T03:00:01+01:00	fix(subagents): pass group context in /subagents spawn
+2b3ecee7c5b32c9391f58799d94277ae0e0caa0d	2b3ecee7c	2026-02-16T20:59:30-05:00	fix(actions): layer per-account gate fallback
+3518554e23680d04d97976cd5ab25ef0766d0a2a	3518554e2	2026-02-16T20:56:55-05:00	fix(heartbeat): bound responsePrefix strip for ack detection
+afa5533253dc004ae6d63d214611353fbc0a2e24	afa553325	2026-02-17T02:55:46+01:00	fix(mattermost): harden react remove flag parsing
+d6226355e653f87e08343c9154188784d0d9e937	d6226355e	2026-02-17T02:51:00+01:00	fix(slack): validate interaction payloads and handle malformed actions
+bbb5fbc71f1a70dd4c0aaa748b70f353c347b9d9	bbb5fbc71	2026-02-16T20:49:09-05:00	fix(scripts): harden Windows UI spawn behavior
+742e6543c7ab342d2771cd8e6e7349846b805fea	742e6543c	2026-02-17T02:46:24+01:00	fix(ui): preserve locale bootstrap and trusted-proxy overview behavior
+accb6734902e8c82fd1e6c13792c61925f3225bf	accb67349	2026-02-16T20:46:05-05:00	revert(telegram): undo accidental merge of PR #18601
+3fff266d52375fabee1c8def6cd800d72b8d7051	3fff266d5	2026-02-16T20:39:06-05:00	fix(session-memory): harden reset transcript recovery
+67250f059aa6e62a8b6334311586e12454b04b0e	67250f059	2026-02-16T20:37:08-05:00	fix(slack): scope attachment extraction to forwarded shares
+fb996031bc0ff7d35b861e97495f05e67b73013d	fb996031b	2026-02-16T20:37:08-05:00	fix(process): harden graceful kill-tree cancellation semantics
+c65b3c2ed92f1781910a7a75159ba9db1ef1f5bf	c65b3c2ed	2026-02-17T02:23:41+01:00	fix(docs): revert accidental es/pt-BR translation scaffold from #18473
+83b1ae895e651530cd99ad1780b8649ed39788ef	83b1ae895	2026-02-16T20:20:32-05:00	fix(transcript): always drop orphaned OpenAI reasoning blocks
+6244ef9ea85871f48cc064ecdd6f20b16fc6756b	6244ef9ea	2026-02-17T02:08:56+01:00	fix: handle Windows and UNC bind mount parsing
+13ae1ae056d79e6bda1b1e966b09b9070de8f15d	13ae1ae05	2026-02-17T00:59:54Z	fix(memory): tighten embedding manager inheritance types
+c20ef582cb4beba9a362467568cdf028d7358c3e	c20ef582c	2026-02-17T01:54:59+01:00	fix: align cron session key routing (#18637) (thanks @vignesh07)
+b3d0e0cb458265fa234176cddc8af136733a4d15	b3d0e0cb4	2026-02-16T23:48:26Z	fix(cron): preserve overrides and harden next-run calculation
+a186ce21586af8fe10f2bed4094bf4d6f94b013c	a186ce215	2026-02-16T23:47:57Z	fix(ci): preserve whatsapp send API compatibility
+12a947223b8251abba15b488a9f3f18538bc67d6	12a947223	2026-02-16T23:47:27Z	fix(ci): restore main checks after bulk merges
+8c241449f56726a4b1d160d3991b069bd9340844	8c241449f	2026-02-16T23:33:05Z	fix(protocol): sync generated gateway swift models
+83a8b78a42483dad24ec95c5080c95427cb56dd3	83a8b78a4	2026-02-16T23:27:35Z	fix(ci): guard loop detection integer parsing
+eaa2f7a7bf62a90909eb8c756358708550478ca6	eaa2f7a7b	2026-02-16T23:26:11Z	fix(ci): restore main lint/typecheck after direct merges
+076df941a3265067602e0951a4233cfb7e8597ea	076df941a	2026-02-17T00:17:01+01:00	feat: add configurable tool loop detection
+dacffd7ac8762415298c3ee07a6e7e2d27b710cd	dacffd7ac	2026-02-17T00:02:12+01:00	fix(sandbox): parse Windows bind mounts in fs-path mapping
+e997545d4bc292262e4555b5ee321f13d321fcd7	e997545d4	2026-02-17T00:02:09+01:00	fix(discord): apply proxy to app-id and allowlist REST lookups
+bc2e02bb343f4a28474eab5cbb6e129ffef7bde5	bc2e02bb3	2026-02-17T00:02:05+01:00	fix(ui/usage): remove remaining timeSeriesCursor reference in renderContextPanel
+647d69881b4720118210d52071a94cf6acf0a2f9	647d69881	2026-02-17T00:02:05+01:00	fix(ui/usage): align client log limit with server cap (1000) and remove unused param
+0302cf89b0f24ed74b03f0f0e2a0f8da93f21d47	0302cf89b	2026-02-17T00:02:05+01:00	feat(timeline): dual-handle range selection on Usage Over Time chart
+86517b8e30b9ddd14a6c880781f80df7c23facaa	86517b8e3	2026-02-17T00:02:00+01:00	feat(feishu): add bitable create app and create field tools
+84383b5e0f7229c8352a8d3063d00138f0a1e7b7	84383b5e0	2026-02-17T00:01:56+01:00	fix(tts): show all provider errors instead of only the last one
+de6cc05e7e88fc5c701be4e880945e00b202fc21	de6cc05e7	2026-02-17T00:01:53+01:00	fix(cron): prevent spin loop when job completes within firing second (#17821)
+bdbb872c077278ce5de096d8f032a26b66aeb200	bdbb872c0	2026-02-17T00:01:42+01:00	fix(ui/usage): replace undefined --text-muted CSS variable with --muted
+16ddbbc6281060eee27ef64f43d251c221365dcf	16ddbbc62	2026-02-17T00:01:37+01:00	fix(sessions): skip cache when initializing session state
+5b3873add41ab8ab79ab804715afb4db83c760c2	5b3873add	2026-02-17T00:01:34+01:00	fix(skills): guard against skills prompt bloat
+1a9a2e396f739772933aafe95be47bc162cdfa1a	1a9a2e396	2026-02-17T00:01:30+01:00	feat: Add GOALS.md and SOUVENIR.md template files
+b4a90bb7430079613a205bc0dbcfa59d51657127	b4a90bb74	2026-02-17T00:01:26+01:00	fix(telegram): suppress message_thread_id for private chat sends (#17242)
+2ed43fd7b4dcc9695a8d5b595566529b8fa5a96e	2ed43fd7b	2026-02-17T00:01:22+01:00	fix(cron): resolve accountId from agent bindings in isolated sessions
+e9f2e6a829efaa7ca6b3249fb38bcf833f9c9320	e9f2e6a82	2026-02-17T00:01:15+01:00	fix(heartbeat): prune transcript for HEARTBEAT_OK turns
+7bb9a7dcfc3194a953f0ca20f86f9caba8a22923	7bb9a7dcf	2026-02-17T00:01:07+01:00	fix(telegram): wire sendPollTelegram into channel action handler (#16977)
+068b9c97498d36e5d155404ff4aa7cd51a57afde	068b9c974	2026-02-17T00:01:03+01:00	feat: wrap compaction generateSummary in retryAsync
+990cf2d226091c0745eb338d2d0c88555510dd76	990cf2d22	2026-02-17T00:01:00+01:00	fix(extensions): address greptile review comments for openai-codex-auth
+45b3c883b8f845f85f4ec92222af93f4aacf61ad	45b3c883b	2026-02-17T00:01:00+01:00	fix: regenerate pnpm lockfile
+3ac422fe2e8b6c453e684f8f59bf445778ff7449	3ac422fe2	2026-02-17T00:01:00+01:00	feat(extensions): add OpenAI Codex CLI auth provider
+f82a3d3e2bb47f1cac5eff036380a52df1420d20	f82a3d3e2	2026-02-17T00:00:57+01:00	fix: use resolveUserPath utility for tilde expansion
+4cd75d5d0f2d9bfce28f0c286db269c2afc79a15	4cd75d5d0	2026-02-17T00:00:57+01:00	fix: remove accidental openclaw link dependency
+ffe700bf94c7f49fdc861801fbd44d0fa72a5172	ffe700bf9	2026-02-17T00:00:57+01:00	fix: use proper pi-mono dark theme colors for export HTML
+add3afb7439ea4a09330ff4b4c057f652a379094	add3afb74	2026-02-17T00:00:57+01:00	feat: add /export-session command
+3c3a39d1650feea71b779d6dcb77758346e2801c	3c3a39d16	2026-02-17T00:00:54+01:00	fix(test): use path.resolve for cross-platform Windows compatibility
+90774c098ade256999a012ca32e1f6d12db22514	90774c098	2026-02-17T00:00:54+01:00	fix(sessions): allow cross-agent session file paths in multi-agent setups
+e20b87f1ba332e2b7838d05e38e3bd7d991f460d	e20b87f1b	2026-02-17T00:00:51+01:00	fix: handle forum/topics in Telegram DM thread routing (#17980)
+d649069184025e1d43b9f78721ea2d5c91acbf1c	d64906918	2026-02-17T00:00:47+01:00	fix: add optional chaining to runResult.meta accesses to prevent crashes on aborted runs
+57c8f62396d450bccf508f2beb20cea7f1496f4d	57c8f6239	2026-02-17T00:00:40+01:00	fix(cron): reuse existing sessionId for webhook/cron sessions
+952db1a3e2f3db4250ae3c252c4b1f0eb4f4b01b	952db1a3e	2026-02-17T00:00:34+01:00	fix(discord): route audioAsVoice payloads through voice message API
+2fa9ddebdba578bfcc1718304a2a9fef704b2915	2fa9ddebd	2026-02-16T23:00:32Z	fix(mattermost): add actions config typing
+1fca7c39289a1a3bb204580859f2dfcfde61fa60	1fca7c392	2026-02-17T00:00:30+01:00	fix(discord): strip user:/discord:/pk: prefixes in command allowFrom
+6931ca7035fe26e6aec1c1b78a08340274d752e7	6931ca703	2026-02-17T00:00:27+01:00	fix(subagent): route nested announce to parent even when parent run ended
+235794d9f65525fd9161a123ae387e2e30715417	235794d9f	2026-02-17T00:00:23+01:00	fix(security): OC-09 credential theft via environment variable injection
+65a1787f92c37a87d0a9ab431d119b5ad73f7cae	65a1787f9	2026-02-17T00:00:20+01:00	fix: normalize paths to forward slashes for Windows RegExp compatibility
+811c4f5e91cb611c0b50152a6777e7093b7197c7	811c4f5e9	2026-02-17T00:00:20+01:00	feat: add post-compaction read audit (Layer 3)
+3296a25cc6aab824ebcb578f0f22d7711833178d	3296a25cc	2026-02-17T00:00:20+01:00	fix: format compaction-safeguard.ts with oxfmt
+c4f829411f6988c90afc89ef86be2f8328ec8cc3	c4f829411	2026-02-17T00:00:20+01:00	feat: append workspace critical rules to compaction summary
+d0b33f23eb6a0a74190d399beb5da1cdc8b20baf	d0b33f23e	2026-02-17T00:00:20+01:00	fix: improve section extraction robustness (case-insensitive, H3, code blocks)
+b1d5c71609c3c32b8c6c4b43b1f3d6564c61634c	b1d5c7160	2026-02-17T00:00:16+01:00	fix(cli): use standalone script for service restart after update (#17225)
+a62ff19a6638087d97b10e916a831f32c0b36cd7	a62ff19a6	2026-02-17T00:00:12+01:00	fix(agent): isolate last-turn total in token usage reporting (#17016)
+d6acd71576cda5a319abbcc244614eb5be91045d	d6acd7157	2026-02-17T00:00:08+01:00	fix: session-memory hook finds previous session file after /new/reset
+767109e7d589b267dc93cb778b0dd03657e817a0	767109e7d	2026-02-17T00:00:08+01:00	fix(skills): improve git credential handling for gh-issues sub-agents
+068260bbeac306064e4bd0495f7ed10ad38e1fe4	068260bbe	2026-02-17T00:00:08+01:00	fix: add api-version query param for Azure verification
+960cc11513d72ca323f3f788e4aac9f241607ae0	960cc1151	2026-02-17T00:00:08+01:00	fix: add Azure AI Foundry URL support for custom providers
+4e5a9d83b780861cecce2916d10a445b3198bf53	4e5a9d83b	2026-02-17T00:00:03+01:00	fix(gateway): preserve unbracketed IPv6 host headers
+8e55503d7785e741ce9995f989d944e09a8f22db	8e55503d7	2026-02-16T23:59:59+01:00	fix(browser): track original port mapping for EADDRINUSE fallback
+0e6daa2e6e30240ce5191ee5c7954f24b4b56b42	0e6daa2e6	2026-02-16T23:59:59+01:00	fix(browser): handle EADDRINUSE with automatic port fallback
+a1a1f568415d98ccedfa91e4a290cffa6ecb953e	a1a1f5684	2026-02-16T23:59:53+01:00	fix(process): disable detached spawn on Windows to fix empty exec output (#18035)
+d0a5ee0176c888be150419205d22f3de0193ac6d	d0a5ee017	2026-02-16T23:59:50+01:00	fix: include token drift warning in JSON response
+d6e85aa6ba208a1c04d3b1b10514821343844e10	d6e85aa6b	2026-02-16T23:59:50+01:00	fix(daemon): warn on token drift during restart (#18018)
+8af4712c4066660735313f2cc26220656362e705	8af4712c4	2026-02-16T23:59:44+01:00	fix(cron): prevent spin loop when job completes within scheduled second (#17821)
+c315246971b727ac7c654334ca33c601895969b2	c31524697	2026-02-16T23:59:41+01:00	fix(feishu): fix mention detection for post messages with embedded docs
+cd4f7524e36aa7f2bcfca0fcbe236505e4ecf54b	cd4f7524e	2026-02-16T23:59:36+01:00	feat(telegram): receive and surface user message reactions (#10075)
+d3698f4eb6c6749630284dfb9073cfc07a94415d	d3698f4eb	2026-02-16T23:59:32+01:00	fix(gateway): trim trusted proxy entries before matching
+e24e465c00c5e884960ea701bcade71c4bf687eb	e24e465c0	2026-02-16T23:59:29+01:00	fix(webchat): strip reply/audio directive tags before rendering #18079
+e91a5b021648bec6f4d3566d9e348e7223b36cb5	e91a5b021	2026-02-16T23:59:22+01:00	fix: release stale session locks and add watchdog for hung API calls (#18060)
+33cf27a52a5ecfff80179570f3bc9dd331d2947d	33cf27a52	2026-02-16T23:59:19+01:00	fix: MMR default disabled, tie-break null guard, correct docs URL
+6b3e0710f4a05135fa57798dcc3ff9668e6a061a	6b3e0710f	2026-02-16T23:59:19+01:00	feat(memory): Add opt-in temporal decay for hybrid search scoring
+fa9420069ab39f36fc47ca23b0ea909025a0a447	fa9420069	2026-02-16T23:59:19+01:00	feat(memory): Add MMR re-ranking for search result diversity
+c529e6005a3e9e112883d86a973abc1e59e22e1d	c529e6005	2026-02-16T23:58:23+01:00	fix(gateway): set explicit chat timeouts for mesh gateway calls
+15fe87e6b714ccb6d6789a50627f4c26d5c8513b	15fe87e6b	2026-02-16T23:58:12+01:00	feat: add before_message_write plugin hook
+94eecaa446aa04c0d4e8cf7c12a40f8441711191	94eecaa44	2026-02-16T23:57:21+01:00	fix: atomic session store writes to prevent context loss on Windows
+1bef2fc68bc512c886c25ef1dfba67f58c90e811	1bef2fc68	2026-02-16T23:57:09+01:00	fix(whatsapp): allow per-message link preview override\n\nWhatsApp messages default to enabling link previews for URLs. This adds\nsupport for overriding this behavior per-message via the \nparameter (e.g. from  tool options), consistent with Telegram.\n\nFix: Updated internal WhatsApp Web API layers to pass  option\ndown to Baileys .
+312a7f7880bb3af8efdecf62bd1a89217d1901b3	312a7f788	2026-02-16T23:56:56+01:00	fix: make tool exit code handling less aggressive
+91903bac152b709700a22ba6a1751dda6005844d	91903bac1	2026-02-16T23:56:10+01:00	fix: include OPENCLAW_SERVICE_VERSION in system presence version detection
+97e0f8d551ea8e2731e4178bea019f8c0eee1a03	97e0f8d55	2026-02-16T22:55:59Z	fix(onboarding): keep wildcard allowFrom helper string-typed
+1dfacd4dd176cea3817d167b60e8e7a422e7a740	1dfacd4dd	2026-02-16T23:55:56+01:00	fix(status): avoid bot+app token warning for mattermost
+82861968c2185cc3c357660f0f198be1bcc4eb4f	82861968c	2026-02-16T23:55:40+01:00	fix(mattermost): address review feedback on reactions PR
+2a2372cd6cab8da2defb41c510a5ff224f14bbca	2a2372cd6	2026-02-16T23:55:40+01:00	feat(mattermost): add emoji reactions support
+b57d29d833920f37cc45d69712fdce3bade95275	b57d29d83	2026-02-16T23:55:34+01:00	fix(slack): extract text and media from forwarded message attachments
+4928717b922e548bea6b09bd657324d991157a38	4928717b9	2026-02-16T23:55:31+01:00	fix: handle Qwen 3 reasoning field in Ollama responses
+46bf210e048a6ad7a7bddb6b97f6ee91191545eb	46bf210e0	2026-02-16T23:55:28+01:00	fix: always drop orphaned OpenAI reasoning blocks in session history
+afd354c482d966a4a68d6179104bf289772057a5	afd354c48	2026-02-16T23:54:52+01:00	fix: add catalog validation to `models set` command
+0b8b95f2c97f6ececcd28a7a8b2a7557931ef62f	0b8b95f2c	2026-02-16T23:54:49+01:00	fix(update): prevent gateway crash loop after failed self-update
+671f913123882898bdb0590c278261c8ae41edf0	671f91312	2026-02-16T23:54:45+01:00	feat: support per-model thinkingDefault override in models config
+e368c365036bc8d70a1c941d998c6b7910da9668	e368c3650	2026-02-16T23:54:40+01:00	feat: add llms.txt discovery as default agent behavior
+4df970d7118dc799a30af1ce9eaaf3fe8e4bc29f	4df970d71	2026-02-16T23:54:31+01:00	fix: improve error for unconfigured local providers (ollama/vllm) (#17328)
+6e1edc7d62c8759b52dcf518d36703a53e0b2da8	6e1edc7d6	2026-02-16T23:54:23+01:00	fix: correct Sparkle appcast version for 2026.2.15
+b2d622cfa3f18ed9b3a804ffc69531a1d3d49e19	b2d622cfa	2026-02-16T23:54:23+01:00	fix: clear stale device-auth token on token mismatch
+0ee348069086ab70fc13568258fd842952963c34	0ee348069	2026-02-16T23:54:17+01:00	fix(cron): preserve model fallbacks when agent overrides primary
+5a3a448bc48dc9e72530b46195476a48845bb8da	5a3a448bc	2026-02-16T23:54:14+01:00	feat(commands): add /subagents spawn command
+63fb99807488bda026cd3fdb360f95c3dc299e9e	63fb99807	2026-02-16T23:53:54+01:00	fix: address code review feedback
+38c96bc53eb36277df29c4e7030ecc63b0e910cf	38c96bc53	2026-02-16T23:53:54+01:00	fix: validate base64 image data before API submission
+aeec95f870dd6ca24ea9aea296c61d0f2c149dd4	aeec95f87	2026-02-16T23:53:50+01:00	fix(gateway): include deliveryContext in update.run restart sentinel (#18239)
+c762bf71f625ed10e86f50bb00c230cfa4d76f1a	c762bf71f	2026-02-16T23:53:44+01:00	fix(telegram): enable autoSelectFamily by default for Node.js 22+
+3ec936d1b450a6a1c79fe72489229264e79c8d8f	3ec936d1b	2026-02-16T23:53:41+01:00	fix(daemon): prefer current node and add macOS version manager paths to service PATH
+1a8548df18765e8d14dce86a9daffd6f14936666	1a8548df1	2026-02-16T23:53:41+01:00	fix(daemon): prefer current node (process.execPath) and add macOS version manager paths to service PATH
+497e2d76ad45a252d7164ba08c9fdcdd8f3f6f6e	497e2d76a	2026-02-16T23:53:35+01:00	feat(gateway): add channel health monitor with auto-restart
+ae0b110e444b26740a32083b273b07db4e05d13d	ae0b110e4	2026-02-16T23:53:28+01:00	fix(security): set 0o600 on remaining session file write paths
+d4c057f8c100a4e4d7e5d443bc10e606244f9d67	d4c057f8c	2026-02-16T23:53:24+01:00	feat(inbound-meta): expose sender_id in trusted system metadata
+bcab2469de779aa9c3479a5cb5474acc34dd18a1	bcab2469d	2026-02-16T23:53:21+01:00	feat: LLM-based query expansion for FTS mode
+65aedac20e535bea40a74a5f96f988738a5a8307	65aedac20	2026-02-16T23:53:21+01:00	fix: enable FTS fallback when no embedding provider available (#17725)
+153794080eccd1d8b1fe98763ea76162ae1c3b4c	153794080	2026-02-16T23:53:21+01:00	fix: support OAuth for Gemini media understanding
+3379b9d341aab6ac425882442ae3955c5d11a910	3379b9d34	2026-02-16T23:53:21+01:00	fix: support OAuth for Gemini embedding API
+9aa8db5c812dd885685bcffa5824abaff5b15535	9aa8db5c8	2026-02-16T23:53:11+01:00	fix(doctor,configure): skip gateway auth for loopback-only setups
+6757a9fedc2e8686b44b60fa07c3436fe6fc1c18	6757a9fed	2026-02-16T23:53:06+01:00	fix(telegram): clean up update offset on channels remove --delete (#18233)
+b91e43714b4e937f33f1c63fe781eb98e20d8756	b91e43714	2026-02-16T23:52:56+01:00	feat(linq): add interactive onboarding adapter
+1d81cc4f1ff1c99dfd386c7965a52f4242cf1a60	1d81cc4f1	2026-02-16T23:52:56+01:00	feat(linq): add read receipts, typing indicators, and User-Agent header
+60bd154e5a335aa00d54ed04032562d01f99243b	60bd154e5	2026-02-16T23:52:56+01:00	fix: parse webhook URL pathname instead of raw string match
+d4a142fd8f1cc2e2d5f634c919a20cc9bf864475	d4a142fd8	2026-02-16T23:52:56+01:00	feat: add Linq channel — real iMessage via API, no Mac required
+95024d167147d3ee3a349f08cce34b17bccaff67	95024d167	2026-02-16T23:52:51+01:00	fix: log error on auto-end failure instead of swallowing
+4c0a741308cbe63ed1ccfc6b878540daaa291ca9	4c0a74130	2026-02-16T23:52:51+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+d56c04a3b5d75025bda026c60fa501fbb02ae1f9	d56c04a3b	2026-02-16T23:52:51+01:00	fix: apply oxfmt formatting
+3eec5e54b1bd969eeb504444898ddc5963502c99	3eec5e54b	2026-02-16T23:52:51+01:00	fix(voice-call): auto-end call when media stream disconnects
+a5c94b8e7b9237a745141a5da62972ba1131788a	a5c94b8e7	2026-02-16T23:52:48+01:00	fix: log error on reaper endCall failure instead of swallowing
+390c503b56644d7a03984c5c54cb501db9b1cd6d	390c503b5	2026-02-16T23:52:48+01:00	feat(voice-call): add configurable stale call reaper
+cc3c25e413a56761066710bd0698c170d039d768	cc3c25e41	2026-02-16T23:52:42+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+2977f7325d25b0b79fbc4564ad6f1e8ca4053382	2977f7325	2026-02-16T23:52:42+01:00	fix: add extraArgs to sandbox browser config and apply oxfmt formatting
+039fc1e04c0ab71d1406005b2c91866517424858	039fc1e04	2026-02-16T23:52:42+01:00	feat(browser): add extraArgs config for custom Chrome launch arguments
+de900bace8986e4d38c75ec6724fb34d34d30ca3	de900bace	2026-02-16T23:52:39+01:00	fix: reset announceRetryCount in replaceSubagentRunAfterSteer
+a6c741eb463064b106e79f0c7baf30f8846eb769	a6c741eb4	2026-02-16T23:52:39+01:00	fix(announce): break infinite retry loop with max attempts and expiry (#18264)
+0764999e2cda2252893965bf632cd3fcc761ded4	0764999e2	2026-02-16T23:52:36+01:00	fix: document intentional non-persistence of initialMessage deletion
+0291ce30a813be5ef6d8084d042977278fe9c59c	0291ce30a	2026-02-16T23:52:36+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+dd319d05d8aeae601a0b41ec360f72e597a41053	dd319d05d	2026-02-16T23:52:36+01:00	fix: apply oxfmt formatting
+2c6db575541c9c267c46cc9e383aa805f741e4d3	2c6db5755	2026-02-16T23:52:36+01:00	feat(voice-call): pre-cache inbound greeting for instant playback
+27a4868c2de2fcd957461f7688fdbeb166f4578f	27a4868c2	2026-02-16T23:52:30+01:00	fix: move Chromium install after pnpm install and use playwright-core/cli.js
+d6aa9adec518b5de3fb80992abe50ead97ac9311	d6aa9adec	2026-02-16T23:52:30+01:00	feat(docker): add optional Chromium + Xvfb install in Docker image
+8b14052ebe9d0ced947de214e2ac20ed384013c3	8b14052eb	2026-02-16T23:52:26+01:00	fix: capture init script exit codes instead of swallowing via pipe
+53af9f743767e7ffca3c95b572a7d5451cfc9e4a	53af9f743	2026-02-16T23:52:26+01:00	feat(docker): add init script support via /openclaw-init.d/
+717caa97fbe023a0d2f14b8e2cbad456954d6d2c	717caa97f	2026-02-16T23:52:23+01:00	fix: remove stderr suppression so install failures are visible in build logs
+2ab6313d99d5c794f2ebcac30534533b6b26755f	2ab6313d9	2026-02-16T23:52:23+01:00	fix(docker): ensure memory-lancedb deps installed in Docker image
+34b18ea9db116730de38eab19c74492518b8567d	34b18ea9d	2026-02-16T23:52:16+01:00	fix: respect OPENCLAW_HOME for isolated gateway instances
+4641e452dd51f45d2a6e29fcc548197eaf550f75	4641e452d	2026-02-16T23:52:06+01:00	fix(docs): update English fallback links after file reorganization
+84764eea52cd2a86a4f1eae2bd29559437c3f4df	84764eea5	2026-02-16T23:52:06+01:00	fix(docs): remove dead references to railway, render and northflank
+a02bcb362030262d8cd78b621ecd519fb6987cac	a02bcb362	2026-02-16T23:51:51+01:00	fix(test): add missing media dedup state fields to mock contexts
+838259331f84237e2b538fae2473d2d88782d587	838259331	2026-02-16T23:51:51+01:00	fix(discord): add media dedup production code for messaging tool pipeline
+a03fec2a3fe0b76e8e20c14c915915126b50e0c8	a03fec2a3	2026-02-16T23:51:47+01:00	fix: use per-account action config for Discord and Telegram gating
+06b961b0371f1dbea621c73d25951b3b44113941	06b961b03	2026-02-16T23:51:41+01:00	fix: flatten remaining anyOf/oneOf in Gemini schema cleaning
+1bbf6206d53b988f313b3d0dcfb6a5587b6b3301	1bbf6206d	2026-02-16T23:51:41+01:00	fix: exclude google-antigravity from Gemini schema sanitization
+fe94e83f6b6c701d5a125b8723f0c6e8a590d0f8	fe94e83f6	2026-02-16T23:51:41+01:00	fix: make tool schema normalization provider-aware
+382158fb3093bed96fc7d3bdc2cdabb62b65e98a	382158fb3	2026-02-16T23:51:37+01:00	fix(ui): auto-refresh sessions list after deletion
+1bb2d65ff3b364e907658f021f93b5fa10fffe68	1bb2d65ff	2026-02-16T23:51:34+01:00	fix: remove unused imports and simplify boolean comparison
+fe613297a75906f7c14898a8043439bffa523840	fe613297a	2026-02-16T23:51:34+01:00	fix: add type assertions for unknown value indexing in translate.ts
+d30f5a2438e1b194b518ba675cf05d5d7ac4fd66	d30f5a243	2026-02-16T23:51:34+01:00	fix: resolve linting issues (curly braces, unused imports, any types)
+075317ab169efb10bcaa631818d05857b09108d3	075317ab1	2026-02-16T23:51:34+01:00	fix: correct function names in overview.ts and add type assertion in translate.ts
+f20bef3d79ffff5915149c0c595c1aa64cf4b105	f20bef3d7	2026-02-16T23:51:34+01:00	fix: add .ts extensions to i18n imports for ESM compatibility
+98ed2e7130ee37f4380be98c7f72e361171fa8f9	98ed2e713	2026-02-16T23:51:34+01:00	fix(i18n): add missing agents and usage tabs to zh-TW locale
+cf44a0c4c1ed9f45f6d3cb79cb76291bec11b753	cf44a0c4c	2026-02-16T23:51:34+01:00	fix(ui): localize language selector and validate stored locale
+a9c952b13a9cdfb9bc462b63f2117ee503939d15	a9c952b13	2026-02-16T23:51:34+01:00	fix(i18n): resolve dynamic import warnings and add zh-TW locale
+4b17ce7f48c67a823ac761fec0a1170090cb7a53	4b17ce7f4	2026-02-16T23:51:34+01:00	feat(ui): add i18n support with English, Chinese, and Portuguese
+f2756118621299aa3f981bc4299adc0ed7603a59	f27561186	2026-02-16T23:51:19+01:00	fix(sandbox): restore SHA-1 in slugifySessionKey to preserve workspace dirs (#18503)
+d799a3994f1bf2dd74f4e085cf1bd772dca40d98	d799a3994	2026-02-16T23:51:16+01:00	fix(doctor): reconcile gateway service token drift after re-pair
+5f821ed06731e81002b69af329a151da4efdafa2	5f821ed06	2026-02-16T23:51:12+01:00	fix(session): prevent stale threadId leaking into non-thread sessions
+01b37f1d3248029da8589e1e6559c76f2d38ac03	01b37f1d3	2026-02-16T23:51:09+01:00	fix(telegram): handle large file getFile errors gracefully
+0587e4cc73290674c32cc9f6edff11ff1b2e9178	0587e4cc7	2026-02-16T23:50:59+01:00	fix(agents): restrict MEDIA: token parsing to line start in tool results (#18510)
+93fbe6482b49ac51b7911ed3ea5e8246fc0a1414	93fbe6482	2026-02-16T23:50:56+01:00	fix(sessions): archive transcript files when pruning stale entries
+441401221d920f9d0bec39cfcea4589fd75745f3	441401221	2026-02-16T23:50:56+01:00	fix(media): clean expired files in subdirectories
+b05273de61b69019fba7293583db9d10a0c40555	b05273de6	2026-02-16T23:50:53+01:00	fix: doctor --fix auto-repairs dmPolicy="open" missing allowFrom wildcard
+89ce1460e15d6f2219cc5ffb866b8b91f19ae2a1	89ce1460e	2026-02-16T23:50:42+01:00	feat(slack): add configurable stream modes
+087edec93f7be8c3210d06b2430ff08037f43b45	087edec93	2026-02-16T23:50:42+01:00	feat(slack): add draft preview cleanup lifecycle
+dfd5a7963146b8245413f9590e8addc6e610f258	dfd5a7963	2026-02-16T23:50:42+01:00	fix(slack): pass account token for draft final chat.update
+bec974aba9ac95612c8df41dd7b2cf43a981b961	bec974aba	2026-02-16T23:50:42+01:00	feat(slack): stream partial replies via draft message updates
+c15385fc94402565a937e92160d69ba2f9a776bf	c15385fc9	2026-02-16T23:50:31+01:00	fix(telegram): enable voice-note transcription in DMs and add CLI fallback
+e8b03a86223a033b4969e4e534d77b5545f0e75f	e8b03a862	2026-02-16T23:50:27+01:00	fix(agents): replace anyOf with string in image tool schema
+6d31d1ecc6eace22f9d629103eff6c203a186f2f	6d31d1ecc	2026-02-16T23:50:24+01:00	fix(plugins): enforce high-priority override precedence
+b90eb5152001e0c50a231ffd1da06b583391324b	b90eb5152	2026-02-16T23:50:24+01:00	feat(plugins): add modelOverride/providerOverride to before_agent_start hook
+15dd2cda209ccabc9febc25e16eec620137ae744	15dd2cda2	2026-02-16T23:50:21+01:00	feat: show transcript file size in session status
+fc6d53c895df64f6e7350354b907e0d775d151a0	fc6d53c89	2026-02-16T23:50:18+01:00	fix: correct import path in test and restore deleted schema help entries
+6d2e3685d6c354d029d788c404c54c5a77d0d2af	6d2e3685d	2026-02-16T23:50:18+01:00	feat(tools): add URL allowlist for web_search and web_fetch
+e179d453c7d8aa3ffdc2dbd67fa5f5fbf93aa016	e179d453c	2026-02-16T23:50:14+01:00	fix: resolve #12770 - update Antigravity default model and trim leading whitespace in BlueBubbles replies
+facfa410a7f282eb2054cec1304f69d9b2df12b7	facfa410a	2026-02-16T23:50:08+01:00	fix(tool-display): satisfy format/lint and address review feedback
+24f213e7edd4c1418aa059ebf00c6497d4c0f501	24f213e7e	2026-02-16T23:50:08+01:00	feat(tool-display): add intent-first details and exec summaries
+b60b44b42e5931c5324346011d1128495022b526	b60b44b42	2026-02-16T23:50:05+01:00	fix(scripts): fix spawn EINVAL error on Windows in ui.js
+290f33759468f3a52603d92f26b5f7d469684887	290f33759	2026-02-16T23:50:01+01:00	fix: remove references to non-existent test file
+eec1f3e9dba9a7c44ff9db2ab4deed1c621141c2	eec1f3e9d	2026-02-16T23:50:01+01:00	fix: address code review feedback - move test data, fix patterns, rewrite docs as RFC
+5801c4f9830c0cab922d33e6750b87047069206a	5801c4f98	2026-02-16T23:50:01+01:00	feat(telegram): add outbound sanitizer leak corpus and docs
+feed5709842deb816cda8ac7e8aa08bc49423793	feed57098	2026-02-16T23:49:54+01:00	fix: syncs all credential types to agent auth.json
+12ce358da5ea190af1c3840e55d306f392d40c9a	12ce358da	2026-02-16T23:49:51+01:00	fix(failover): recognize 'abort' stop reason as timeout for model fallback
+32c66aff49fcdb295484dd94f56c9c8a8f0d9482	32c66aff4	2026-02-16T23:49:47+01:00	fix: add windowsHide: true to spawn in runCommandWithTimeout
+20957efa467403419442e1a45fd76d095fd7c6df	20957efa4	2026-02-16T23:49:44+01:00	fix(process): graceful process tree termination with SIGTERM before SIGKILL
+19ae7a4e17d80b7274ac04ad8d0ceff6b31afa85	19ae7a4e1	2026-02-16T23:49:41+01:00	fix(session-memory): fallback to rotated transcript after /new
+4e930db432e1c0fc269fd4a40abfb46e804714cd	4e930db43	2026-02-16T14:13:17-08:00	fix: guard reminder note (#18588) (thanks @vignesh07)
+0cff8bc4e6977d7ba3a6ade0551c4548f30f8a2b	0cff8bc4e	2026-02-16T17:02:59-05:00	fix(telegram): include DM topic thread id in replies (#18586)
+1567d6cbb436ab9074006d8a2f9cd74d74fb76e7	1567d6cbb	2026-02-16T15:23:40-06:00	feat(discord): download attachments from forwarded messages (#17049)
+e5eb5b3e43d78a0beca7bd917f65eeadb73a033d	e5eb5b3e4	2026-02-16T15:16:35-05:00	feat: add stuck loop detection and exponential backoff infrastructure for agent polling (#17118)
+81d2a91a909483672a05ff2e4792999569d62077	81d2a91a9	2026-02-16T13:48:46-06:00	fix(discord): send initial message for non-forum thread creation (#18117)
+7c240a2b5858d0c507ae31a610baff1079cb1dba	7c240a2b5	2026-02-16T13:38:39-06:00	feat(discord): faster reaction status state machine (watchdog + debounce) (#18248)
+3238bd78d9d593d48e7b49fe9d655554f13f9163	3238bd78d	2026-02-16T13:25:58-06:00	fix(discord): normalize bare numeric IDs in outbound target resolution
+250896cf6e75a4d9a34b0b918c8264e0cd14c723	250896cf6	2026-02-16T12:53:45-06:00	fix: correct contradictory test name (Greptile review)
+03cadc4b7aa428195807edef72f5849031152628	03cadc4b7	2026-02-16T12:53:45-06:00	fix(auth): auto-expire stale auth profile cooldowns and reset error count
+5a39e13c929c4d6840242d42538b027741a7a0bf	5a39e13c9	2026-02-17T01:41:53+08:00	fix(ios): restore missing location monitor merge files (#18260)
+9e26fe44597adf46dbf6a53b3a037a9ec671e161	9e26fe445	2026-02-16T17:37:10Z	fix(ios): gate talk barge-in on isolated audio routes (#18265)
+b3859b488cbecf9287d7bef203b9c163ddc47665	b3859b488	2026-02-16T17:36:17Z	feat(ios): add background listening core toggle (#18261)
+ad27716d3f02ccbf10908086c8ed1008bc7b284a	ad27716d3	2026-02-16T17:33:42Z	feat(ios): add Talk voice directive hint toggle (#18250)
+16327f21dadc12c4793d9a7bc8e033dacac09764	16327f21d	2026-02-16T22:48:47+05:30	feat(telegram): support inline button styles (#18241)
+44ef045614019e46a6897704683a72d279a964d7	44ef04561	2026-02-16T16:42:28Z	fix(canvas): port remaining iOS branch stability fixes (#18228)
+c8a536e30a175dccac68478d23963f17c4183343	c8a536e30	2026-02-16T10:34:18-06:00	fix(agents): scope message tool schema by channel (#18215)
+fec4be8dec67019bf058f0d5a1b9f4fb4cd49f1b	fec4be8de	2026-02-16T08:35:49-05:00	fix(cron): prevent daily jobs from skipping days (48h jump) #17852 (#17903)
+095d522099653367e1b76fa5bb09d4ddf7c8a57c	095d52209	2026-02-16T08:33:40-05:00	fix(security): create session transcript files with 0o600 permissions (#18066)
+f4b2fd00bc9013ae8f0e2a7aad5ae09fdbd720c1	f4b2fd00b	2026-02-16T08:24:55-05:00	fix(config): harden object-array merge-by-id fallback
+dddb1bc942521f5f195741674299d2014ad30fc6	dddb1bc94	2026-02-16T18:54:34+05:30	fix(telegram): fix streaming with extended thinking models overwriting previous messages/ also happens to Execution error (#17973)
+e3e8046a931701017c83f64fbf810af1d319102d	e3e8046a9	2026-02-16T08:17:23-05:00	fix(infra): avoid detached finally unhandled rejection in fetch wrapper (#18014)
+cb391f4bdc75f069ccf642842b25966932068ff2	cb391f4bd	2026-02-16T08:13:51-05:00	fix(config): prevent config.patch from destroying arrays when patch entries lack id (#18030)
+c2a0cf0c28a2596b995ca94952b6f278b0767dac	c2a0cf0c2	2026-02-16T08:09:02-05:00	fix(tts): update tool description to prevent duplicate audio delivery (#18046)
+39bb1b33222e44139128c3a9e04124df97e7d934	39bb1b332	2026-02-16T08:03:35-05:00	fix: auto-recover primary model after rate-limit cooldown expires (#17478) (#18045)
+244ed9db391aa964567ab38c868beed2b595e70a	244ed9db3	2026-02-16T18:10:24+05:30	fix(telegram): draft stream preview not threaded when replyToMode is on (#17880) (#17928)
+b2aa6e094db73210376a7ed3dc72f506398dfdaa	b2aa6e094	2026-02-16T16:21:10+05:30	fix(telegram): prevent non-abort slash commands from racing chat replies (#17899)
+314f193030d026a9c0065ddc74612d9726083ac5	314f19303	2026-02-16T09:56:11+01:00	fix(ci): run scope detection on blacksmith runners
+1e4cf489e0dbd7a54daa09eca887f6738afb0d1d	1e4cf489e	2026-02-16T09:53:36+01:00	fix(ci): keep main runs alive while coalescing newer pushes
+ada7a6289f4d59b6f556de54f15c10b4114921c5	ada7a6289	2026-02-16T09:50:37+01:00	fix(ci): dedupe docker release runs by ref
+2983ef0243b319ed02823a126387abee0ebd8cb0	2983ef024	2026-02-16T09:47:07+01:00	fix(ci): use ref-based concurrency across workflows
+025d4152d177ddf75cd4f4368e6096566ed91838	025d4152d	2026-02-16T09:42:58+01:00	fix(ci): key concurrency by ref instead of sha
+3daaa19426649e991c2edf9ae00bc3917607229e	3daaa1942	2026-02-16T09:36:54+01:00	fix(ci): use JDK 17 for Android SDK setup
+fb6dba2058434e64d9e3bfa84ac27ec91b04925e	fb6dba205	2026-02-16T05:30:02+01:00	fix(ci): align tar override and lockfile to 7.5.9
+c62b90a2b7000538954268cf7c415f74e43c7224	c62b90a2b	2026-02-16T09:57:29+05:30	fix(telegram): stop block streaming from splitting messages when streamMode is off (#17704)
+61a865031faf723f86c8c8dc6e3b4dc3b7b02db4	61a865031	2026-02-16T04:45:42+01:00	fix: sync pnpm lockfile for docker onboard
+41ded303b4f6dae5afa854531ff837c3276ad60b	41ded303b	2026-02-16T04:32:03+01:00	fix(sandbox): preserve array order in config hashing
+cbf58d2e1c835d9a5b077fef52e88a10a23d1449	cbf58d2e1	2026-02-15T19:31:52-08:00	fix(memory): harden context window cache collisions
+559c8d9930eebb5356506ff1a8cd3dbaec92be77	559c8d993	2026-02-16T04:30:59+01:00	fix: replace deprecated SHA-1 in sandbox config hash
+aef1d55300083c951c27ac3ee629e99f3b450906	aef1d5530	2026-02-16T04:27:12+01:00	fix(cron): normalize skill-filter snapshots and split isolated run helpers
+6754a926ee227f72f894044a883b5fdaad047662	6754a926e	2026-02-16T03:26:07Z	fix(pairing): support legacy telegram allowFrom migration
+d19b746928e99507d6192340210cb0360e308abf	d19b74692	2026-02-15T22:25:26-05:00	feat(skills): add cross-platform install fallback for non-brew environments (#17687)
+ac2ede5bb1d55b4119b95f6420c55c20123783fc	ac2ede5bb	2026-02-16T04:18:24+01:00	fix(telegram): treat no-op editMessage as success
+61c99352640ff9746fcd613262201377ea5b2ffb	61c993526	2026-02-16T04:09:39+01:00	fix: correct indentation in cron isolated-agent run.ts
+053affffecec45aa88fea29e123b69236b4bc1ab	053affffe	2026-02-16T04:09:39+01:00	fix(cron): pass agent-level skill filter to isolated cron sessions
+6802b155a806e9b6a5d2a4ef8461becef82c9278	6802b155a	2026-02-15T21:53:49-05:00	fix: stop LLM retry loop when browser control service is unavailable (#17673)
+17a148c8a847d4270bf22201c8cf0f79f4b8ce66	17a148c8a	2026-02-16T03:51:38+01:00	fix: always include long-wait polling guidance in prompt
+2363e1b0853a028e47f90dcc1066e3e9809d65f1	2363e1b08	2026-02-16T03:47:28+01:00	fix(security): restrict skill download target paths
+c6c53437f7da033b94a01d492e904974e7bda74c	c6c53437f	2026-02-16T03:47:10+01:00	fix(security): scope session tools and webhook secret fallback
+d95be2c384a3fcf0f91cb00436bd429ff4a1ec0e	d95be2c38	2026-02-16T02:45:00Z	fix: preserve sandbox allow-all semantics
+ddcc7a1a5d27161bd547b58a03dc484609d17000	ddcc7a1a5	2026-02-15T20:33:51-06:00	fix(discord): dedupe native skill commands by skillName (#17365)
+cf69907015b659e5025efb735ee31bd05c4ee3d5	cf6990701	2026-02-16T03:30:53+01:00	fix(security): redact Telegram bot tokens in errors
+09566b1693f0c04fed9f8476bc42d05574452f55	09566b169	2026-02-15T20:30:17-06:00	fix(discord): preserve channel session keys via channel_id fallbacks (#17622)
+b88f377623a0858dcc905800d3593246b8335523	b88f37762	2026-02-16T03:23:45+01:00	fix: make fast-tool stub type portable
+ba84b12535b7d272cb4793109afc56dd332b32a0	ba84b1253	2026-02-16T03:23:45+01:00	fix: harden pre-commit hook against option injection
+3b4096e02e7e335f99f5986ec1bd566e90b14a7e	3b4096e02	2026-02-16T03:15:57+01:00	fix(ui): load Control UI bootstrap config via JSON endpoint
+adc818db4a4b3b8d663e7674ef20436947514e1b	adc818db4	2026-02-16T03:15:57+01:00	fix(gateway): serve Control UI bootstrap config and lock down CSP
+887b209db47f1f9322fead241a1c0b043fd38339	887b209db	2026-02-16T03:04:06+01:00	fix(security): harden sandbox docker config validation
+6254e96acf16e70ceccc8f9b2abecee44d606f79	6254e96ac	2026-02-16T02:53:40+01:00	fix(security): harden prompt path sanitization
+cd44a0d01e9fe195dcc6b031b8597957257d3571	cd44a0d01	2026-02-16T02:32:05+01:00	fix: codex and similar processes keep dying on pty, solved by refactoring process spawning (#14257)
+71cee673b2ef2e637120c247cf315afa644f076b	71cee673b	2026-02-16T01:15:31Z	fix(gateway): satisfy server-method lint
+f03ea76db30ec10c8f3040f3260cc4583486a518	f03ea76db	2026-02-16T00:49:00Z	fix(slack): tighten threadId type to satisfy lint
+5ecc364d55a8b22d32fea73de60f1bd0e7049bcb	5ecc364d5	2026-02-16T00:37:19Z	fix(daemon): drop unused formatGatewayServiceDescription import
+166cf6a3e04c7df42bea70a7ad5ce2b9df46d147	166cf6a3e	2026-02-16T01:21:11+01:00	fix(web_fetch): cap response body before parsing
+fd3d452f1f622aa23e64384e9367624553eda066	fd3d452f1	2026-02-16T00:19:34Z	fix(ci): fix ui cron test mock signature
+a91bcd2cf477efe14199f4b9b9a10421f6ce0e29	a91bcd2cf	2026-02-16T00:18:27Z	fix(test): avoid fake-timers hang in gateway lock
+bed0e076205cc040416c588645e7b7cd444d5413	bed0e0762	2026-02-15T23:14:42Z	fix(cli): clear plugin manifest cache after install
+632b71c7f84b8f805df3ae59c35c25654b79505a	632b71c7f	2026-02-15T23:14:42Z	fix(test): avoid inheriting process.env in nix config e2e
+eef13235ad0188d5d20de81d89da10fd87751bc6	eef13235a	2026-02-15T23:14:42Z	fix(test): make sessions_spawn e2e harness ordering stable
+89155aa6c63a1318ca8e628158da69bd3c06c377	89155aa6c	2026-02-15T23:14:42Z	fix(test): load sessions_spawn harness before tools
+bbcbabab74a3412f55f66a40402cd7735a8da34e	bbcbabab7	2026-02-15T23:14:42Z	fix(ci): repair e2e mocks and tool schemas
+6b4590be069c3628273d3392fa4131c6a85e4de9	6b4590be0	2026-02-15T22:40:28Z	fix(agents): stabilize sessions_spawn e2e suite
+a948212ca7ddc01250d374f2d6a2b1efdece7463	a948212ca	2026-02-15T14:20:54-08:00	fix(ui): show session labels in selector and standardize session key prefixes
+7c822d039b69f7ccc5b97f740a2348376549e9e2	7c822d039	2026-02-15T16:01:00-06:00	feat(plugins): expose llm input/output hook payloads (openclaw#16724) thanks @SecondThread
+0c7785151600f67b79a764f9951abda100bd41f8	0c7785151	2026-02-15T15:50:44-06:00	fix(agents): mark required-param tool errors as non-retryable (#17533)
+ff4f59ec9062bfa675257f8fd5ef30df1f5e21db	ff4f59ec9	2026-02-15T13:45:17-08:00	feat(image-tool): support multiple images in a single tool call (#17512)
+27deda2221a9a0bb45017f0a60d312d435148281	27deda222	2026-02-15T21:42:35Z	fix(test): drop unused gateway e2e PluginRegistry imports
+84601bf96bfc9c723483327550399c85b4e58f6c	84601bf96	2026-02-15T21:34:15Z	fix(test): fix pi embedded subscribe harness typing
+5c233f4ded959502f1e7ca9d7d6dac67e804644c	5c233f4de	2026-02-15T21:09:59Z	fix(ui): drop unused vi in test helper
+3a075f029272c9f813fec18adbfb12fbf44c6361	3a075f029	2026-02-15T20:05:25Z	fix(macos): drop duplicate AnyCodable helpers
+c75fe7e3cda102536556c630c607bd48753c6bf1	c75fe7e3c	2026-02-15T20:03:48Z	fix(swift): make SwiftPM tests deterministic
+108f0ef8c4a95c85fec7f4609042a07cee2089a6	108f0ef8c	2026-02-15T19:29:28Z	fix(test): remove stale cleanup calls in cron regressions
+88548784ce47336f76cd2bf47bdcdbf455d3539d	88548784c	2026-02-15T19:25:11Z	fix(bluebubbles): use Buffer for multipart body
+c682634188dbdd517af870c1d28315a0928fe4df	c68263418	2026-02-15T13:05:46-06:00	fix(discord): role-based allowlist never matches (Carbon Role objects stringify to mentions) (#16369)
+c118f6c6883a465d9da4d8ae22fcabcae889bc0e	c118f6c68	2026-02-15T18:50:36Z	fix(discord): fix component parsing and modal field typing
+65f8b46c15f6a9f97c8908fa5f1d7a5207a27f15	65f8b46c1	2026-02-15T18:12:15Z	fix(ci): stabilize media and session store tests
+be9b5cefbd86f8de2c33d6f95de7147fe73c3c86	be9b5cefb	2026-02-15T17:57:13Z	fix(ci): stabilize state-dir dependent tests
+c6b3736fe750870912a7d9cc592e6e84f5f12c93	c6b3736fe	2026-02-15T11:36:54-06:00	fix: dedupe probe/token base types (#16986) (thanks @iyoda)
+b6069fc68c2ae92e7c06967b565e363612f57903	b6069fc68	2026-02-15T11:30:25-06:00	feat: support per-channel ackReaction config (#17092) (thanks @zerone0x)

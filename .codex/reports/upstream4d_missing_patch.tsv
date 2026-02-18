@@ -1,0 +1,1513 @@
+e583e716f2301a3270c51416ea30588fa062f3ab	e583e716f	2026-02-18T18:00:07Z	perf(test): use expect.poll for background abort completion
+6f273d5e2a8b8b64695e77734e37860fde6c1709	6f273d5e2	2026-02-18T17:57:48Z	perf(test): replace send-keys session polling loop
+cd8eb079e3c3ecf3928e1327222f8d10f82afca8	cd8eb079e	2026-02-18T17:53:33Z	perf(test): replace subagent lifecycle polling helper
+c68d1073b5ab01b3bae468e8e95f8fddbed5289d	c68d1073b	2026-02-18T17:51:38Z	perf(test): replace claude runner call polling loop
+a82ceb81d27a4671979beeba2681209ab79731a0	a82ceb81d	2026-02-18T17:48:51Z	perf(test): replace sessions e2e yield loops with waitFor
+95aa5480a0ef4a6ad43266f93eceba745f15ced8	95aa5480a	2026-02-18T17:48:02Z	fix(telegram): correct onboarding import for chat lookup helper
+d67942af1e94c7c2bfa95a73b33b1b32b354f865	d67942af1	2026-02-18T17:48:02Z	refactor(telegram): share getChat id lookup helper
+6187e2afbded0789c48ce89646b0c3346f68fb5c	6187e2afb	2026-02-18T17:48:02Z	refactor(gateway): share gmail watcher startup flow
+e702a9eb52a2aa617eee491ebc0b0b590b330c86	e702a9eb5	2026-02-18T17:48:02Z	refactor(channels): share account action gate resolution
+b73a2de9f6137a01f9cac5d94b164cce7f798367	b73a2de9f	2026-02-18T17:48:02Z	refactor(infra): reuse shared home prefix expansion
+b51166e879a96c7cbaa139cdb8dbbf024d1765cb	b51166e87	2026-02-18T17:48:02Z	refactor(browser): share control lifecycle helpers
+005e1d5fd1eb647f63ff7493ceadf0e461765305	005e1d5fd	2026-02-18T17:48:02Z	refactor(cli): share styled select prompt helper
+8b48e0c615b8d9fe3f0e791b4470cb84794d07b4	8b48e0c61	2026-02-18T17:48:02Z	refactor(shared): reuse requirement remote context type
+7b2697bd4dddbd19dbaa8570507a9fe92e365e3f	7b2697bd4	2026-02-18T17:48:01Z	refactor(auto-reply): reuse native command spec mapping
+f46bcbe16d3329c7b431ec0e057d99521387f87b	f46bcbe16	2026-02-18T17:48:01Z	refactor(auto-reply): share slash set/unset command parsing
+fedebc245ea0b5cba59ec91b07171e35ec883fcf	fedebc245	2026-02-18T17:47:13Z	fix(protocol): align bool-first AnyCodable equality/hash dispatch (#20233)
+8f079afb385333c7a4179a2aeab756d6bb48d33c	8f079afb3	2026-02-18T17:46:39Z	perf(test): remove timer usage in command queue ordering test
+6d15d01446c1c59e71ddc44cb6b1340e4bca129a	6d15d0144	2026-02-18T17:44:44Z	perf(test): replace relay list polling loop with expect.poll
+5d81c3ead6da4e413eb43dea5a2e780b8d0cf56b	5d81c3ead	2026-02-18T17:43:06Z	perf(test): remove timer sleeps from concurrency test
+e9b4d86e37bf1c210700f2e4071551d0fa4b8316	e9b4d86e3	2026-02-18T17:39:54Z	fix(protocol): preserve AnyCodable booleans from JSON bridge (#20220)
+05173ec53abbda2b46250ade93ba452ae43d180e	05173ec53	2026-02-18T17:37:26Z	perf(test): use fs.rm retry options in cron teardown
+aa3dfe8216e1b7fdda50427a3cfd7a8fdcb0696e	aa3dfe821	2026-02-18T17:35:13Z	perf(test): replace role-update signal polling with waitFor
+d16621f608ef68c1632921ae307a35b7144224ce	d16621f60	2026-02-18T17:33:25Z	fix(test): annotate mock web listener return type
+9c125c6c1f6e8edac76b7c365aefda319fd7b0b8	9c125c6c1	2026-02-18T17:31:59Z	perf(test): remove unnecessary qmd export delay
+f9e67f3f4cd30ed3297041c90471ef650092bdae	f9e67f3f4	2026-02-18T17:28:25Z	perf(test): replace gateway chat polling loops with waitFor
+e8e47ff00ee2793e098cf252d4ba6618033203cf	e8e47ff00	2026-02-18T17:26:05Z	perf(test): replace manual log polling with vi.waitFor
+8ab90858baabf766784481b09b2c5a11252a744c	8ab90858b	2026-02-18T17:23:44Z	refactor(auto-reply): share command action arg formatting
+0a783315360cb17774364f6ec5dee51900a905f4	0a7833153	2026-02-18T17:23:44Z	refactor(infra): share shell env timeout normalization
+5ae4595bb9cc33e3caa68d661f1ab5ceb4053e86	5ae4595bb	2026-02-18T17:23:44Z	refactor(plugins): reuse plugin service runtime context
+64a10e64e40ba07bba07b008e82df11fed8d1fb4	64a10e64e	2026-02-18T17:22:18Z	perf(test): replace reconnect polling sleeps with waitFor
+0d25b6a31761394ef7b9296e15855014eb6fed94	0d25b6a31	2026-02-18T17:20:35Z	perf(test): remove fixed sleeps in async test flows
+00e32cf04a464167bdbcdbd6e367ed8ea4629ab1	00e32cf04	2026-02-18T17:16:36Z	test(auto-reply): type set/unset action helper expectations
+28d49b8d44463a80cad81a7aefb000ffc6686741	28d49b8d4	2026-02-18T17:13:47Z	refactor(auth-profiles): reuse cooldown timestamp resolver
+818419b4c486a143d201e7c5ba8531d8f99abc00	818419b4c	2026-02-18T17:13:40Z	refactor(auto-reply): share set/unset command action parsing
+288015a9fc86ea7f0674c2c04cb6d9a4a10498b9	288015a9f	2026-02-18T17:13:35Z	refactor(auth): share api key masking utility
+3138dbaf75bd34234aff14dffb27bc0366de13f1	3138dbaf7	2026-02-18T17:01:22Z	test(auto-reply): share elevated-off status assertion
+50e5413c197d0a45a518c2d4092764552a068c2d	50e5413c1	2026-02-18T17:01:22Z	refactor(cron-test): share running-state fixture
+c7831fdf1e774c0284f586ec2fed2f395e4d2ddb	c7831fdf1	2026-02-18T17:01:22Z	refactor(gateway-test): share preview transcript fixture
+e9f6a2ce52ff61b6650d02a6a6141581355c0996	e9f6a2ce5	2026-02-18T17:01:22Z	refactor(web-test): share mock listener harness
+f05395ae002a6c03ae07de8cf83483f92386f190	f05395ae0	2026-02-18T17:01:22Z	refactor(test): share internal hook and npm pack assertions
+72a4d83334a219f1dc2c6fa1e9f7ebc7947105c4	72a4d8333	2026-02-18T16:50:05Z	perf(test): use microtask wait in fetch rejection test
+c0a6ff08a7424b9148d32d0acf270d7005043b18	c0a6ff08a	2026-02-18T16:48:35Z	test(auto-reply): reuse shared directive and home test harnesses
+82cb185881c5b345d2890e204f068ca7e2d7ec1d	82cb18588	2026-02-18T16:48:35Z	refactor(core): unify bounded concurrency runner
+2b8f1bade0eb33bbc06970397751069e187acc2a	2b8f1bade	2026-02-18T16:48:35Z	refactor(archive): share archive path safety helpers
+36996194cd0c0b41344f00c6ff120eb6bd18eabf	36996194c	2026-02-18T16:45:48Z	perf(test): remove timer waits in hooks and discord monitor tests
+4605dfd2ae9847676c3a9aac01d8d66a40d2f590	4605dfd2a	2026-02-18T16:35:25Z	test(channels): add slack group-mention and onboarding helper coverage
+f3b75730de42572bee9b82344d7cc16e5e44342a	f3b75730d	2026-02-18T16:35:25Z	refactor(channels): share slack matching and allowlist prompt flow
+c0cd53e1044159a07da33214e0806ddba6e2b0f6	c0cd53e10	2026-02-18T16:28:00Z	perf(test): trim sandbox registry cleanup churn
+a661eec0bf34ab77208809ffae88f5385a347bd7	a661eec0b	2026-02-18T16:26:52Z	test(channels): cover query+limit filtering in directory config
+68be4611dd3141bf372fdfcd3ae18bb3f3afb736	68be4611d	2026-02-18T16:26:52Z	refactor(channels): dedupe directory query/limit pipelines
+d77dcebcb15440c175d831ca3f2778bdba02273a	d77dcebcb	2026-02-18T16:23:55Z	perf(test): replace timeout ticks with microtask waits
+983a68c23e9b83f10d4cba09aaecee3670ca3436	983a68c23	2026-02-18T16:22:20Z	test(matrix): cover directory context and group exact-match resolution
+eb4f1e765c09d5999724ff3e0aec273d7579f5eb	eb4f1e765	2026-02-18T16:22:20Z	refactor(matrix): dedupe directory/target match helpers
+e5f13db13d9957b303b8400896048bc627b3884c	e5f13db13	2026-02-18T16:22:00Z	perf(test): remove polling loop from announce queue tests
+98fac87a9e196fd311429eefccc9b4f77109c171	98fac87a9	2026-02-18T16:18:01Z	test(matrix): add coverage for deduped action helpers
+f5c370219154631f8942965d104b7ee4e63f1895	f5c370219	2026-02-18T16:18:01Z	refactor(matrix): dedupe action limit and pin/reaction helpers
+7648f6bb00f249170d7d8ac4f095565820fb150e	7648f6bb0	2026-02-18T16:14:07Z	perf(test): fake abort timer and dedupe slack thread cases
+29d3bb278f3e9b8f8623e8926d53315f81d48ea1	29d3bb278	2026-02-18T16:08:38Z	refactor(device-pair): reduce duplicated gateway parsing
+95d52b06d571c01404a657b682f5bb1aceaa0ca6	95d52b06d	2026-02-18T16:08:38Z	refactor(mattermost): dedupe reaction flow and test fixtures
+c7bc94436b8ee130d607212a0a56cc388eeb3d4c	c7bc94436	2026-02-18T16:01:20Z	perf(test): fake queue timers and merge telegram reply-mode checks
+797a47c3cec7b1bd7741575dfb401991dddb41fa	797a47c3c	2026-02-18T16:55:50+01:00	docs: harden coding-agent skill guidance example
+a0d904dc23167c51680340ddeedabf1950cf7747	a0d904dc2	2026-02-18T09:39:09-06:00	docs(discord): replace quick setup and add recommended guild setup (#20088)
+6a19654c4a88d9b726b8c260a0f9881fdec35e25	6a19654c4	2026-02-18T14:15:20Z	refactor(core): dedupe browser route signatures and cli watchdog schema
+1934eebbf023e8c752cb3c4b03ccbdaa349bd29a	1934eebbf	2026-02-18T14:15:14Z	refactor(agents): dedupe lifecycle send assertions and stable payload stringify
+168d24526e676e5baf826b6087ecf4591565e2e4	168d24526	2026-02-18T14:01:34Z	chore(protocol): regenerate Swift models for device pair remove params
+42025915dbeef583dbbf70024c3f9a828d70e993	42025915d	2026-02-18T14:01:29Z	test(agents): dedupe sessions_spawn model preference assertions
+33b0b38f65e9fd03e503d33be9c28c7db4f98ceb	33b0b38f6	2026-02-18T14:01:24Z	test(agents): dedupe shared bootstrap and tool-id test setup
+33f30367e1baba8fa347949cca84d82b27274192	33f30367e	2026-02-18T13:39:40Z	fix(cli): include model and thinking fields in cron edit patch type
+41e68c31dbb05f2d47f3c8b52ccedb2c964884a5	41e68c31d	2026-02-18T13:39:40Z	test(channels): dedupe slack arg-menu and discord reply chunk assertions
+c7bfa818eaeb4a512a406eeff79b8689899fe66c	c7bfa818e	2026-02-18T13:39:40Z	test(cli): dedupe cron add/edit assertion harness
+57083e4220e3a5884e5bf016ef3af556c20cbddb	57083e422	2026-02-18T13:37:41Z	iOS: add Apple Watch companion message MVP (#20054)
+e71e9a55abeca90ba7e1c5fc0ffd73ad54b32bc3	e71e9a55a	2026-02-18T13:34:03Z	fix(cli): align runtime capture helper with RuntimeEnv signature
+277d524fa3f9bf0cc5a9d5dda050dfbbbd70bce5	277d524fa	2026-02-18T13:34:03Z	test(agents): restore stable cron tool gateway mocks
+a18f411fb6a41e3ce276ecf505737f6b891a3b27	a18f411fb	2026-02-18T13:34:03Z	test(agents): dedupe cron tool mock wiring
+8f866d51c445ed33542af662b7c61187314c61c6	8f866d51c	2026-02-18T13:34:03Z	test(cli): dedupe runtime capture fixtures across command specs
+3af9f704c8ca854bc74a88ff6f5b88a5253195e5	3af9f704c	2026-02-18T13:34:03Z	test(cli): dedupe repeated gateway node and slack pairing setup
+2d0ce40ed6c46667ded95aee455e9a16a54b8ed0	2d0ce40ed	2026-02-18T13:34:03Z	test(agents): dedupe tool-result overflow and telegram account helpers
+1437ed76a03ff115682aef6e48b0fa4faccfa12c	1437ed76a	2026-02-18T13:27:31Z	Gateway/CLI: add paired-device remove and clear flows (#20057)
+fc65f70a9b97b5af99f6a82030145ad16897c6dc	fc65f70a9	2026-02-18T13:23:06Z	iOS: stabilize pairing/reconnect loops (#20056)
+ff50d3303d83fd88f237668372433f8174f68121	ff50d3303	2026-02-18T13:17:44Z	test(memory): dedupe model-auth mock setup
+28b8101eef7458f7b8910c7c93cb8313491c098f	28b8101ee	2026-02-18T13:15:00Z	fix(browser): handle IPv6 loopback auth and dedupe fetch auth tests
+eb775ff24b9af4b1a4aa89b72a91f6c4831c06bf	eb775ff24	2026-02-18T13:13:43Z	test(media): dedupe audio provider request assertions
+e1b491d9613251fd218743f0a4fa913e3f3d0e9a	e1b491d96	2026-02-18T13:13:43Z	test(channels): dedupe inbound contract dispatch capture setup
+39881a318ab618a12c6b9e37068061e9879fa04d	39881a318	2026-02-18T13:13:04Z	Browser: reuse extension relay when relay port is already occupied (#20035)
+f4db58a5fd5bb322ebe66373a1f433cc9cd3b4f9	f4db58a5f	2026-02-18T13:06:21Z	test(media): dedupe auto-audio fixture wiring
+d0676186001d62aaf5ea382defee9c26b0c870bb	d06761860	2026-02-18T13:06:08Z	test(line): dedupe reply chunk fixture setup
+53ad08f319c4240f250d7fe9c6bcd06ea3316514	53ad08f31	2026-02-18T13:02:59Z	test(slack): type draft stream harness callbacks
+7b46f2c17fa41121712dfa697e39b211f7f59648	7b46f2c17	2026-02-18T13:01:37Z	test(imessage): dedupe send test scaffolding
+7f7fc523cf00b72bb3dda0bb06c4435a80f5c199	7f7fc523c	2026-02-18T12:59:36Z	test(cli): dedupe runMessageAction helper specs
+c6d6411378836865508ae8c69ddbe56066e2df72	c6d641137	2026-02-18T12:58:35Z	test(media): dedupe redirect request fixtures
+7bca5f5400839bbca973cd67b7dcc82cbedd9afc	7bca5f540	2026-02-18T12:57:51Z	test(slack): dedupe block and draft stream test fixtures
+3daf730fcc12ab30f5bd28429e6a569f9c93ff49	3daf730fc	2026-02-18T12:54:22Z	test(gateway): fix send target resolution error typing
+56ebbf0eedd45c72037c5a5fe477fc5136fa4318	56ebbf0ee	2026-02-18T12:52:34Z	test(gateway): dedupe sessions usage handler fixtures
+fc295883292b86fba309b64f7495f1dc7d202acd	fc2958832	2026-02-18T12:52:25Z	test(gateway): dedupe send delivery fixtures
+3a09d85cd309e1eb3d70fdcc571351cba817d7e7	3a09d85cd	2026-02-18T12:49:15Z	test(gateway): fix typed respond helpers in agent tests
+00c23080856e8a65624d4ab8983c89a788f905ee	00c230808	2026-02-18T12:48:10Z	test(gateway): dedupe health status scope test setup
+c6da37dfb57a940db3b1ed53418d234116d14dce	c6da37dfb	2026-02-18T12:48:04Z	test(gateway): dedupe agent handler request fixtures
+396ccf9fb194c0037bebf289914093c07c641a74	396ccf9fb	2026-02-18T12:45:14Z	test(gateway): dedupe agents.files.list assertions
+2aec380fb304b12880c6e566cd8b07cac50a82c2	2aec380fb	2026-02-18T12:43:54Z	test(gateway): dedupe update and chat abort persistence fixtures
+bb84452c625eafa53064c169c901125ac9010770	bb84452c6	2026-02-18T12:43:46Z	fix(signal): restore mention-gating helper map typing
+37b5c9292845cb4439a1b830b7229ce0246fdbfe	37b5c9292	2026-02-18T12:38:44Z	test(signal): dedupe mention-gating handler setup
+9b68af5f4fd81f800d9353ae17357c7f63cee38c	9b68af5f4	2026-02-18T12:37:38Z	test(signal): dedupe receive event fixtures and add mention clamp case
+9c2b82362ee7e98c523d9b5577bd53d5b78f2afb	9c2b82362	2026-02-18T12:28:35Z	test(signal): dedupe monitor tool-result test payload fixtures
+1e2b367e1ea0f12f5e071215585dd6cfbfc15b36	1e2b367e1	2026-02-18T12:28:30Z	test(hooks): dedupe session-memory handler test setup
+c3472f6c54e9318ebe9b30e9ee43b8199684138f	c3472f6c5	2026-02-18T12:28:25Z	test(memory): dedupe embeddings provider test fixtures
+87ca2a24bd43408920c16abdcc38a6441f927442	87ca2a24b	2026-02-18T12:27:21Z	test(gateway): dedupe call gateway test setup
+514e318df90b0b96b2dcb0578e150c9a3562ea6c	514e318df	2026-02-18T12:20:56Z	test(config): dedupe io write config test setup
+eabf187fa5c47042b304751f0aac504767703d46	eabf187fa	2026-02-18T12:20:48Z	test(cron): dedupe migration and regression fixtures
+2fd211b705a78738049b5d3c273007bf0adbc102	2fd211b70	2026-02-18T12:20:40Z	test(auto-reply): dedupe directive behavior e2e fixtures
+3c886ee98b02475205b8e21e83dc36e3c096b985	3c886ee98	2026-02-18T12:04:32Z	test(infra): dedupe update-runner fixture setup
+4750be9d5f23b34e0d6c2910961698f0a8b3bef8	4750be9d5	2026-02-18T12:04:32Z	test(cli): extract update-cli package-install test helpers
+3356aae7048722cf87cb4a0255f4f4c7a08a5791	3356aae70	2026-02-18T12:04:32Z	test(cron): dedupe delivery target tests and add coverage
+36a34e595908fc9942c07786b6fc446ad44fb93c	36a34e595	2026-02-18T12:04:32Z	test(cron): dedupe isolated-agent session test setup
+cb34e80f984e5ae5161d7ea7ee12f52977f2105a	cb34e80f9	2026-02-18T19:38:23+08:00	fix(ios): restore auto-selected team for local signing (#19993)
+d833dcd731875262cdffe3fc60137dfaf53e16b3	d833dcd73	2026-02-18T15:31:01+05:30	fix(telegram): cron and heartbeat messages land in wrong chat instead of target topic (#19367)
+114736ed1a52de47043d9154e2cf6508a16fe5b6	114736ed1	2026-02-18T00:09:51-08:00	Doctor/Security: fix telegram numeric ID + symlink config permission warnings (#19844)
+7ea7b7e7af2bdac724becb1caf24b56da87df51a	7ea7b7e7a	2026-02-18T00:45:43-05:00	Infra: unify git root discovery
+639d0221ff584896f788360a28199a76d21784e9	639d0221f	2026-02-18T05:31:13Z	test: dedupe line and whatsapp target resolution tests
+a9cce800df9add880c5c4901e0107fa5352be84c	a9cce800d	2026-02-18T05:31:06Z	test: dedupe slack missing-thread tests and cover history failures
+12ad708ce53f5e3cf29d88cc4f08304271e3a930	12ad708ce	2026-02-18T05:30:59Z	test: dedupe gateway auth and sessions patch coverage
+e3292b9af1f69d77ff49a1aa0b48cb34e216f0a6	e3292b9af	2026-02-18T05:30:51Z	test: dedupe sessions command tests and cover active filtering
+23f21501906151df5ad42b518d4f05ad0c0ad4a7	23f215019	2026-02-18T05:05:04Z	test: dedupe auth fallback tests and add auth util unit coverage
+112f8250fcb69f97b5b802ee9a0d8f738c91bf39	112f8250f	2026-02-18T05:05:04Z	test: dedupe registry/session tests and add install source coverage
+07fdceb5fd5dc214f1b7f50c7dfa6925596c7d74	07fdceb5f	2026-02-18T00:02:51-05:00	refactor: centralize presence routing and version precedence coverage (#19609)
+5c69e625f58dd012c0765430becdffc4dc175f03	5c69e625f	2026-02-17T23:59:20-05:00	fix(cli): display correct model for sub-agents in sessions list (#18660)
+a69e7682c1aeddb6cdd6d090b7268669b5ee84fc	a69e7682c	2026-02-18T04:49:22Z	refactor(test): dedupe channel and monitor action suites
+31f83c86b2cfe5552fda00786a088cb16df38c35	31f83c86b	2026-02-18T04:49:22Z	refactor(test): dedupe agent harnesses and routing fixtures
+8a9fddedc9ad3b5ca64ce8eb63cd08ab6de3bab5	8a9fddedc	2026-02-18T04:49:22Z	refactor: extract shared install and embedding utilities
+4d3403b7acdce0e58dd0fd8de6948e9ff8f81fce	4d3403b7a	2026-02-17T23:46:40-05:00	chore: fix CI errors
+308e09c87624ef443b9f56a3e10fe8fbcc91496b	308e09c87	2026-02-18T04:27:01Z	perf(test): shorten process timeout fixtures
+46278e22cfb0df481637301e7927bda778c5f095	46278e22c	2026-02-18T04:22:59Z	perf(test): trim telegram duplicates and queue wait delays
+fa4772b4ce87a3f10faa7036ba6c86fb8ceab63a	fa4772b4c	2026-02-18T04:16:36Z	perf(test): dedupe telegram allowlist and speed twitch probe
+fdc676822788dc76b9493cf6b0f704ebf9b8145c	fdc676822	2026-02-18T04:10:27Z	perf(test): stabilize and speed sandbox registry races
+5f12334761cb5dab94a042ad50e9f647ae17fbc7	5f1233476	2026-02-18T04:04:14Z	refactor: dedupe image, web, and auth profile test fixtures
+05b7bd2c22b687d697e45dd89ddf4b47a6de71c8	05b7bd2c2	2026-02-18T04:04:14Z	refactor: dedupe command dispatch and process poll tests
+adac9cb67f0a724e3394e3ebc3b2b6403190d97a	adac9cb67	2026-02-18T04:04:14Z	refactor: dedupe gateway and scheduler test scaffolding
+262472ba207c2f1b0e3dbea0e06e9421652fcd77	262472ba2	2026-02-18T04:04:14Z	test: remove duplicated scenario scaffolding across runtime tests
+e57628165a196799416a55e67d7089db924d5aa4	e57628165	2026-02-18T04:04:14Z	test: dedupe shared setup in channel and doctor config tests
+d1ab85297262e552bedc2df8121d0dab261c1163	d1ab85297	2026-02-18T04:04:14Z	test: extract shared e2e helpers for trigger handling and skills
+b099171db5881851d628bb207cff84d84153606f	b099171db	2026-02-18T04:04:04Z	perf(test): dedupe slow discord monitor cases
+ac0db68235a05b516cd6b684c718cdf27002cc90	ac0db6823	2026-02-18T05:01:31+01:00	refactor(security): extract safeBins trust resolver
+e8154c12e62cb4518a5642dd9d8137b04990d9b3	e8154c12e	2026-02-18T04:57:08+01:00	refactor(net): table-drive embedded IPv6 decoding and SSRF tests
+35016a380c009d04cfed5289890cf6af79b5e1ce	35016a380	2026-02-18T04:55:40+01:00	fix(sandbox): serialize registry mutations and lock usage
+28bac46c92069dc728524fbf383024c1b64e5c23	28bac46c9	2026-02-18T04:55:31+01:00	fix(security): harden safeBins path trust
+42d2a6188864a9c114209e35b8ea3c192792667c	42d2a6188	2026-02-18T04:53:50+01:00	chore(changelog): move SSRF transition fix to 2026.2.18
+442fdbf3d897e61e06d2ab308ed2048ef45fc85c	442fdbf3d	2026-02-18T04:53:09+01:00	fix(security): block SSRF IPv6 transition bypasses
+50e5553533dd36a1e84d46d5f2fcb1fed610fcaf	50e555353	2026-02-18T04:53:09+01:00	fix: align retry backoff semantics and test mock signatures
+0bf1b38cc0dbf8feffc4fb60298631661175ab97	0bf1b38cc	2026-02-17T22:52:58-05:00	Agents: fix subagent completion thread routing
+35851cdaff423df29e3f16df3992b412634043ca	35851cdaf	2026-02-18T04:52:13+01:00	chore(changelog): move cron SSRF fix into 2026.2.18
+516046dba86360b6b7724230cb00eb9621a13470	516046dba	2026-02-18T04:51:25+01:00	fix: avoid doctor token regeneration on invalid repairs
+797ea7ed27bab421cfd051a4c078dc4bdd84a9dd	797ea7ed2	2026-02-18T03:50:30Z	perf(test): cut slow monitor/subagent test overhead
+99db4d13e5c139883ef0def9ff963e9273179655	99db4d13e	2026-02-18T04:48:08+01:00	fix(gateway): guard cron webhook delivery against SSRF
+bc00c7d15687c616c8b4a27fb0e10a1a0a868095	bc00c7d15	2026-02-18T04:46:38+01:00	refactor: dedupe sandbox registry helpers
+6a5f887b3deba23be9d734e672bbbc80769aef08	6a5f887b3	2026-02-18T09:16:31+05:30	test: harden Telegram command menu sanitization coverage (#19703)
+cc29be8c9bcdfaecb90f0ab13124c8f5362a6741	cc29be8c9	2026-02-18T04:44:56+01:00	fix: serialize sandbox registry writes
+8278903f0ae24a7272294138b804cd096f57bc96	8278903f0	2026-02-18T04:40:42+01:00	fix: update deep links handling
+4bf3338834560b942a06f0714412c24670052fd5	4bf333883	2026-02-18T04:40:06+01:00	chore: bump version to 2026.2.18 unreleased
+f25bbbc37eb412b35093d8c1dfe44f714d2ecbe2	f25bbbc37	2026-02-18T04:37:58+01:00	feat: switch anthropic onboarding defaults to sonnet
+e8816c554f224b6c0d85f2eb28e5e8377da92371	e8816c554	2026-02-17T22:36:14-05:00	Agents: fix subagent completion delivery to origin channel
+ca43efa96589dc3c32b9ccedf2f8a01ed735773f	ca43efa96	2026-02-18T03:25:14Z	fix(ci): force npm install path in smoke docker tests
+91e9684e8ca92ab00096c1bc166ae3c7e4bf33c3	91e9684e8	2026-02-18T03:17:54Z	test: add normalization coverage for shared and slack allow-list
+8407eeb33c15767156963f58836538451d89d8b0	8407eeb33	2026-02-18T03:17:54Z	refactor: extract shared string normalization helpers
+8984f31876d30b523383e2cfd2f21027adc03255	8984f3187	2026-02-18T03:07:47Z	fix(agents): correct completion announce retry backoff schedule
+a420fa04173826c4369bd64b8f101131ef6ade11	a420fa041	2026-02-18T03:02:20Z	fix(test): align subagent announce chat history mock typing
+289f215b3160015588789f6345ee11569ac5c1cf	289f215b3	2026-02-18T03:00:27Z	fix(agents): make manual subagent completion announce deterministic
+d30492823c2382f493c453263f1385fdbc6e079c	d30492823	2026-02-17T21:55:47-05:00	chore(auto-reply): format subagent command files
+34851a78b2bbe517d6f5e6acc13a6db666bb2f6d	34851a78b	2026-02-18T03:48:18+01:00	fix: route manual subagent spawn replies via OriginatingTo fallback
+4134875c311fbb7f677fb9181a883431444cf3e9	4134875c3	2026-02-18T02:42:52Z	fix: route discord native subagent announce to channel target
+c1928845ac9321259afc7012afcb23083f4aaba9	c1928845a	2026-02-18T02:35:58Z	fix: route native subagent spawns to target session
+40a666159732a99e207d7ea054decfe0cda6b9b0	40a666159	2026-02-17T21:32:04-05:00	test(cli): fix option-collision mock typings
+c90b09cb02b2a1387d4e23d73c9afe3a26c0bb87	c90b09cb0	2026-02-18T03:29:48+01:00	feat(agents): support Anthropic 1M context beta header
+d1c00dbb7c64a39e205464dae7f2a068420e91c1	d1c00dbb7	2026-02-18T03:27:16+01:00	fix: harden include confinement edge cases (#18652) (thanks @aether-ai-agent)
+b5f551d71698b96a6849f26cf280ab88bc24188c	b5f551d71	2026-02-18T03:27:16+01:00	fix(security): OC-06 prevent path traversal in config includes
+ae3637b23b6a52d40169780ec9968e81c8c277ec	ae3637b23	2026-02-18T03:21:52+01:00	test: expand subagent announce completion coverage
+edf7d6af61568eade21d302e268c252858bbf8ec	edf7d6af6	2026-02-18T03:19:50+01:00	fix: harden subagent completion announce retries
+d7c6136c1f8b4d3e1dfc93bca1d1e6c283773f94	d7c6136c1	2026-02-18T03:12:32+01:00	test: add sonnet 4.6 and opus 4.6 setup-token model tests
+5a31da8eecdc9b08c35d599001047df424126e9a	5a31da8ee	2026-02-17T21:10:38-05:00	chore: format imports in gateway and session tools
+81db05962752ae152c9fe3c4946e81b13237ba14	81db05962	2026-02-18T02:59:40+01:00	fix(subagents): always read latest assistant/tool output on subagent completion
+0dd97feb41f847ee754b599caa5f763b1b865251	0dd97feb4	2026-02-18T02:57:33+01:00	fix(subagents): include tool role in subagent completion output
+985ec71c553837bd7084d3a64f6f14bfc80856b2	985ec71c5	2026-02-17T20:57:09-05:00	CLI: resolve parent/subcommand option collisions (#18725)
+fa4f66255ce1bb3235de9ec1b3eaccb0a04832a0	fa4f66255	2026-02-18T02:52:35+01:00	fix(subagents): return completion message for manual session spawns
+f6f5cda6ca47ca6178cf809e7638a29197e93ee8	f6f5cda6c	2026-02-18T01:50:11Z	style: format subagent command files
+e2dd827ca4bac832c16865c42082a6455a588c3b	e2dd827ca	2026-02-18T02:45:05+01:00	fix: guarantee manual subagent spawn sends completion message
+5bd95bef5a05eeb7d65c6bc5bdc2ef3ec237a91d	5bd95bef5	2026-02-18T01:37:34Z	fix(protocol): regenerate swift gateway models
+b8b43175c5b896b6edc3a07813c16c0df165e0a2	b8b43175c	2026-02-18T01:34:35Z	style: align formatting with oxfmt 0.33
+31f9be126c51a10d288c7a7f49c45907f3638ce3	31f9be126	2026-02-18T01:29:02Z	style: run oxfmt and fix gate failures
+638853c6d2608b122be63526b721aa359452af40	638853c6d	2026-02-18T02:18:05+01:00	fix(security): sanitize sandbox env vars before docker launch
+5487c9adebb0a5a8b7bf12e106d3bc2923df0485	5487c9ade	2026-02-18T02:18:02+01:00	feat(security): add sandbox env sanitization helpers + tests
+71ad357bbe5d398181f8c6b1838fb384b2a6a1b7	71ad357bb	2026-02-18T02:18:02+01:00	test: remove obsolete mesh test file
+972d1b74d0d9d3d58615a66612800bef4ea36bc1	972d1b74d	2026-02-18T02:18:02+01:00	Revert "Add mesh orchestration gateway methods with DAG execution and retry"
+01672a8f25586029eb580549ef8f53f8d0224a38	01672a8f2	2026-02-18T02:18:02+01:00	Revert "Add mesh auto-planning with chat command UX and hardened auth/session behavior"
+6dcc052bb4407fe440a4e53aef8eeefb5903cab4	6dcc052bb	2026-02-18T02:09:40+01:00	fix: stabilize model catalog and pi discovery auth storage compatibility
+653add918b7db426111789e12087688d84d584b4	653add918	2026-02-18T01:59:08+01:00	chore: bump workspace dependencies
+414b996b0cbf46e6c5b1a01a26126a2328f410a1	414b996b0	2026-02-18T01:58:33+01:00	fix(agents): make image resize logs single-line with size
+345920044436ab81eef3c7bd4db85101e066b9c3	345920044	2026-02-18T01:51:28+01:00	docs: reorder unreleased changelog by user-impact highlights
+f42e13c17cf6414655ccb8157c3797543e0e72f1	f42e13c17	2026-02-18T01:38:44+01:00	feat(telegram): add forum topic creation support (#17035)
+76949001ea213ac988816209d652cc583408bb11	76949001e	2026-02-18T01:35:37+01:00	fix: compact skill paths in prompt (#14776) (thanks @bitfish3)
+4f2c57eb4eb034867134f20cd53679de7a6a3fa3	4f2c57eb4	2026-02-18T01:35:37+01:00	feat(skills): compact skill paths with ~ to reduce prompt tokens
+cfd384ead21b1268bfc09adfb16eab8d5ef588ca	cfd384ead	2026-02-18T01:31:28+01:00	feat(skills): improve descriptions with routing logic (#14577)
+2e91552f097555773dbfd43e7b84efea6c280571	2e91552f0	2026-02-18T01:31:11+01:00	feat(agents): add generic provider api key rotation (#19587)
+9cce40d123725a1cdd9b1624b0ca533d5b869211	9cce40d12	2026-02-18T01:28:20+01:00	feat(skills): Add 'Use when / Don't use when' routing blocks (#14521)
+6b5199ba2a023d21fc91d142d4a1858dcdfe6d5b	6b5199ba2	2026-02-18T01:05:36+01:00	Whatsapp/add resolve outbound target tests (#19345)
+4c569ce246295edf2c438471f697f481492645f0	4c569ce24	2026-02-18T00:56:57+01:00	docs(tokens): document image dimension token tradeoffs
+b05e89e5e6051fbc5d455f8cdbc8c57fc1acf1fe	b05e89e5e	2026-02-18T00:54:20+01:00	fix(agents): make image sanitization dimension configurable
+1d23934c098a64e5c33c868a8c0cd06dda8e9013	1d23934c0	2026-02-18T00:50:22+01:00	fix: follow-up slack streaming routing/tests (#9972) (thanks @natedenh)
+b2acfd606a0d69205ea25c28b7055b63e8f86852	b2acfd606	2026-02-17T15:49:22-08:00	fix(subagent): update SUBAGENT_SPAWN_ACCEPTED_NOTE for clarity on auto-announcement behavior
+f07bb8e8fc1ceaea474148d5cce86fbf8a5eb81d	f07bb8e8f	2026-02-18T00:35:41+01:00	fix(hooks): backport internal message hook bridge with safe delivery semantics
+087dca8fa9f597eb968d51299fd04b16f3d01fea	087dca8fa	2026-02-17T15:32:52-08:00	fix(subagent): harden read-tool overflow guards and sticky reply threading (#19508)
+75e11fed5db0b0dd3c83644f63feab357ed35e37	75e11fed5	2026-02-18T00:16:36+01:00	docs: update AGENTS instructions
+5acec7f79b7c0461e7c0f3ada3add5bdcd09072a	5acec7f79	2026-02-18T00:08:27+01:00	fix: wire agents.defaults.imageModel into media understanding auto-discovery
+ae2c8f2cf03ff5c00126875760c40cacb54de7fe	ae2c8f2cf	2026-02-18T00:00:31+01:00	feat(models): support anthropic sonnet 4.6
+a333d92013620e2bef9f9e2acde36bbac4551f2b	a333d9201	2026-02-17T23:48:49+01:00	docs(security): harden gateway security guidance
+dd4eb8bf6320faeebf2c9b3486f1f43050c5a507	dd4eb8bf6	2026-02-17T23:48:14+01:00	fix(cron): retry next-second schedule compute on undefined
+c26cf6aa830c739e009e93d6b44162407ea1fb25	c26cf6aa8	2026-02-17T23:48:14+01:00	feat(cron): add default stagger controls for scheduled jobs
+b98b113b889f60db5cb463da66f662202e3b754c	b98b113b8	2026-02-17T23:47:34+01:00	fix(ios): harden share relay routing and delivery guards
+442b45e54ecaeb0feca23e03c0fbd4180010b92b	442b45e54	2026-02-17T23:47:29+01:00	fix(gateway): make health monitor checks single-flight
+96f7d35dd74b87880fcd4f6bdedd7e504f70d5fc	96f7d35dd	2026-02-17T23:47:24+01:00	fix(gateway): block cross-session fallback in node event delivery
+4bd6a2b0d4de7dc47172036b84e46da96add0060	4bd6a2b0d	2026-02-17T23:40:09+01:00	docs: tighten PR scope and review-size policy in vision
+3aa33f29e523dfb59f745c98b288513842e18900	3aa33f29e	2026-02-17T23:21:03+01:00	docs: tighten contribution guidance and vision links
+b20339a2329639a23fca6cc0d317619f21064bbb	b20339a23	2026-02-17T14:17:22-08:00	fix(signal): canonicalize message targets in tool and inbound flows
+9a2c39419e5a4be28c3fc308322d7e2edae6d59f	9a2c39419	2026-02-17T23:08:55+01:00	chore(release): bump version to 2026.2.17
+25a9e7ed97b32db6a1119b4dada6b319397c48e7	25a9e7ed9	2026-02-17T23:05:08+01:00	docs(changelog): add missing 2026.2.16 entries and reorder by user impact
+2cf82c357e7e293ea56d39e0b8d814f12573c904	2cf82c357	2026-02-17T14:28:08-06:00	Docs: expand multi-agent routing
+bfc9736366561aa8ba87ee43cd5a2b195195892a	bfc973636	2026-02-17T20:08:50Z	feat: share to openclaw ios app (#19424)
+81c5c02e5318407f81df27b6a9c8118fcf52a2dd	81c5c02e5	2026-02-17T11:40:20-08:00	changelog: add @tyler6204 credit for today's entries
+75001a049007e6681aaaca729fe4053f0fe4e3e4	75001a049	2026-02-17T11:40:04-08:00	fix cron announce routing and timeout handling
+e1015a51975552185b077b8bd6e3c4391b859ed5	e1015a519	2026-02-17T11:39:58-08:00	fix(bluebubbles): recover outbound message IDs and include sender metadata
+98962ed81d266bd9d0bcd359a8d24d2f6d5b0c9c	98962ed81	2026-02-18T03:16:10+08:00	feat(ios): auto-select local signing team (#18421)
+2362aac3db6e47c442b87642bdb3795acc178259	2362aac3d	2026-02-17T11:05:37-08:00	chore: document sessions_spawn response note and subagent context prefix
+ab9429554121a71563a0f2d0c6aab71e58e12909	ab9429554	2026-02-18T02:22:54+08:00	docs(slack): add assistant:write requirement for typing status
+c4e9bb3b99dbc90b5964fc810c00a598e8c0a628	c4e9bb3b9	2026-02-17T23:20:36+05:30	fix: sanitize native command names for Telegram API (#19257)
+20a561224cb48c294bcdc6716be40a2632551497	20a561224	2026-02-17T17:42:47Z	iOS: use operator session for ChatSheet RPCs (#19320)
+b251533e03c41d9301c3d6db505290edef872412	b251533e0	2026-02-17T11:07:38-06:00	update my contributing list
+2e3219ff6630f3396d58783938d8cc3228f6e515	2e3219ff6	2026-02-17T10:47:22-06:00	Update auto-response message for third-party extensions
+0978d63edd43de5d31431a85fdf80f9696c17ef4	0978d63ed	2026-02-17T17:42:37+01:00	docs: add community plugins guide
+5923d3ff8aac578e591701d966e1b7814f1b0456	5923d3ff8	2026-02-17T17:38:13+01:00	docs: add vision doc and link from README
+d85f0fc0c3606ea487cb6cc666e7e3682460ace2	d85f0fc0c	2026-02-17T17:38:13+01:00	docs: refine maintainer application guidance
+dbda60d99bcde51f1fc4c095656d833de928f92a	dbda60d99	2026-02-17T17:38:13+01:00	docs: add maintainer application section
+2caf7e76124141ec5107e7e6dea6f55b88b24162	2caf7e761	2026-02-17T10:46:54-05:00	docs(changelog): remove revert entries
+e0e2184b900144f25e3a9fbfd1d5289b3cf26e97	e0e2184b9	2026-02-17T10:43:39-05:00	test(release): add appcast regression coverage
+19a8f8bbf6e8ce84fcc5e95e75e626caa998b489	19a8f8bbf	2026-02-17T10:40:25-05:00	test(cron): add model fallback regression coverage
+e7c19cb52d6b5a4c6c0beb2cca6e052eb4f8ba8c	e7c19cb52	2026-02-17T10:10:32-05:00	test(telegram): cover autoSelectFamily env precedence
+9f261f592df8386e2de222c6329b4dda2f2022f5	9f261f592	2026-02-17T10:05:29-05:00	revert: PR 18288 accidental merge (#19224)
+21978303a9bfa6d1e78a8f85b27bba1015816082	21978303a	2026-02-17T10:02:26-05:00	test(auto-reply): cover sender_id metadata
+11fcbadec8ee16aa3b46fd6f4149c2a90cb68700	11fcbadec	2026-02-17T10:01:54-05:00	fix(daemon): guard preferred node selection
+3f66280c3ccce4b85a4e6250595563a558dc574f	3f66280c3	2026-02-17T10:00:08-05:00	test(sessions): add delivery info regression coverage
+c0072be6a6667e90c0c9c8c517a20c99408d1d96	c0072be6a	2026-02-17T09:58:47-05:00	docs(cli): add components send example
+4536a6e05f0303b203b4db2e4e9e4158cc7dae5d	4536a6e05	2026-02-17T09:58:39-05:00	revert(agents): revert base64 image validation (#19221)
+bd1e7fadd5b33f2571781907f66617a67b2da32d	bd1e7fadd	2026-02-17T09:47:29-05:00	test: cover cron telemetry and typed fetch mocks
+f44e3b2a340cf4f5c7bbaf8da18c49491ed506b6	f44e3b2a3	2026-02-17T09:43:41-05:00	revert: fix models set catalog validation (#19194)
+6bb9b0656f26241ea8b8f7e7ceaab07fe34698f5	6bb9b0656	2026-02-17T14:34:41Z	Tests: fix fetch mock typings for type-aware checks
+dd0b789669c0a430207e2c437ac8e777641fe267	dd0b78966	2026-02-17T09:30:50-05:00	fix(mattermost): surface reactions support
+2547b782d77fb2bfbce134fce2c6c0b2633180c9	2547b782d	2026-02-17T14:29:41Z	Agents: add before_message_write persistence regression tests
+ae93bc9f51fc1b1aab5623f822cc3256909250e3	ae93bc9f5	2026-02-17T14:29:41Z	fix(gateway): make stale token cleanup non-fatal
+3211280bed557b4648ce94431b83ad1c0dd8e444	3211280be	2026-02-17T09:25:18-05:00	revert: per-model thinkingDefault override (#19195)
+5d1bcc76cc66c2b4862bf46bee47e87b82dcd587	5d1bcc76c	2026-02-17T09:22:55-05:00	docs(zai): document tool_stream defaults
+7caf874546e73952027cd3b78acd562974188334	7caf87454	2026-02-17T09:20:21-05:00	test(update): cover restart gating
+a19ea7d400c1dc72deb67b9fd77c1fe45168cdc3	a19ea7d40	2026-02-17T09:19:04-05:00	test(discord): cover auto-thread skip types
+afd78133bade01cef39035763cab7737e90930ca	afd78133b	2026-02-17T09:16:13-05:00	fix(ui): revert PR #18093 directive tags (#19188)
+d54e4af4a12323bb28b152cfebe6b16b6c5faa30	d54e4af4a	2026-02-17T09:15:01-05:00	revert(agents): remove llms.txt discovery prompt (#19192)
+747403be9b35b96ca6ff24eba2ec782cd28f9d03	747403be9	2026-02-17T09:14:09-05:00	docs(readme): remove Android install link
+b114c827016cc2f1c8979fb468209ee03bd788f4	b114c8270	2026-02-17T14:08:04Z	CLI: approve latest pending device request
+cc359d338ef959f7a706244922c5c8658ffe2282	cc359d338	2026-02-17T09:02:39-05:00	test: add fetch mock helper and reaction coverage
+0e023e300ec1f715a81dc3b75687b21f85b44b39	0e023e300	2026-02-17T13:57:50Z	Revert: fully roll back #17986 templates
+e2a93db430945d57d1e015dd916dbd9a244925f2	e2a93db43	2026-02-17T13:56:30Z	test(discord): fix mock call arg typing
+1ee64d6c72377f481a14b3e3196c620abb0b9c35	1ee64d6c7	2026-02-17T13:56:30Z	Revert "fix(browser): handle EADDRINUSE with automatic port fallback"
+66f5a4c6980bf704b9b032767bd4bc5fceda7473	66f5a4c69	2026-02-17T13:56:30Z	Revert "fix(browser): track original port mapping for EADDRINUSE fallback"
+b0d4c9b7219896c470c2959f1bdcef8a567b02f1	b0d4c9b72	2026-02-17T13:56:30Z	fix(discord): preserve DM lastRoute user target
+7884d656877be6e17466d2e2fab2e904b4a2c5f9	7884d6568	2026-02-17T08:53:25-05:00	test(feishu): cover post mentions for other users
+17c4a03e2b812d626d91d0b60934a8605b6edb28	17c4a03e2	2026-02-17T08:49:26-05:00	test(discord): cover audioAsVoice replies
+9772a28f0e425fe4d2fb8d9b832546ff3b1f677b	9772a28f0	2026-02-17T08:49:16-05:00	test(gateway): cover trusted proxy trimming
+e74ec2acd3c7252bfcdf7ee82196791bef171447	e74ec2acd	2026-02-17T08:48:11-05:00	fix(cron): add spin-loop regression coverage
+366da7569a3fe8cae340d9e6c2923e36f68fb044	366da7569	2026-02-17T08:47:25-05:00	fix(cli): honor update restart overrides
+dff8692613d586dd9e4759b6a3efe66509d811a9	dff869261	2026-02-17T08:45:41-05:00	fix(discord): normalize command allowFrom prefixes
+96fb276481af7fee97aa6ebad1f08d96d5894eaa	96fb27648	2026-02-17T08:44:42-05:00	docs(changelog): note webhook session reuse fix
+72ab24a1578377a55cce3ed1d8d0574f71f89829	72ab24a15	2026-02-17T08:44:42-05:00	test(cron): cover webhook session rollover overrides
+7fca92ea93e769bd5d47ebaa0cad7e169cf37bae	7fca92ea9	2026-02-17T08:44:42-05:00	test(web): fix baileys mock typing
+111a24d55cb1bc863d1c2cb5e34d15a616a4220b	111a24d55	2026-02-17T08:44:24-05:00	fix(daemon): scope token drift warnings
+210bc379710353024fce9c579ecce8d07daf47f2	210bc3797	2026-02-17T08:40:36-05:00	chore(subagents): add regression coverage and changelog
+85b5ac8520b6d45775d0cd1b65c8ee746c4331e0	85b5ac852	2026-02-17T13:31:38Z	Revert: fully roll back #17974 zh-cn UI README
+836e77449cdd36cd60e227d541397569d6eba22a	836e77449	2026-02-17T13:12:53Z	iOS onboarding: stop auth step-3 retry loop churn (#19153)
+0c87dbdcfc2653c512d0bc72fcfefad06cde33c8	0c87dbdcf	2026-02-17T13:02:38Z	voice-call: harden closed-loop turn loop and transcript routing (#19140)
+bc4038149cddbce950547eab25997ff2a1fa8d14	bc4038149	2026-02-17T12:23:26Z	Revert: undo #17974 README change
+9f907320c33fcd0f5f177cd5d2a472acf168e69f	9f907320c	2026-02-17T11:17:30+02:00	Revert "fix: handle forum/topics in Telegram DM thread routing (#17980)"
+32d12fcae9e1a4d4165d217037dfcbece6e2953d	32d12fcae	2026-02-17T14:44:18+05:30	feat(telegram): add channel_post support for bot-to-bot communication (#17857)
+5db95cd8d52f30af5535ad6794c4f0b1b3d4be15	5db95cd8d	2026-02-17T10:40:13+02:00	fix(extensions): revert openai codex auth plugin (PR #18009)
+19f8b6bf4fd8de34e25077080908c6975756eb6c	19f8b6bf4	2026-02-17T09:15:55+01:00	fix: searchable model picker in configure (#19010) (thanks @bjesuiter)
+ddee6291eba40b32a91d0e89dd361f1ee72bba3f	ddee6291e	2026-02-17T09:15:55+01:00	Docs: add screenshot showing model picker usability issue
+daef91800cc3e3ce43df8eae18c653cf56c02df2	daef91800	2026-02-17T09:15:55+01:00	Configure: improve searchable model picker token matching
+01fcac07262decf89cae1179de0097b12e734978	01fcac072	2026-02-17T09:15:55+01:00	Configure: make model picker allowlist searchable
+900b97e3c734f32a8b5f2a5e98d7090a36c28602	900b97e3c	2026-02-17T13:30:29+05:30	test: type telegram action mock passthrough args
+7be63ec74a6aad250d08051a9dab091f5972beb1	7be63ec74	2026-02-17T13:30:29+05:30	fix: align tool execute arg parsing for hooks
+f8b9e26c477dccb824c79feb13593e0f15c64300	f8b9e26c4	2026-02-17T13:30:29+05:30	test: pass extensionContext in abort dedupe e2e
+1903c685c0683e351f63c376881e3b7de4dd43b6	1903c685c	2026-02-17T13:30:29+05:30	style: drop aidev-note prefix in telegram comments
+9d9630c83a41adb82632e13d5349fff3330a3e29	9d9630c83	2026-02-17T13:30:29+05:30	fix: preserve telegram dm topic thread ids
+f17b42d2f8eebecd0a334fe8d811ac4a60f04ee0	f17b42d2f	2026-02-16T23:52:24-08:00	CI: remove formal models conformance workflow (#19007)
+92de4031a3262b0b6dc85467bdb6b8172166bba9	92de4031a	2026-02-17T09:45:08+02:00	Revert "fix(telegram): wire sendPollTelegram into channel action handler (#16977)"
+e727bca2dc686bc1b3ec127c5b4e88cfdb871908	e727bca2d	2026-02-17T09:44:36+02:00	Revert "Add Telegram polls action to config typing"
+33b59441d25f2e557a2b926669b48e89272987bd	33b59441d	2026-02-17T09:43:57+02:00	Revert "Fix Telegram poll action wiring"
+b2fef5ebc464a94fd2ae87c89b1093223887e170	b2fef5ebc	2026-02-17T09:38:15+02:00	Revert "Default Telegram polls to public"
+60dc3741c0362a5a64adf6c12634986fa430ed7e	60dc3741c	2026-02-17T12:53:54+05:30	fix: before_tool_call hook double-fires with abort signal (#16852)
+583844ecf6c153a8b3748523d68f654224875467	583844ecf	2026-02-17T12:36:15+05:30	fix(telegram): avoid duplicate preview bubbles in partial stream mode (#18956)
+5649e403df845d018ece698833f34e444c9d618d	5649e403d	2026-02-17T15:56:51+09:00	chore: Fix hanging test.
+73668bb9630db32128c3e822b6838b5ea0db5f9e	73668bb96	2026-02-17T15:54:17+09:00	chore: Fix broken test.
+bcf862f69ffb2898130f791f823762585afc2a7f	bcf862f69	2026-02-17T15:50:07+09:00	chore: Typecheck tests.
+048e29ea35531dd937ad1fb30003f26c881b1931	048e29ea3	2026-02-17T15:50:07+09:00	chore: Fix types in tests 45/N.
+52ad28e097e87f15029e34c105a1912db830e791	52ad28e09	2026-02-17T15:50:07+09:00	chore: Fix types in tests 44/N.
+688f86bf28c62e47dcf34dbc26240b5a61feefe7	688f86bf2	2026-02-17T15:50:07+09:00	chore: Fix types in tests 43/N.
+7d2ef131c139598905be4f704076d658d4e010f2	7d2ef131c	2026-02-17T15:50:07+09:00	chore: Fix types in tests 42/N.
+6264c5e84236abbfe1f783968532911caaf47973	6264c5e84	2026-02-17T15:50:07+09:00	chore: Fix types in tests 41/N.
+3dc8d5656de6bc3e7184b0e529c424684c1ff4d2	3dc8d5656	2026-02-17T15:50:07+09:00	chore: Fix types in tests 40/N.
+c4bd82d81de8d810071b2f6a93d263dd93f31b33	c4bd82d81	2026-02-17T15:50:07+09:00	chore: Fix types in tests 39/N.
+084e39b519d8ab8d1479d8d02adfffbbbd76fa5d	084e39b51	2026-02-17T15:50:07+09:00	chore: Fix types in tests 38/N.
+238718c1d8bd59e68a8b3adc1ab12474cca3c064	238718c1d	2026-02-17T15:50:07+09:00	chore: Fix types in tests 37/N.
+7b31e8fc5951a0fca4bb46623ef24dda2544ec08	7b31e8fc5	2026-02-17T15:50:07+09:00	chore: Fix types in tests 36/N.
+2a4ca7671e97888d0e07fe3d447c0695489b23c0	2a4ca7671	2026-02-17T15:50:07+09:00	chore: Fix types in tests 35/N.
+ed75d30ad304c0f8b5d435fbc09a98b54eea5b3a	ed75d30ad	2026-02-17T15:50:07+09:00	chore: Fix types in tests 34/N.
+49bd9f75f4cd5290db94292cee406fec05d54895	49bd9f75f	2026-02-17T15:50:07+09:00	chore: Fix types in tests 33/N.
+f44b58fd58a078a2b867c25bd715b1ca7453eeff	f44b58fd5	2026-02-17T11:26:14+05:30	style(telegram): format dispatch files
+7ffc8f9f7ccf0fa80d9708102344932a9a62b93d	7ffc8f9f7	2026-02-17T11:21:49+05:30	fix(telegram): add initial message debounce for better push notifications (#18147)
+2e375a5498a0ae60d933de77940da60d3964037e	2e375a549	2026-02-17T14:33:38+09:00	chore: Fix types in tests 32/N.
+116f5afea3e7f0860b420e37cd2f0e94a630aceb	116f5afea	2026-02-17T14:33:26+09:00	chore: Fix types in tests 31/N.
+f2f17bafbc14d2f261f4430d5a68053027b63d32	f2f17bafb	2026-02-17T14:32:57+09:00	chore: Fix types in tests 30/N.
+ecf1c955a1070eb121224b8901f2c98668833780	ecf1c955a	2026-02-17T14:32:43+09:00	chore: Fix types in tests 29/N.
+03e6acd0514029214c343eb40d847c9c4b61f312	03e6acd05	2026-02-17T14:32:18+09:00	chore: Fix types in tests 28/N.
+97c8f4999eb1408e5ef8cb01ade67e02a69fed04	97c8f4999	2026-02-17T14:31:55+09:00	chore: Fix types in tests 27/N.
+423543530954c3724109e63434a9de53eeb572e4	423543530	2026-02-17T14:31:40+09:00	chore: Fix types in tests 26/N.
+6e5df1dc0fccc82b214a7767630704ad0b446033	6e5df1dc0	2026-02-17T14:31:02+09:00	chore: Fix types in tests 25/N.
+600022cdcc0f03bc0e36ac15d48418d246b56006	600022cdc	2026-02-17T14:30:36+09:00	chore: Fix types in tests 24/N.
+be5b28cd6b473df2ab672bdf09a81ee5d224ec8d	be5b28cd6	2026-02-17T13:40:17+09:00	chore: Fix types.
+d0cb8c19b2a1c4e5a2ce8a84e390c08ead5a20e8	d0cb8c19b	2026-02-17T13:36:48+09:00	chore: wtf.
+ed11e93cf2da98d8ce6a6d1b4a22f34e71d93536	ed11e93cf	2026-02-16T23:20:16-05:00	chore(format)
+ca19745fa22e56e071085ea50c085293605bb4eb	ca19745fa	2026-02-16T23:17:13-05:00	Revert "channels: migrate extension account listing to factory"
+e391827ea95bd499c8180e176b13ba4a2bef2751	e391827ea	2026-02-16T22:16:20-06:00	CI: use self-hosted for labeler/automation
+f8adfcf60eb4331aa9b9c961e15bcc25c71408b6	f8adfcf60	2026-02-16T23:12:06-05:00	test(agents): cover exec non-zero exits
+4b40bdb98e9c5df2fdbe8c01ff78d3aaa18eec7d	4b40bdb98	2026-02-16T23:07:26-05:00	fix(telegram): clear offsets on token change
+65fa529e032d35c1e18313e99367b80980ce9a3d	65fa529e0	2026-02-16T22:59:37-05:00	Revert "fix(whatsapp): allow per-message link preview override\n\nWhatsApp messages default to enabling link previews for URLs. This adds\nsupport for overriding this behavior per-message via the \nparameter (e.g. from  tool options), consistent with Telegram.\n\nFix: Updated internal WhatsApp Web API layers to pass  option\ndown to Baileys ."
+67014228cffa6c686f30d5a07345cf658fa890cc	67014228c	2026-02-16T22:57:15-05:00	fix(subagents): harden announce retry guards
+f7d2e15a2e69e34425d7e581d5ce801d303ac7e4	f7d2e15a2	2026-02-16T22:37:34-05:00	test: stabilize infra tests
+759c7fc18e4883a1068944793c0ea4bb310b119d	759c7fc18	2026-02-16T22:35:28-05:00	revert(voice-call): remove cached inbound greeting
+950f36feff3486fb65d611f544c537e73351533a	950f36fef	2026-02-16T22:35:28-05:00	revert(voice-call): undo oxfmt formatting pass
+ffe1ba68b92af39c0ba97eacfa3a135e38075adf	ffe1ba68b	2026-02-16T22:35:28-05:00	revert(voice-call): undo cached greeting note
+1486eb66fd17c08e284cf819585511bafaf9d33e	1486eb66f	2026-02-16T22:35:27-05:00	revert(gateway): restore loopback auth setup
+b7cf28f4070eb99b626ffe1c22a215eb3b057891	b7cf28f40	2026-02-16T22:35:27-05:00	test(docker): cover browser install build arg
+826e62a3bce109ca899590c24c35b6bc913576cd	826e62a3b	2026-02-16T22:35:27-05:00	fix(sessions): purge deleted transcript archives
+52b624ccae8921608004d586dd7183e529897786	52b624cca	2026-02-16T22:35:27-05:00	fix(doctor): audit env-only gateway tokens
+df8f7ff1ab3b15cfa990c27b5ca16bedea36da9a	df8f7ff1a	2026-02-16T22:26:31-05:00	docs(voice-call): document stale call reaper config
+cf6cdc74d0882fd8eb1b6056df5b58c0f0467736	cf6cdc74d	2026-02-17T12:24:03+09:00	chore: Fix types in tests 23/N.
+8d6e345338df1c1b2fbf933cf746c96dcd22a62d	8d6e34533	2026-02-17T12:23:12+09:00	chore: Fix types in tests 22/N.
+245018fd6b05259a67851065da5b78663b663cdf	245018fd6	2026-02-17T12:23:12+09:00	chore: Fix types in tests 21/N.
+18cc48dfd928641de2f81cae2ea9eac7f28ec53e	18cc48dfd	2026-02-17T12:23:12+09:00	chore: Fix types in tests 20/N.
+e09643e82c51d86ddc16afe0eb96b01bb155c321	e09643e82	2026-02-17T12:23:12+09:00	chore: chore: Fix types in tests 19/N.
+ecfc5a5ee7048155ed8aa0d24b71c308c8499a42	ecfc5a5ee	2026-02-16T22:21:00-05:00	test(agents): cover tool result media placeholders
+68634468f58da75a0e40c29aec3bc80762816de3	68634468f	2026-02-16T22:18:03-05:00	chore(format): fix test import order
+bfaa03981b028519bd35cb1429f1f2e336c76b8b	bfaa03981	2026-02-16T22:13:08-05:00	test(voice-call): cover stream disconnect auto-end
+78c3e5166bbd289bef518b1465f36a1da58d9e32	78c3e5166	2026-02-16T22:10:59-05:00	test(telegram): cover getFile file-too-big errors
+d137f33281e12b24b06ab32cb49123fdd061403d	d137f3328	2026-02-16T22:10:07-05:00	test(status): cover token summary variants
+def0254169e40bc5ab93f50386712fad96237894	def025416	2026-02-16T22:08:51-05:00	test(session): cover stale threadId fallback
+7a00f056af0ea6a167c175ff50c317c3eee65af9	7a00f056a	2026-02-16T22:03:41-05:00	revert(sandbox): revert SHA-1 slug restoration
+6b8c0bc69705bf84e838bcaa576ae6e27d664f2f	6b8c0bc69	2026-02-17T12:00:38+09:00	chore: Format files.
+8ece8215aadda6d9a2ffaa163cc8ee6b91781e00	8ece8215a	2026-02-17T12:00:29+09:00	chore: Fix types in tests 18/N.
+43c97d18aa51e07787300d0868795c1c97be10ea	43c97d18a	2026-02-17T12:00:29+09:00	chore: Fix types in tests 17/N.
+7bc783cb03faf5eda74a29e321261c9237923201	7bc783cb0	2026-02-17T12:00:29+09:00	chore: Fix types in tests 16/N.
+a76a9c375f8e40328312ad133cd5a6afc26bd6d0	a76a9c375	2026-02-17T12:00:29+09:00	chore: Fix types in tests 15/N.
+db3529e92475ebfe0e3e464e112667f353cb13ca	db3529e92	2026-02-17T12:00:29+09:00	chore: Fix types in tests 14/N.
+50fd2a99ba1080629adf473173854928b3b01e3b	50fd2a99b	2026-02-17T12:00:29+09:00	chore: Fix types in tests 13/N.
+81fd771cb9989dbafea74f8912016a2cf8017ff2	81fd771cb	2026-02-16T21:50:01-05:00	fix(gateway): preserve chat.history context under hard caps
+f6e68b917b04143b929ce96647ebd3e9eb62817b	f6e68b917	2026-02-16T21:48:57-05:00	docs(cron): clarify webhook posting summary condition
+6070116382aab73e41138f1d48b516cf05f17207	607011638	2026-02-16T21:47:18-05:00	revert(exec): undo accidental merge of PR #18521
+ae82371d8a541c49931598c0ade3e10ba869f07d	ae82371d8	2026-02-16T21:46:45-05:00	revert(docs): undo accidental merge of #18516
+3df8305cb6a29f7fe7ba00008fde4d4fbd2b16f0	3df8305cb	2026-02-16T21:46:04-05:00	fix(ui): gate sessions refresh on successful delete
+9c5f08244e70ea892298fc423563e593aa285ae1	9c5f08244	2026-02-17T11:37:11+09:00	chore: Format files.
+391796a3fb219aef54b13a02f15d36b18d2a532c	391796a3f	2026-02-16T21:34:27-05:00	fix(agents): restore multi-image image tool schema contract
+966e5560f837e43879c72078433366b7cee4a79e	966e5560f	2026-02-16T21:29:00-05:00	revert(telegram): undo accidental merge of PR #18564
+0c1c34c9506d885253428286e56cf02f223ac780	0c1c34c95	2026-02-17T03:28:20+01:00	refactor(plugins): split before-agent hooks by model and prompt phases
+a75e95be02fe6b7b6bcc59e5b96b5d2514afe4d2	a75e95be0	2026-02-17T03:27:23+01:00	fix(reply): track messaging media aliases for dedupe
+1f850374f6e7bc8e178f548bddb8095f32ef2f9a	1f850374f	2026-02-17T03:26:26+01:00	fix(gateway): harden channel health monitor recovery
+4aed4eedb7608ba151c513bf7793eb3425032c91	4aed4eedb	2026-02-16T21:25:35-05:00	test(extensions): cast fetch mocks to satisfy tsgo
+f7e75d2c5c53e8d16d6385b2ebc2b88ce0f34ee3	f7e75d2c5	2026-02-16T21:25:35-05:00	fix(doctor): repair googlechat open dm wildcard auto-fix
+81741c37fd5ae2942e2904b3e1cee608a04d60ee	81741c37f	2026-02-17T11:24:08+09:00	fix(gateway): remove watch-mode build/start race (#18782)
+4b8f53979ed25325517436de12c2c109b172c104	4b8f53979	2026-02-17T11:22:49+09:00	chore: Fix type errors from reverts.
+262b7a157ae6f84a243cd13cc44f260c6ece7270	262b7a157	2026-02-17T11:22:49+09:00	chore: chore: Fix types in tests 12/N.
+e02feaff8348df90aa1073e5b2041b173bf44857	e02feaff8	2026-02-17T11:22:49+09:00	chore: Fix types in tests 11/N.
+058eb857629f5208c280e555cdb08c0a2f4cf74c	058eb8576	2026-02-17T11:22:49+09:00	chore: Fix types in tests 10/N.
+95f344e433b1629907ec93fe6c76ab90cf343e58	95f344e43	2026-02-17T11:22:49+09:00	chore: Fix types in tests 9/N.
+5dc8983954e3007194ede6f1477a19b233e16eac	5dc898395	2026-02-17T11:22:49+09:00	chore: Fix types in tests 8/N.
+ac38d51290008f769e32d97850f42d34341d1c0f	ac38d5129	2026-02-17T11:22:49+09:00	chore: Fix types in tests 7/N.
+0aa28c71cabbfd055d14644ee570b1f290e0c692	0aa28c71c	2026-02-16T21:20:05-05:00	fix(doctor): move forced exit to top-level command
+901d4cb310a07bcabfe802d86a500c54cd822452	901d4cb31	2026-02-17T03:19:42+01:00	revert: accidental merge of OC-09 sandbox env sanitization change
+f79cf3a01d8fab852740be838d2c4917b3e45732	f79cf3a01	2026-02-16T21:16:29-05:00	revert: remove accidentally merged video-quote-finder skill (#18550)
+a78839e60cdb3ef9867ebaeaecc9c9cd57865459	a78839e60	2026-02-17T11:15:15+09:00	chore: Fix Slack test.
+bb8df6ab8d33eec4e9744cb3190ef880544a0d03	bb8df6ab8	2026-02-16T21:13:48-05:00	revert(tools): finish rollback of PR #18584
+f924ab40d83546a892ddebdea92c77c7d6c99581	f924ab40d	2026-02-16T21:13:48-05:00	revert(tools): undo accidental merge of PR #18584
+0158e41298aaef3041c03efc0973c3d783f360f7	0158e4129	2026-02-16T21:11:53-05:00	Revert "fix: resolve #12770 - update Antigravity default model and trim leading whitespace in BlueBubbles replies"
+fb6e415d0c52abd30aba211a1f3fda49a7453d1e	fb6e415d0	2026-02-17T03:10:36+01:00	fix(agents): align session lock hold budget with run timeouts
+ce4b4d947ce9523f01db12c07cd5b601d0eb6027	ce4b4d947	2026-02-16T21:09:49-05:00	revert(doctor): undo accidental merge of PR #18591
+41475454696316cdf3d2dbeca24e451402a35742	414754546	2026-02-16T21:04:29-05:00	Revert "feat: show transcript file size in session status"
+9789dfd95b1798f20cc6b980f58d783c0c80edba	9789dfd95	2026-02-17T03:04:00+01:00	fix(ui): correct usage range totals and muted styles
+4ca75bed56047e283da18eb28aa6d310356f3456	4ca75bed5	2026-02-16T21:00:59-05:00	fix(models): sync auth-profiles before availability checks
+fbda9a93fda35558d57d3273dceffe05d9de10db	fbda9a93f	2026-02-16T21:00:27-05:00	fix(failover): align abort timeout detection and regressions
+f242246839a66d534ea5ed4419c40c04a34cd01b	f24224683	2026-02-17T03:00:01+01:00	fix(subagents): pass group context in /subagents spawn
+2b3ecee7c5b32c9391f58799d94277ae0e0caa0d	2b3ecee7c	2026-02-16T20:59:30-05:00	fix(actions): layer per-account gate fallback
+616c0bd4c75fcac79955015d00407349fe7727f4	616c0bd4c	2026-02-17T10:57:31+09:00	chore: Cleanup unused vars that were leftover from the reverts.
+b3d9ecf4e49dfd5298be339224dd54c801f1de9c	b3d9ecf4e	2026-02-17T10:57:31+09:00	chore: Fix types that were broken due to reverts.
+01ea8088766b18f19c656023dcf92b3bdcccf583	01ea80887	2026-02-17T10:57:31+09:00	chore: Format files.
+003d6c45d6b4718a9f8500f25a9ef694eb42581b	003d6c45d	2026-02-17T10:57:31+09:00	chore: Fix types in tests 6/N.
+b6d4f7c00e24e5e5384ea09dac23cbd827988d03	b6d4f7c00	2026-02-17T10:57:31+09:00	chore: Fix types in tests 5/N.
+c49234cbfbdfbb742d533ba4b612b9ea22aa13e4	c49234cbf	2026-02-17T10:57:31+09:00	chore: chore: Fix types in tests 4/N.
+1406b28469a3418a79ab57f7fbc1b3b7b0b87215	1406b2846	2026-02-17T10:57:31+09:00	chore: Fix types in tests 3/N.
+3518554e23680d04d97976cd5ab25ef0766d0a2a	3518554e2	2026-02-16T20:56:55-05:00	fix(heartbeat): bound responsePrefix strip for ack detection
+c219c85df31c79d498c5fdbbd0eb3055512138fe	c219c85df	2026-02-17T02:56:45+01:00	docs(changelog): record PR 18608 fixups
+afa5533253dc004ae6d63d214611353fbc0a2e24	afa553325	2026-02-17T02:55:46+01:00	fix(mattermost): harden react remove flag parsing
+d6226355e653f87e08343c9154188784d0d9e937	d6226355e	2026-02-17T02:51:00+01:00	fix(slack): validate interaction payloads and handle malformed actions
+bbb5fbc71f1a70dd4c0aaa748b70f353c347b9d9	bbb5fbc71	2026-02-16T20:49:09-05:00	fix(scripts): harden Windows UI spawn behavior
+742e6543c7ab342d2771cd8e6e7349846b805fea	742e6543c	2026-02-17T02:46:24+01:00	fix(ui): preserve locale bootstrap and trusted-proxy overview behavior
+accb6734902e8c82fd1e6c13792c61925f3225bf	accb67349	2026-02-16T20:46:05-05:00	revert(telegram): undo accidental merge of PR #18601
+3fff266d52375fabee1c8def6cd800d72b8d7051	3fff266d5	2026-02-16T20:39:06-05:00	fix(session-memory): harden reset transcript recovery
+f818de7bef08044d8d038d07a667460ca567f9c0	f818de7be	2026-02-16T20:38:03-05:00	docs(changelog): note slack forwarded attachment hotfix
+3793424f5fc4df86b37c8ffb6ac5e1b5f474d9c6	3793424f5	2026-02-16T20:37:22-05:00	docs(changelog): note process kill-tree hotfix
+67250f059aa6e62a8b6334311586e12454b04b0e	67250f059	2026-02-16T20:37:08-05:00	fix(slack): scope attachment extraction to forwarded shares
+fb996031bc0ff7d35b861e97495f05e67b73013d	fb996031b	2026-02-16T20:37:08-05:00	fix(process): harden graceful kill-tree cancellation semantics
+7b172d61cdf8cb520bd46cb00862eedb84d42630	7b172d61c	2026-02-16T20:36:01-05:00	Revert "fix: respect OPENCLAW_HOME for isolated gateway instances"
+014a46d3fc3695864fc7a34da6ff756f81ed77c1	014a46d3f	2026-02-17T02:34:09+01:00	Revert "fix: session-memory hook finds previous session file after /new/reset"
+a1538ea637f4815fa2c8654554f87e4c1f66141d	a1538ea63	2026-02-16T20:33:58-05:00	Revert "fix: flatten remaining anyOf/oneOf in Gemini schema cleaning"
+c0c367fde78e5240367b9c6c3cf6e5c8057d0423	c0c367fde	2026-02-17T02:30:55+01:00	docs: clarify discord proxy scope for startup REST calls
+2992639f88ba9a1aa3b2a5ad576f56ad0e783470	2992639f8	2026-02-17T02:30:55+01:00	Revert "feat: add Linq channel — real iMessage via API, no Mac required"
+a36782e342d6c8c84ecc5b6b47cef0bbb34e33b5	a36782e34	2026-02-17T02:30:55+01:00	Revert "feat(linq): add interactive onboarding adapter"
+0d1eceb9cf3a466f2cb595e7f66286b27712f6ab	0d1eceb9c	2026-02-16T20:30:03-05:00	Revert "Onboarding: fix webchat URL loopback and canonical session"
+726ad45c75241860580c70d86712fdce7984672f	726ad45c7	2026-02-16T20:27:32-05:00	Revert "fix: add windowsHide: true to spawn in runCommandWithTimeout"
+22b2a77b30f4d03758d89e00258c8312d1c7245d	22b2a77b3	2026-02-16T20:27:19-05:00	Revert "fix(docker): ensure memory-lancedb deps installed in Docker image"
+63aa5c5a45d10cab0cf1abb54e87eb553183dcf8	63aa5c5a4	2026-02-16T20:27:19-05:00	Revert "fix: remove stderr suppression so install failures are visible in build logs"
+950d5a46b292e311fc458cfd71a96861567c1c5e	950d5a46b	2026-02-17T10:26:49+09:00	chore: Fix types in tests 2/N.
+0cf443afe8c16bc5e36d075859df6034b2ae9fc2	0cf443afe	2026-02-17T10:26:49+09:00	chore: Fix types in tests 1/N.
+25126d75c3acacf11cdf8e16a61fb75fc52bfc37	25126d75c	2026-02-17T02:26:36+01:00	Revert "Agents: improve Windows scaffold helpers for venture studio"
+37064e5cc6921b7badc30d4502c27053fa11bcb1	37064e5cc	2026-02-16T20:25:46-05:00	Revert "feat(docker): add init script support via /openclaw-init.d/"
+09c82a1fbfd9f6d126b9f8aea5df9ca1d3843e62	09c82a1fb	2026-02-16T20:25:46-05:00	Revert "fix: capture init script exit codes instead of swallowing via pipe"
+83392d39274917f488ba72bc89a064477f6c325b	83392d392	2026-02-17T02:25:31+01:00	Revert "fix(gateway): set explicit chat timeouts for mesh gateway calls"
+563df5638947d6caea4d6e837b55eb8bc295687d	563df5638	2026-02-17T02:24:48+01:00	Revert "config: align memory hybrid UI metadata with schema labels/help"
+4fa35d3fd9151a0c916eccbef4d4f78b3b9647a6	4fa35d3fd	2026-02-17T02:24:31+01:00	Revert "fix: use resolveUserPath utility for tilde expansion"
+d4385e67aa6c61681e5be49ea1dcb203fce98cb7	d4385e67a	2026-02-17T02:23:41+01:00	chore(docs): drop accidental .DS_Store artifacts
+c65b3c2ed92f1781910a7a75159ba9db1ef1f5bf	c65b3c2ed	2026-02-17T02:23:41+01:00	fix(docs): revert accidental es/pt-BR translation scaffold from #18473
+6d451c8205d9162b1fa60325e02a715c3492939b	6d451c820	2026-02-16T20:20:47-05:00	test(ollama): add reasoning fallback regression coverage
+83b1ae895e651530cd99ad1780b8649ed39788ef	83b1ae895	2026-02-16T20:20:32-05:00	fix(transcript): always drop orphaned OpenAI reasoning blocks
+6229814af2c6f67aa6b937b3d002c7e31238b380	6229814af	2026-02-17T10:15:10+09:00	chore: Remove invalid tsconfig paths reference.
+ff8316e04e674eab907f05c07325a122aa15f8e0	ff8316e04	2026-02-17T10:14:13+09:00	chore: Fix formatting.
+d3a36cc3b070ac48f55960989dd9ecc9ef42db95	d3a36cc3b	2026-02-17T10:14:01+09:00	chore: Fix remaining extension test types, enable type checking for extension tests.
+a741985574e79b78ce3fdb8bebd009a3cdcde5fe	a74198557	2026-02-17T10:14:01+09:00	chore: Fix more extension test types, 2/N.
+72f00df95a26bd9327b3e53a8582492d87227721	72f00df95	2026-02-17T10:14:01+09:00	chore: Fix more extension test type 1/N.
+0f8d1f175a6efab4f1364fe0d220bfb4667613a8	0f8d1f175	2026-02-17T10:14:00+09:00	chore: Fix type errors in `extensions/twitch` tests.
+889f221ed1231f926a65729a65c32cf1a378ba0e	889f221ed	2026-02-17T10:14:00+09:00	chore: Fix type errors in `extensions/bluebubbles` tests.
+6244ef9ea85871f48cc064ecdd6f20b16fc6756b	6244ef9ea	2026-02-17T02:08:56+01:00	fix: handle Windows and UNC bind mount parsing
+13ae1ae056d79e6bda1b1e966b09b9070de8f15d	13ae1ae05	2026-02-17T00:59:54Z	fix(memory): tighten embedding manager inheritance types
+5115f6fdf3642ea5adbbe81bf5a57195ff45c85e	5115f6fdf	2026-02-17T00:59:54Z	style: normalize imports for oxfmt 0.33
+dcdbbd8b3b5fa72ea75a81ebc1619bfd0110ece4	dcdbbd8b3	2026-02-17T01:57:51+01:00	test: replace ui prototype method patches with instance stubs
+c20ef582cb4beba9a362467568cdf028d7358c3e	c20ef582c	2026-02-17T01:54:59+01:00	fix: align cron session key routing (#18637) (thanks @vignesh07)
+064a3079cb5fe54a6539ed16c2d72227e89301b6	064a3079c	2026-02-17T01:54:59+01:00	Heartbeat: queue pending wakes per target
+a7c25f203a1b0e4eeacbb2d851f5f4e7bea81c0f	a7c25f203	2026-02-17T01:54:59+01:00	Protocol: regenerate cron Swift models
+a258503590598f7b0734c37a2cafc49030aa1da3	a25850359	2026-02-17T01:54:59+01:00	Cron: dedupe gateway wake target resolution
+f988abf202e3fe5c49765934031012fcf2f5e11d	f988abf20	2026-02-17T01:54:59+01:00	Cron: route reminders by session namespace
+f452a7a60b0dac6dde59634264fdc815c52d275f	f452a7a60	2026-02-17T00:53:44Z	refactor(shared): reuse chat content extractor for assistant text
+ddef3cadbab3387f3095cbcd4ce8c662c8154f2d	ddef3cadb	2026-02-17T01:50:04+01:00	refactor: replace memory manager prototype mixing
+7649f9cba4d5f952a7a7a9c156b0b1872e051ab5	7649f9cba	2026-02-17T00:49:42Z	refactor(test): share heartbeat sandbox fixtures
+b9e7299a708411991fd50dd1895b558850e4d266	b9e7299a7	2026-02-17T00:49:37Z	refactor(test): share embedded runner overflow mocks
+9032a50981abbad92f7c6d097fc0daa4295fd301	9032a5098	2026-02-17T00:45:02Z	refactor: reuse sandbox path expansion in apply-patch
+7687f6cfcd5c46e001dcc0badc00e22e15abd9c6	7687f6cfc	2026-02-17T00:45:02Z	refactor: reuse runtime requires evaluation
+51951791504524352daff0349036e0e2b41098ef	519517915	2026-02-17T00:45:02Z	refactor: centralize plugin allowlist mutation
+7147cd9cc0182a6c35e298efdbb82a83a02a1c05	7147cd9cc	2026-02-17T00:45:02Z	refactor: dedupe process-scoped lock maps
+c70597daeb66debc0866715bbc885a9a10508e1f	c70597dae	2026-02-17T09:40:00+09:00	chore: Fix formatting.
+194608d0ddcd7399734aa4d088fafb024d2c4ef9	194608d0d	2026-02-17T09:33:26+09:00	chore: Remove leftover file.
+dee013426923785b1bcd57fa55fc28276bf57acf	dee013426	2026-02-17T00:32:34Z	style: reformat dedupe-touched files
+817b5812e10a3817d4606afa6f964bef6726cad3	817b5812e	2026-02-17T00:32:34Z	refactor(agents): share queued JSONL file writer
+80c7d04ad205e2a8103c677f07a930f96c9e8805	80c7d04ad	2026-02-17T00:32:34Z	refactor(cron): reuse shared run outcome telemetry types
+a6466f2576c36f6ff53c00dafa3e1f5f62fdd0e8	a6466f257	2026-02-17T00:32:34Z	refactor(web-tools): share URL allowlist resolver
+64fc82844e9d406a13cc96373f43e28712396e1b	64fc82844	2026-02-17T00:32:34Z	refactor(channels): share prefixed target parsing
+10b060dbd368f293f3ba83644e6a1779fc70f39c	10b060dbd	2026-02-17T00:32:34Z	refactor(agent-tools): reuse gateway option parsing
+37c97964af2eef51034d5da32a1e5f3e2d61ea7b	37c97964a	2026-02-17T00:32:34Z	refactor(media): centralize input file limit resolution
+ed74f48bd503675754012fe3673227789f169877	ed74f48bd	2026-02-17T00:32:34Z	refactor(status): share update channel display + one-liner
+1dc9bb8d6217e1721a80a51e260b6fcaa2910166	1dc9bb8d6	2026-02-17T09:29:47+09:00	chore: Fix more type issues.
+8ae93cce531c7f977298573b61c2103262f0e8be	8ae93cce5	2026-02-17T01:26:06+01:00	docs: add ts-suppression guardrails
+843acd52b7729a31767a50495f61d574c879c21e	843acd52b	2026-02-17T09:20:04+09:00	chore: Fix up Oxlint/Oxfmt ignore patterns.
+90ef2d6bdf0715dd9e1ef2751390e4d76d22443a	90ef2d6bd	2026-02-17T09:18:40+09:00	chore: Update formatting.
+1e13a3933c92021d9adb26baef7aec5f06824bc9	1e13a3933	2026-02-17T09:14:42+09:00	chore: Update deps.
+5cbdd3a9c15c1bbd604a44f29e07cd7b9e0bbde2	5cbdd3a9c	2026-02-17T00:11:02Z	test(auto-reply): dedupe command spawn test harness
+b9aed3a07c45a6e2469e07b385495dbcba438a2a	b9aed3a07	2026-02-17T00:11:02Z	refactor(infra): reuse device auth scope normalization
+fbd3786e7a84efc44ea2fb618c4a728ea0242c28	fbd3786e7	2026-02-17T00:11:02Z	refactor(channels): share target parsing helpers
+9bfd3ca1958aae1513990acad1043a0dec52316b	9bfd3ca19	2026-02-17T00:11:02Z	refactor(memory): consolidate embeddings and batch helpers
+423b7a0f2855836d34e68fdf21a04faa7625d95e	423b7a0f2	2026-02-17T00:11:02Z	refactor(auto-reply): reuse embedded run context helpers
+246bb7f30f9b2ae4b5d19a5779b233a6c5572b37	246bb7f30	2026-02-17T00:11:02Z	refactor(agents): share model auth label resolution
+ff2e790e031d544756b30c40796754cd915b9904	ff2e790e0	2026-02-16T18:06:35-06:00	CI: increase stale operations per run
+4088c0b89d01caace4574ce83354c5f2239cfcb7	4088c0b89	2026-02-16T23:48:43Z	refactor(core): dedupe schema and command parsing helpers
+c55e017c19ac9a39a61901ebebe4e6bdd873f110	c55e017c1	2026-02-16T23:48:43Z	refactor(daemon): dedupe user bin path assembly helpers
+3451159174c84072f717a643115fe08e9ce6a0ce	345115917	2026-02-16T23:48:43Z	refactor(channels): share draft stream loop across slack and telegram
+f6111622e671c3b72fd608f7559a6abb8c90a173	f6111622e	2026-02-16T23:48:43Z	refactor(commands): share system prompt bundle for context and export
+32e2c369d754e5e31a42a232940867366d25997e	32e2c369d	2026-02-16T23:48:43Z	refactor(agents): extract shared session dir resolver
+82c4f8ca2265f7a4402b238009cd3db8d45cef88	82c4f8ca2	2026-02-16T23:48:43Z	chore(ci): align lint and format checks for templated exports
+170e6f33b919321b715ad124af8e1f4eceb34e07	170e6f33b	2026-02-16T23:48:43Z	docs(commands): add export-session aliases to slash command list
+b3d0e0cb458265fa234176cddc8af136733a4d15	b3d0e0cb4	2026-02-16T23:48:26Z	fix(cron): preserve overrides and harden next-run calculation
+968bba5c18caaa22e0dffee2c7cf3aa963730494	968bba5c1	2026-02-16T23:47:57Z	refactor(telegram): remove duplicate poll dispatch branch
+0a188ee49a09483ac71ee6bd03641cc657b834b6	0a188ee49	2026-02-16T23:47:57Z	test(ci): stabilize update and discord process tests
+a186ce21586af8fe10f2bed4094bf4d6f94b013c	a186ce215	2026-02-16T23:47:57Z	fix(ci): preserve whatsapp send API compatibility
+94e46311717071035af01ead5fbe84e546dda06f	94e463117	2026-02-16T23:47:57Z	refactor(onboarding): simplify zalo allowFrom merge paths
+d89d951c3e9ca21f61d27a10bc5228fe766e2b5c	d89d951c3	2026-02-16T23:47:57Z	refactor(onboarding): reuse allowFrom merge helper in matrix
+7632e60d70dead0beac3f1a9f3c2b98daf8def4a	7632e60d7	2026-02-16T23:47:57Z	refactor(onboarding): reuse allowFrom merge helper in extensions
+12a947223b8251abba15b488a9f3f18538bc67d6	12a947223	2026-02-16T23:47:27Z	fix(ci): restore main checks after bulk merges
+8c241449f56726a4b1d160d3991b069bd9340844	8c241449f	2026-02-16T23:33:05Z	fix(protocol): sync generated gateway swift models
+83a8b78a42483dad24ec95c5080c95427cb56dd3	83a8b78a4	2026-02-16T23:27:35Z	fix(ci): guard loop detection integer parsing
+eaa2f7a7bf62a90909eb8c756358708550478ca6	eaa2f7a7b	2026-02-16T23:26:11Z	fix(ci): restore main lint/typecheck after direct merges
+076df941a3265067602e0951a4233cfb7e8597ea	076df941a	2026-02-17T00:17:01+01:00	feat: add configurable tool loop detection
+dacffd7ac8762415298c3ee07a6e7e2d27b710cd	dacffd7ac	2026-02-17T00:02:12+01:00	fix(sandbox): parse Windows bind mounts in fs-path mapping
+3f617e33b759fa6b4ac59f704daac9a07ce6f1df	3f617e33b	2026-02-17T00:02:09+01:00	style(discord): format provider after proxy fetch changes
+e997545d4bc292262e4555b5ee321f13d321fcd7	e997545d4	2026-02-17T00:02:09+01:00	fix(discord): apply proxy to app-id and allowlist REST lookups
+bc2e02bb343f4a28474eab5cbb6e129ffef7bde5	bc2e02bb3	2026-02-17T00:02:05+01:00	fix(ui/usage): remove remaining timeSeriesCursor reference in renderContextPanel
+647d69881b4720118210d52071a94cf6acf0a2f9	647d69881	2026-02-17T00:02:05+01:00	fix(ui/usage): align client log limit with server cap (1000) and remove unused param
+0302cf89b0f24ed74b03f0f0e2a0f8da93f21d47	0302cf89b	2026-02-17T00:02:05+01:00	feat(timeline): dual-handle range selection on Usage Over Time chart
+86517b8e30b9ddd14a6c880781f80df7c23facaa	86517b8e3	2026-02-17T00:02:00+01:00	feat(feishu): add bitable create app and create field tools
+84383b5e0f7229c8352a8d3063d00138f0a1e7b7	84383b5e0	2026-02-17T00:01:56+01:00	fix(tts): show all provider errors instead of only the last one
+de6cc05e7e88fc5c701be4e880945e00b202fc21	de6cc05e7	2026-02-17T00:01:53+01:00	fix(cron): prevent spin loop when job completes within firing second (#17821)
+531f735c8a7c326f1f9212aa5a1cb83150621bc4	531f735c8	2026-02-17T00:01:46+01:00	Update extensions/openclaw-zh-cn-ui/README.md
+aeadeffa1540d72580d8acbc6d2dc3e7b8103702	aeadeffa1	2026-02-17T00:01:46+01:00	Update README.md
+967efc8e1be31d507b965679dc702ad7b619e049	967efc8e1	2026-02-17T00:01:46+01:00	Update README.md
+c88a90c7c33dec427eb3e0ca38959d35c8698cea	c88a90c7c	2026-02-17T00:01:46+01:00	Create README.md
+bdbb872c077278ce5de096d8f032a26b66aeb200	bdbb872c0	2026-02-17T00:01:42+01:00	fix(ui/usage): replace undefined --text-muted CSS variable with --muted
+16ddbbc6281060eee27ef64f43d251c221365dcf	16ddbbc62	2026-02-17T00:01:37+01:00	fix(sessions): skip cache when initializing session state
+5b3873add41ab8ab79ab804715afb4db83c760c2	5b3873add	2026-02-17T00:01:34+01:00	fix(skills): guard against skills prompt bloat
+4f5b9da5039561db84b56d789316f046a03955e6	4f5b9da50	2026-02-17T00:01:30+01:00	Update docs/reference/templates/SOUVENIR.md
+8a3f3a49a54dd3bd18b3f2b5b57cedacfc71d1b0	8a3f3a49a	2026-02-17T00:01:30+01:00	Update docs/reference/templates/GOALS.md
+bf1b4386dfb2807ae5c5eae9ebab1438409e4de0	bf1b4386d	2026-02-17T00:01:30+01:00	Update docs/reference/templates/GOALS.md
+1a9a2e396f739772933aafe95be47bc162cdfa1a	1a9a2e396	2026-02-17T00:01:30+01:00	feat: Add GOALS.md and SOUVENIR.md template files
+b4a90bb7430079613a205bc0dbcfa59d51657127	b4a90bb74	2026-02-17T00:01:26+01:00	fix(telegram): suppress message_thread_id for private chat sends (#17242)
+2ed43fd7b4dcc9695a8d5b595566529b8fa5a96e	2ed43fd7b	2026-02-17T00:01:22+01:00	fix(cron): resolve accountId from agent bindings in isolated sessions
+e9f2e6a829efaa7ca6b3249fb38bcf833f9c9320	e9f2e6a82	2026-02-17T00:01:15+01:00	fix(heartbeat): prune transcript for HEARTBEAT_OK turns
+7bb9a7dcfc3194a953f0ca20f86f9caba8a22923	7bb9a7dcf	2026-02-17T00:01:07+01:00	fix(telegram): wire sendPollTelegram into channel action handler (#16977)
+068b9c97498d36e5d155404ff4aa7cd51a57afde	068b9c974	2026-02-17T00:01:03+01:00	feat: wrap compaction generateSummary in retryAsync
+990cf2d226091c0745eb338d2d0c88555510dd76	990cf2d22	2026-02-17T00:01:00+01:00	fix(extensions): address greptile review comments for openai-codex-auth
+45b3c883b8f845f85f4ec92222af93f4aacf61ad	45b3c883b	2026-02-17T00:01:00+01:00	fix: regenerate pnpm lockfile
+24569d093a36781c297abc2af13ae3cf6a04d9f9	24569d093	2026-02-17T00:01:00+01:00	style: fix import ordering in openai-codex-auth
+3ac422fe2e8b6c453e684f8f59bf445778ff7449	3ac422fe2	2026-02-17T00:01:00+01:00	feat(extensions): add OpenAI Codex CLI auth provider
+f82a3d3e2bb47f1cac5eff036380a52df1420d20	f82a3d3e2	2026-02-17T00:00:57+01:00	fix: use resolveUserPath utility for tilde expansion
+4cd75d5d0f2d9bfce28f0c286db269c2afc79a15	4cd75d5d0	2026-02-17T00:00:57+01:00	fix: remove accidental openclaw link dependency
+f70b3a2e687848509f9d5b9d4d9b998360686717	f70b3a2e6	2026-02-17T00:00:57+01:00	refactor: bundle export-html templates instead of reading from node_modules
+1eb1a33f3748b691933da1846672dd344bb3bebd	1eb1a33f3	2026-02-17T00:00:57+01:00	chore: remove --open option (not useful for remote sessions)
+ffe700bf94c7f49fdc861801fbd44d0fa72a5172	ffe700bf9	2026-02-17T00:00:57+01:00	fix: use proper pi-mono dark theme colors for export HTML
+add3afb7439ea4a09330ff4b4c057f652a379094	add3afb74	2026-02-17T00:00:57+01:00	feat: add /export-session command
+3c3a39d1650feea71b779d6dcb77758346e2801c	3c3a39d16	2026-02-17T00:00:54+01:00	fix(test): use path.resolve for cross-platform Windows compatibility
+90774c098ade256999a012ca32e1f6d12db22514	90774c098	2026-02-17T00:00:54+01:00	fix(sessions): allow cross-agent session file paths in multi-agent setups
+e20b87f1ba332e2b7838d05e38e3bd7d991f460d	e20b87f1b	2026-02-17T00:00:51+01:00	fix: handle forum/topics in Telegram DM thread routing (#17980)
+c25c276e00b9bedd41ca0c1ea60b44294eb1c78a	c25c276e0	2026-02-17T00:00:47+01:00	refactor: remove unnecessary optional chaining from agent meta usage in reply and cron modules
+d649069184025e1d43b9f78721ea2d5c91acbf1c	d64906918	2026-02-17T00:00:47+01:00	fix: add optional chaining to runResult.meta accesses to prevent crashes on aborted runs
+690ec492df3206acc8b6a88a62ce612c38061f59	690ec492d	2026-02-17T00:00:40+01:00	refactor: remove redundant field assignments in resolveCronSession
+57c8f62396d450bccf508f2beb20cea7f1496f4d	57c8f6239	2026-02-17T00:00:40+01:00	fix(cron): reuse existing sessionId for webhook/cron sessions
+952db1a3e2f3db4250ae3c252c4b1f0eb4f4b01b	952db1a3e	2026-02-17T00:00:34+01:00	fix(discord): route audioAsVoice payloads through voice message API
+2fa9ddebdba578bfcc1718304a2a9fef704b2915	2fa9ddebd	2026-02-16T23:00:32Z	fix(mattermost): add actions config typing
+9f0fc74d10c6b5f3a29e6cf648b6ab8e37443fde	9f0fc74d1	2026-02-16T23:00:32Z	refactor(model): share normalized provider map lookups
+1fca7c39289a1a3bb204580859f2dfcfde61fa60	1fca7c392	2026-02-17T00:00:30+01:00	fix(discord): strip user:/discord:/pk: prefixes in command allowFrom
+6931ca7035fe26e6aec1c1b78a08340274d752e7	6931ca703	2026-02-17T00:00:27+01:00	fix(subagent): route nested announce to parent even when parent run ended
+235794d9f65525fd9161a123ae387e2e30715417	235794d9f	2026-02-17T00:00:23+01:00	fix(security): OC-09 credential theft via environment variable injection
+65a1787f92c37a87d0a9ab431d119b5ad73f7cae	65a1787f9	2026-02-17T00:00:20+01:00	fix: normalize paths to forward slashes for Windows RegExp compatibility
+811c4f5e91cb611c0b50152a6777e7093b7197c7	811c4f5e9	2026-02-17T00:00:20+01:00	feat: add post-compaction read audit (Layer 3)
+3296a25cc6aab824ebcb578f0f22d7711833178d	3296a25cc	2026-02-17T00:00:20+01:00	fix: format compaction-safeguard.ts with oxfmt
+c4f829411f6988c90afc89ef86be2f8328ec8cc3	c4f829411	2026-02-17T00:00:20+01:00	feat: append workspace critical rules to compaction summary
+d0b33f23eb6a0a74190d399beb5da1cdc8b20baf	d0b33f23e	2026-02-17T00:00:20+01:00	fix: improve section extraction robustness (case-insensitive, H3, code blocks)
+b1d5c71609c3c32b8c6c4b43b1f3d6564c61634c	b1d5c7160	2026-02-17T00:00:16+01:00	fix(cli): use standalone script for service restart after update (#17225)
+a62ff19a6638087d97b10e916a831f32c0b36cd7	a62ff19a6	2026-02-17T00:00:12+01:00	fix(agent): isolate last-turn total in token usage reporting (#17016)
+d6acd71576cda5a319abbcc244614eb5be91045d	d6acd7157	2026-02-17T00:00:08+01:00	fix: session-memory hook finds previous session file after /new/reset
+767109e7d589b267dc93cb778b0dd03657e817a0	767109e7d	2026-02-17T00:00:08+01:00	fix(skills): improve git credential handling for gh-issues sub-agents
+068260bbeac306064e4bd0495f7ed10ad38e1fe4	068260bbe	2026-02-17T00:00:08+01:00	fix: add api-version query param for Azure verification
+960cc11513d72ca323f3f788e4aac9f241607ae0	960cc1151	2026-02-17T00:00:08+01:00	fix: add Azure AI Foundry URL support for custom providers
+4e5a9d83b780861cecce2916d10a445b3198bf53	4e5a9d83b	2026-02-17T00:00:03+01:00	fix(gateway): preserve unbracketed IPv6 host headers
+8e55503d7785e741ce9995f989d944e09a8f22db	8e55503d7	2026-02-16T23:59:59+01:00	fix(browser): track original port mapping for EADDRINUSE fallback
+0e6daa2e6e30240ce5191ee5c7954f24b4b56b42	0e6daa2e6	2026-02-16T23:59:59+01:00	fix(browser): handle EADDRINUSE with automatic port fallback
+a1a1f568415d98ccedfa91e4a290cffa6ecb953e	a1a1f5684	2026-02-16T23:59:53+01:00	fix(process): disable detached spawn on Windows to fix empty exec output (#18035)
+d0a5ee0176c888be150419205d22f3de0193ac6d	d0a5ee017	2026-02-16T23:59:50+01:00	fix: include token drift warning in JSON response
+d6e85aa6ba208a1c04d3b1b10514821343844e10	d6e85aa6b	2026-02-16T23:59:50+01:00	fix(daemon): warn on token drift during restart (#18018)
+8af4712c4066660735313f2cc26220656362e705	8af4712c4	2026-02-16T23:59:44+01:00	fix(cron): prevent spin loop when job completes within scheduled second (#17821)
+eed806ce5830c45612a06240dd18cf106381410b	eed806ce5	2026-02-16T23:59:41+01:00	f
+a42ccb9c1d8b120b8d0e2e609dea54cc9b7bbc81	a42ccb9c1	2026-02-16T23:59:41+01:00	f
+c315246971b727ac7c654334ca33c601895969b2	c31524697	2026-02-16T23:59:41+01:00	fix(feishu): fix mention detection for post messages with embedded docs
+cd4f7524e36aa7f2bcfca0fcbe236505e4ecf54b	cd4f7524e	2026-02-16T23:59:36+01:00	feat(telegram): receive and surface user message reactions (#10075)
+d3698f4eb6c6749630284dfb9073cfc07a94415d	d3698f4eb	2026-02-16T23:59:32+01:00	fix(gateway): trim trusted proxy entries before matching
+e24e465c00c5e884960ea701bcade71c4bf687eb	e24e465c0	2026-02-16T23:59:29+01:00	fix(webchat): strip reply/audio directive tags before rendering #18079
+9c3eed597067569550bf006870387af2af1c4838	9c3eed597	2026-02-16T23:59:25+01:00	Update Akash Kobal's avatar link in README
+18f3bbfe05c8c9772ecba88428ac85caf80d83aa	18f3bbfe0	2026-02-16T23:59:25+01:00	Add avatar link for AkashKobal to README
+e91a5b021648bec6f4d3566d9e348e7223b36cb5	e91a5b021	2026-02-16T23:59:22+01:00	fix: release stale session locks and add watchdog for hung API calls (#18060)
+7d8d8c338bfc8b2063c4f5da666ab9386833dcfa	7d8d8c338	2026-02-16T23:59:19+01:00	config: align memory hybrid UI metadata with schema labels/help
+65ad9a4262e38d1407b75660cd65a68580579865	65ad9a426	2026-02-16T23:59:19+01:00	Memory: fix MMR tie-break and temporal timestamp dedupe
+33cf27a52a5ecfff80179570f3bc9dd331d2947d	33cf27a52	2026-02-16T23:59:19+01:00	fix: MMR default disabled, tie-break null guard, correct docs URL
+6b3e0710f4a05135fa57798dcc3ff9668e6a061a	6b3e0710f	2026-02-16T23:59:19+01:00	feat(memory): Add opt-in temporal decay for hybrid search scoring
+fa9420069ab39f36fc47ca23b0ea909025a0a447	fa9420069	2026-02-16T23:59:19+01:00	feat(memory): Add MMR re-ranking for search result diversity
+a0ab301dc31cbb4efb92ff8d831533d3c05e4a8d	a0ab301dc	2026-02-16T23:59:16+01:00	Fix Discord auto-thread attempting to thread in Forum/Media channels\n\nCreating threads on messages within Forum/Media channels is often redundant\nor invalid (as messages are already posts). This prevents API errors and spam.\n\nFix: Check channel type before attempting auto-thread creation.
+b90d7625e5117e498e7e2ffd5c38e1455bb6552e	b90d7625e	2026-02-16T23:59:16+01:00	Fix Discord session routing continuity (enable lastRoute for groups)\n\nPreviously, 'updateLastRoute' was only enabled for Direct Messages.\nThis meant that group/channel sessions did not update their routing\nmetadata (last channel/to/accountId) in 'session-meta.json'.\n\nIf the bot restarted or a proactive cron job tried to send a message\nto a group session using 'sessions_send' without an explicit 'to' field,\nit would fail because 'lastRoute' was missing or stale.\n\nFix: Enable 'updateLastRoute' for all Discord messages (Group + DM),\nensuring the session store always has the latest valid routing target.
+dbe2ab6f6229a5d1bed2cc370cee0abc2bf4b24a	dbe2ab6f6	2026-02-16T23:58:38+01:00	cron: keep usage telemetry in run log types + error paths
+ddea5458d020efed3c0050d9e0962d9a50608582	ddea5458d	2026-02-16T23:58:38+01:00	cron: log model+token usage per run + add usage report script
+c529e6005a3e9e112883d86a973abc1e59e22e1d	c529e6005	2026-02-16T23:58:23+01:00	fix(gateway): set explicit chat timeouts for mesh gateway calls
+16e59b26a6f901df54e430d2a3d216eeb3c0a898	16e59b26a	2026-02-16T23:58:23+01:00	Add mesh auto-planning with chat command UX and hardened auth/session behavior
+83990ed54269ffca5d25c5667c333ddc42f58780	83990ed54	2026-02-16T23:58:23+01:00	Add mesh orchestration gateway methods with DAG execution and retry
+15fe87e6b714ccb6d6789a50627f4c26d5c8513b	15fe87e6b	2026-02-16T23:58:12+01:00	feat: add before_message_write plugin hook
+94eecaa446aa04c0d4e8cf7c12a40f8441711191	94eecaa44	2026-02-16T23:57:21+01:00	fix: atomic session store writes to prevent context loss on Windows
+1bef2fc68bc512c886c25ef1dfba67f58c90e811	1bef2fc68	2026-02-16T23:57:09+01:00	fix(whatsapp): allow per-message link preview override\n\nWhatsApp messages default to enabling link previews for URLs. This adds\nsupport for overriding this behavior per-message via the \nparameter (e.g. from  tool options), consistent with Telegram.\n\nFix: Updated internal WhatsApp Web API layers to pass  option\ndown to Baileys .
+312a7f7880bb3af8efdecf62bd1a89217d1901b3	312a7f788	2026-02-16T23:56:56+01:00	fix: make tool exit code handling less aggressive
+91903bac152b709700a22ba6a1751dda6005844d	91903bac1	2026-02-16T23:56:10+01:00	fix: include OPENCLAW_SERVICE_VERSION in system presence version detection
+5d9a026a9e8b2226650be5b7a1b2da2a498a1c20	5d9a026a9	2026-02-16T23:56:05+01:00	gateway: hard-cap chat.history oversized payloads
+97e0f8d551ea8e2731e4178bea019f8c0eee1a03	97e0f8d55	2026-02-16T22:55:59Z	fix(onboarding): keep wildcard allowFrom helper string-typed
+64f5e4a4240d7884a4326165bfc283725d3e4875	64f5e4a42	2026-02-16T22:55:59Z	refactor(onboarding): reuse allowlist merge across channels
+486b7379d4e420ae286a714676feb51c75bac1f0	486b7379d	2026-02-16T22:55:59Z	refactor(test): dedupe doctor harness mock payload factories
+230e1d9962a7dc789c58e8113aa2f253f40cbc2b	230e1d996	2026-02-16T22:55:59Z	refactor(auth): share profile id dedupe helper
+ff7a7351150279303009fa9f54a6a5e059e6c834	ff7a73511	2026-02-16T22:55:59Z	refactor(onboarding): share allowlist merge helpers
+1dfacd4dd176cea3817d167b60e8e7a422e7a740	1dfacd4dd	2026-02-16T23:55:56+01:00	fix(status): avoid bot+app token warning for mattermost
+82861968c2185cc3c357660f0f198be1bcc4eb4f	82861968c	2026-02-16T23:55:40+01:00	fix(mattermost): address review feedback on reactions PR
+2a2372cd6cab8da2defb41c510a5ff224f14bbca	2a2372cd6	2026-02-16T23:55:40+01:00	feat(mattermost): add emoji reactions support
+b57d29d833920f37cc45d69712fdce3bade95275	b57d29d83	2026-02-16T23:55:34+01:00	fix(slack): extract text and media from forwarded message attachments
+4928717b922e548bea6b09bd657324d991157a38	4928717b9	2026-02-16T23:55:31+01:00	fix: handle Qwen 3 reasoning field in Ollama responses
+46bf210e048a6ad7a7bddb6b97f6ee91191545eb	46bf210e0	2026-02-16T23:55:28+01:00	fix: always drop orphaned OpenAI reasoning blocks in session history
+e33017982cdf5cebf75f5b7d1e7a962071aba7f6	e33017982	2026-02-16T23:55:02+01:00	Update README.md
+e759b4cd58bc737039d3362819e4b7b209fe04e9	e759b4cd5	2026-02-16T23:55:02+01:00	Update README.md
+572cfb7a53494cdb9e2188d3c04b227e24e21fd2	572cfb7a5	2026-02-16T23:55:02+01:00	Update README.md
+57aef596b49fc3e4338f524c488adc356fc4fc62	57aef596b	2026-02-16T23:55:02+01:00	Revise Android installation link in README
+0a02b916380f40ea2d5255a46610f8e252738c70	0a02b9163	2026-02-16T23:54:56+01:00	Handle Telegram poll vote updates for agent context
+5cbfaf5cc70d8d69a39d640eea147d70589eeaaf	5cbfaf5cc	2026-02-16T23:54:56+01:00	Add Telegram polls action to config typing
+b2fe44b1eeca288f32b2883dcda8614895edd970	b2fe44b1e	2026-02-16T23:54:56+01:00	Fix lint in telegram poll action handler
+c43e95e011cdbdd3be9446b12d257899b4a90201	c43e95e01	2026-02-16T23:54:56+01:00	Default Telegram polls to public
+556b531a140330540a10299cd6c4907750a2c0b6	556b531a1	2026-02-16T23:54:56+01:00	Fix Telegram poll action wiring
+afd354c482d966a4a68d6179104bf289772057a5	afd354c48	2026-02-16T23:54:52+01:00	fix: add catalog validation to `models set` command
+0b8b95f2c97f6ececcd28a7a8b2a7557931ef62f	0b8b95f2c	2026-02-16T23:54:49+01:00	fix(update): prevent gateway crash loop after failed self-update
+671f913123882898bdb0590c278261c8ae41edf0	671f91312	2026-02-16T23:54:45+01:00	feat: support per-model thinkingDefault override in models config
+e368c365036bc8d70a1c941d998c6b7910da9668	e368c3650	2026-02-16T23:54:40+01:00	feat: add llms.txt discovery as default agent behavior
+4df970d7118dc799a30af1ce9eaaf3fe8e4bc29f	4df970d71	2026-02-16T23:54:31+01:00	fix: improve error for unconfigured local providers (ollama/vllm) (#17328)
+6e1edc7d62c8759b52dcf518d36703a53e0b2da8	6e1edc7d6	2026-02-16T23:54:23+01:00	fix: correct Sparkle appcast version for 2026.2.15
+b2d622cfa3f18ed9b3a804ffc69531a1d3d49e19	b2d622cfa	2026-02-16T23:54:23+01:00	fix: clear stale device-auth token on token mismatch
+0ee348069086ab70fc13568258fd842952963c34	0ee348069	2026-02-16T23:54:17+01:00	fix(cron): preserve model fallbacks when agent overrides primary
+5a3a448bc48dc9e72530b46195476a48845bb8da	5a3a448bc	2026-02-16T23:54:14+01:00	feat(commands): add /subagents spawn command
+bb5ce3b02f8fcc1bc99f006127f3fca301f46ac7	bb5ce3b02	2026-02-16T23:54:08+01:00	CLI: preserve message send components payload
+63fb99807488bda026cd3fdb360f95c3dc299e9e	63fb99807	2026-02-16T23:53:54+01:00	fix: address code review feedback
+38c96bc53eb36277df29c4e7030ecc63b0e910cf	38c96bc53	2026-02-16T23:53:54+01:00	fix: validate base64 image data before API submission
+aeec95f870dd6ca24ea9aea296c61d0f2c149dd4	aeec95f87	2026-02-16T23:53:50+01:00	fix(gateway): include deliveryContext in update.run restart sentinel (#18239)
+d43c11c76d4d8ebaf20841a1c3e8595951eb2e33	d43c11c76	2026-02-16T23:53:44+01:00	test: update tests and comments to reflect new autoSelectFamily default
+c762bf71f625ed10e86f50bb00c230cfa4d76f1a	c762bf71f	2026-02-16T23:53:44+01:00	fix(telegram): enable autoSelectFamily by default for Node.js 22+
+3ec936d1b450a6a1c79fe72489229264e79c8d8f	3ec936d1b	2026-02-16T23:53:41+01:00	fix(daemon): prefer current node and add macOS version manager paths to service PATH
+1a8548df18765e8d14dce86a9daffd6f14936666	1a8548df1	2026-02-16T23:53:41+01:00	fix(daemon): prefer current node (process.execPath) and add macOS version manager paths to service PATH
+59eac34c2bcf4aa188ebe8a5efa7ba27ec8692f4	59eac34c2	2026-02-16T23:53:35+01:00	changelog: add channel health monitor entry
+30ee12e40a952404b0892d6761cb930444042f2b	30ee12e40	2026-02-16T23:53:35+01:00	gateway: wire channel health monitor into startup with configurable interval
+497e2d76ad45a252d7164ba08c9fdcdd8f3f6f6e	497e2d76a	2026-02-16T23:53:35+01:00	feat(gateway): add channel health monitor with auto-restart
+68489a213f87ac78ca3277716ead2c0f5fb14ee6	68489a213	2026-02-16T23:53:35+01:00	gateway: expose isManuallyStopped and resetRestartAttempts on ChannelManager
+ae0b110e444b26740a32083b273b07db4e05d13d	ae0b110e4	2026-02-16T23:53:28+01:00	fix(security): set 0o600 on remaining session file write paths
+d4c057f8c100a4e4d7e5d443bc10e606244f9d67	d4c057f8c	2026-02-16T23:53:24+01:00	feat(inbound-meta): expose sender_id in trusted system metadata
+bcab2469de779aa9c3479a5cb5474acc34dd18a1	bcab2469d	2026-02-16T23:53:21+01:00	feat: LLM-based query expansion for FTS mode
+65aedac20e535bea40a74a5f96f988738a5a8307	65aedac20	2026-02-16T23:53:21+01:00	fix: enable FTS fallback when no embedding provider available (#17725)
+153794080eccd1d8b1fe98763ea76162ae1c3b4c	153794080	2026-02-16T23:53:21+01:00	fix: support OAuth for Gemini media understanding
+3379b9d341aab6ac425882442ae3955c5d11a910	3379b9d34	2026-02-16T23:53:21+01:00	fix: support OAuth for Gemini embedding API
+d24340d75bf2b8e69a60f8c122ea59eaec9b0833	d24340d75	2026-02-16T23:53:19+01:00	channels: migrate extension account listing to factory
+59384001ad257e2369647f6252880dad8a4a44fc	59384001a	2026-02-16T23:53:19+01:00	channels: migrate core channel account listing to factory
+5544ab820c3022f40902c3a93e77a806eec15429	5544ab820	2026-02-16T23:53:19+01:00	channels: add createAccountListHelpers factory
+9aa8db5c812dd885685bcffa5824abaff5b15535	9aa8db5c8	2026-02-16T23:53:11+01:00	fix(doctor,configure): skip gateway auth for loopback-only setups
+6757a9fedc2e8686b44b60fa07c3436fe6fc1c18	6757a9fed	2026-02-16T23:53:06+01:00	fix(telegram): clean up update offset on channels remove --delete (#18233)
+b91e43714b4e937f33f1c63fe781eb98e20d8756	b91e43714	2026-02-16T23:52:56+01:00	feat(linq): add interactive onboarding adapter
+1d81cc4f1ff1c99dfd386c7965a52f4242cf1a60	1d81cc4f1	2026-02-16T23:52:56+01:00	feat(linq): add read receipts, typing indicators, and User-Agent header
+60bd154e5a335aa00d54ed04032562d01f99243b	60bd154e5	2026-02-16T23:52:56+01:00	fix: parse webhook URL pathname instead of raw string match
+d4a142fd8f1cc2e2d5f634c919a20cc9bf864475	d4a142fd8	2026-02-16T23:52:56+01:00	feat: add Linq channel — real iMessage via API, no Mac required
+95024d167147d3ee3a349f08cce34b17bccaff67	95024d167	2026-02-16T23:52:51+01:00	fix: log error on auto-end failure instead of swallowing
+4c0a741308cbe63ed1ccfc6b878540daaa291ca9	4c0a74130	2026-02-16T23:52:51+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+d56c04a3b5d75025bda026c60fa501fbb02ae1f9	d56c04a3b	2026-02-16T23:52:51+01:00	fix: apply oxfmt formatting
+3eec5e54b1bd969eeb504444898ddc5963502c99	3eec5e54b	2026-02-16T23:52:51+01:00	fix(voice-call): auto-end call when media stream disconnects
+a5c94b8e7b9237a745141a5da62972ba1131788a	a5c94b8e7	2026-02-16T23:52:48+01:00	fix: log error on reaper endCall failure instead of swallowing
+390c503b56644d7a03984c5c54cb501db9b1cd6d	390c503b5	2026-02-16T23:52:48+01:00	feat(voice-call): add configurable stale call reaper
+47f8c9209feca98e1fac2519380664071fc5d3b1	47f8c9209	2026-02-16T23:52:42+01:00	test: add tests for extraArgs filtering logic
+cc3c25e413a56761066710bd0698c170d039d768	cc3c25e41	2026-02-16T23:52:42+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+2977f7325d25b0b79fbc4564ad6f1e8ca4053382	2977f7325	2026-02-16T23:52:42+01:00	fix: add extraArgs to sandbox browser config and apply oxfmt formatting
+039fc1e04c0ab71d1406005b2c91866517424858	039fc1e04	2026-02-16T23:52:42+01:00	feat(browser): add extraArgs config for custom Chrome launch arguments
+de900bace8986e4d38c75ec6724fb34d34d30ca3	de900bace	2026-02-16T23:52:39+01:00	fix: reset announceRetryCount in replaceSubagentRunAfterSteer
+a6c741eb463064b106e79f0c7baf30f8846eb769	a6c741eb4	2026-02-16T23:52:39+01:00	fix(announce): break infinite retry loop with max attempts and expiry (#18264)
+0764999e2cda2252893965bf632cd3fcc761ded4	0764999e2	2026-02-16T23:52:36+01:00	fix: document intentional non-persistence of initialMessage deletion
+0291ce30a813be5ef6d8084d042977278fe9c59c	0291ce30a	2026-02-16T23:52:36+01:00	fix: apply oxfmt 0.32.0 formatting (match CI version)
+dd319d05d8aeae601a0b41ec360f72e597a41053	dd319d05d	2026-02-16T23:52:36+01:00	fix: apply oxfmt formatting
+2c6db575541c9c267c46cc9e383aa805f741e4d3	2c6db5755	2026-02-16T23:52:36+01:00	feat(voice-call): pre-cache inbound greeting for instant playback
+27a4868c2de2fcd957461f7688fdbeb166f4578f	27a4868c2	2026-02-16T23:52:30+01:00	fix: move Chromium install after pnpm install and use playwright-core/cli.js
+d6aa9adec518b5de3fb80992abe50ead97ac9311	d6aa9adec	2026-02-16T23:52:30+01:00	feat(docker): add optional Chromium + Xvfb install in Docker image
+8b14052ebe9d0ced947de214e2ac20ed384013c3	8b14052eb	2026-02-16T23:52:26+01:00	fix: capture init script exit codes instead of swallowing via pipe
+53af9f743767e7ffca3c95b572a7d5451cfc9e4a	53af9f743	2026-02-16T23:52:26+01:00	feat(docker): add init script support via /openclaw-init.d/
+717caa97fbe023a0d2f14b8e2cbad456954d6d2c	717caa97f	2026-02-16T23:52:23+01:00	fix: remove stderr suppression so install failures are visible in build logs
+2ab6313d99d5c794f2ebcac30534533b6b26755f	2ab6313d9	2026-02-16T23:52:23+01:00	fix(docker): ensure memory-lancedb deps installed in Docker image
+34b18ea9db116730de38eab19c74492518b8567d	34b18ea9d	2026-02-16T23:52:16+01:00	fix: respect OPENCLAW_HOME for isolated gateway instances
+4641e452dd51f45d2a6e29fcc548197eaf550f75	4641e452d	2026-02-16T23:52:06+01:00	fix(docs): update English fallback links after file reorganization
+84764eea52cd2a86a4f1eae2bd29559437c3f4df	84764eea5	2026-02-16T23:52:06+01:00	fix(docs): remove dead references to railway, render and northflank
+97bdfb6aac53fef33b692bc7fa1a85ffd45e02b0	97bdfb6aa	2026-02-16T23:52:06+01:00	docs: scaffold full es and pt-BR doc routes with localized placeholders
+72676d318e2ce044fa74037751e43136e7637a91	72676d318	2026-02-16T23:52:06+01:00	docs: replace english locale mirrors with translated landing pages
+8bccf9e8ed8e9a563d8b8862093af5f6f28ef68d	8bccf9e8e	2026-02-16T23:52:06+01:00	docs: expand es and pt-BR docs trees
+59e0e7e4ffeb6853e4be24f3c25c5ceb1a212f2e	59e0e7e4f	2026-02-16T23:52:00+01:00	Onboarding: fix webchat URL loopback and canonical session
+a02bcb362030262d8cd78b621ecd519fb6987cac	a02bcb362	2026-02-16T23:51:51+01:00	fix(test): add missing media dedup state fields to mock contexts
+838259331f84237e2b538fae2473d2d88782d587	838259331	2026-02-16T23:51:51+01:00	fix(discord): add media dedup production code for messaging tool pipeline
+c7681c3cff37047fca391a57d1bd373f4948ea62	c7681c3cf	2026-02-16T23:51:51+01:00	test(media-dedup): add missing coverage for Discord media dedup wiring
+4640999e7778109448933dacd0fab702d72e3484	4640999e7	2026-02-16T23:51:47+01:00	test: add per-account action gating tests for Discord and Telegram handlers
+a03fec2a3fe0b76e8e20c14c915915126b50e0c8	a03fec2a3	2026-02-16T23:51:47+01:00	fix: use per-account action config for Discord and Telegram gating
+1faf8e8e9d5c50ac8a81b975185c88b53dc9b47d	1faf8e8e9	2026-02-16T23:51:44+01:00	Slack: add external select flow for large arg menus
+7a4efbb03016fa7701d3fb26daa3763bcf315931	7a4efbb03	2026-02-16T23:51:44+01:00	Slack: capture workflow button interaction metadata
+bd20c1e24d55e9d2328445795a795680f3dfe7b7	bd20c1e24	2026-02-16T23:51:44+01:00	Slack: include stacked modal lifecycle context
+ce973332f664df984ea6fd2e80d5dbcb7f463aff	ce973332f	2026-02-16T23:51:44+01:00	Slack: add media block fallback text handling
+7aaf1547df9b47a3323eafba786be7843d004dbe	7aaf1547d	2026-02-16T23:51:44+01:00	Slack: escape mrkdwn in interaction confirmations
+a7c1b8aea74d7b4bae6002c1c7014fcf60bd1fbf	a7c1b8aea	2026-02-16T23:51:44+01:00	Slack: attribute interaction confirmations and structured selects
+9fcb93dd13bf44d0888c583e6df192ae0f6095e1	9fcb93dd1	2026-02-16T23:51:44+01:00	Slack: add rich text previews for modal inputs
+05ab14708153eb9d63d64fecd337313b793bd4cc	05ab14708	2026-02-16T23:51:44+01:00	Slack: expand advanced modal controls payloads and confirms
+5bbbc3e3e6fdedcb3e2e49da356c723200ddfd2f	5bbbc3e3e	2026-02-16T23:51:44+01:00	Slack: show picker values in interaction confirmations
+5f9a04604e8a527d626db78f15238d97bad6b6c7	5f9a04604	2026-02-16T23:51:44+01:00	Slack: add header and context blocks to arg menus
+7c5529a1532c7d9e356eb1d0a9cb25ce9278e458	7c5529a15	2026-02-16T23:51:44+01:00	Slack: enrich modal input payload normalization
+d1aa2323bd56cc4aff65856760d2ca81b3a3e631	d1aa2323b	2026-02-16T23:51:44+01:00	Slack: update action rows for select interactions
+1bfdd4e23759872111989bf00509d1ea17f72ef7	1bfdd4e23	2026-02-16T23:51:44+01:00	Slack: add overflow menus for slash arg choices
+296ba8e934b897eea598726e97a55512745a7390	296ba8e93	2026-02-16T23:51:44+01:00	Slack: enrich block action context payloads
+7e42408adeb5d23876f70c63b7a079bb73a3dce0	7e42408ad	2026-02-16T23:51:44+01:00	Slack: dedupe normalized interaction selections
+6e790303dffadda96f025ccf546292007d6b31f2	6e790303d	2026-02-16T23:51:44+01:00	Slack: validate runtime blocks in send and edit paths
+c01c6b7079b7684cf4a1e53677232737d6667193	c01c6b707	2026-02-16T23:51:44+01:00	Slack: expand interaction payload normalization coverage
+ac969e602c448e414a2bcdbbfe4337336b600e50	ac969e602	2026-02-16T23:51:44+01:00	Slack: add modal private metadata utilities
+82d132f1ba791b463d8d34291f4dcf7946624b8b	82d132f1b	2026-02-16T23:51:44+01:00	Slack: add send blocks behavior tests
+e8a1d4171d0f5cce11af5bd4dafb80b7c73befaf	e8a1d4171	2026-02-16T23:51:44+01:00	Slack: guard select option value length in slash menus
+c943ffab7cbf4126067722fb833c568ea370932d	c943ffab7	2026-02-16T23:51:44+01:00	Slack: reject blocks plus media in send paths
+10d876e319b8ba45e0712dfa041a448f230d753f	10d876e31	2026-02-16T23:51:44+01:00	Slack: validate blocks input shape centrally
+e023c84d785be2354af41f01ad308336ac8771ef	e023c84d7	2026-02-16T23:51:44+01:00	Slack: infer interaction channel type from channel ID
+378e18b75bf4224ac4d5d5bdee1eb2f5176a98c4	378e18b75	2026-02-16T23:51:44+01:00	Slack: support blocks in plugin edit action
+3912a2264bd09c7e15805d744c16cd3112b0980f	3912a2264	2026-02-16T23:51:44+01:00	Slack: support blocks in plugin send action
+08bc1dce6af980abf8f3f8f6c6d5365adfc20fb8	08bc1dce6	2026-02-16T23:51:44+01:00	Slack: support Block Kit blocks in editMessage
+c9684a2678268f72b849261329966a5c12569918	c9684a267	2026-02-16T23:51:44+01:00	Slack: support Block Kit blocks in sendMessage actions
+bd17587b2ab0d22ee5866926632946097a6ce38d	bd17587b2	2026-02-16T23:51:44+01:00	Slack: route modal interactions via private metadata
+d57cbcf713d747c4ec36276074f74ea4fedd3d00	d57cbcf71	2026-02-16T23:51:44+01:00	Slack: use static_select for large slash arg menus
+cf0ca47a82897f6efba420eb15b8813d38a845bd	cf0ca47a8	2026-02-16T23:51:44+01:00	Slack: capture Block Kit view closed events
+e7cded82b22ac961ce3c8bb2542256d99f7605aa	e7cded82b	2026-02-16T23:51:44+01:00	Slack: capture Block Kit modal submissions
+21ba564fb064338b687620dda92b5b53ba2b5b58	21ba564fb	2026-02-16T23:51:44+01:00	Slack: fix CI typing for interaction handler
+55b70aa8b4d190fae05a7c5b0f52cf911fa44182	55b70aa8b	2026-02-16T23:51:44+01:00	Slack: register interaction event handler
+9419d029c95ff6134684a75acc3990166a49fc73	9419d029c	2026-02-16T23:51:44+01:00	Slack: enrich Block Kit interaction events
+06b961b0371f1dbea621c73d25951b3b44113941	06b961b03	2026-02-16T23:51:41+01:00	fix: flatten remaining anyOf/oneOf in Gemini schema cleaning
+1bbf6206d53b988f313b3d0dcfb6a5587b6b3301	1bbf6206d	2026-02-16T23:51:41+01:00	fix: exclude google-antigravity from Gemini schema sanitization
+fe94e83f6b6c701d5a125b8723f0c6e8a590d0f8	fe94e83f6	2026-02-16T23:51:41+01:00	fix: make tool schema normalization provider-aware
+382158fb3093bed96fc7d3bdc2cdabb62b65e98a	382158fb3	2026-02-16T23:51:37+01:00	fix(ui): auto-refresh sessions list after deletion
+66fc12a40c6d8baf09b2ea39cfab8e3e9281e08e	66fc12a40	2026-02-16T23:51:34+01:00	style: apply oxfmt formatting to app-render.ts
+1bb2d65ff3b364e907658f021f93b5fa10fffe68	1bb2d65ff	2026-02-16T23:51:34+01:00	fix: remove unused imports and simplify boolean comparison
+fe613297a75906f7c14898a8043439bffa523840	fe613297a	2026-02-16T23:51:34+01:00	fix: add type assertions for unknown value indexing in translate.ts
+d30f5a2438e1b194b518ba675cf05d5d7ac4fd66	d30f5a243	2026-02-16T23:51:34+01:00	fix: resolve linting issues (curly braces, unused imports, any types)
+075317ab169efb10bcaa631818d05857b09108d3	075317ab1	2026-02-16T23:51:34+01:00	fix: correct function names in overview.ts and add type assertion in translate.ts
+f20bef3d79ffff5915149c0c595c1aa64cf4b105	f20bef3d7	2026-02-16T23:51:34+01:00	fix: add .ts extensions to i18n imports for ESM compatibility
+e0c45eab4903960be3f0db34c83f4d023731dd0b	e0c45eab4	2026-02-16T23:51:34+01:00	style: apply oxfmt formatting
+98ed2e7130ee37f4380be98c7f72e361171fa8f9	98ed2e713	2026-02-16T23:51:34+01:00	fix(i18n): add missing agents and usage tabs to zh-TW locale
+cf44a0c4c1ed9f45f6d3cb79cb76291bec11b753	cf44a0c4c	2026-02-16T23:51:34+01:00	fix(ui): localize language selector and validate stored locale
+a9c952b13a9cdfb9bc462b63f2117ee503939d15	a9c952b13	2026-02-16T23:51:34+01:00	fix(i18n): resolve dynamic import warnings and add zh-TW locale
+4b17ce7f48c67a823ac761fec0a1170090cb7a53	4b17ce7f4	2026-02-16T23:51:34+01:00	feat(ui): add i18n support with English, Chinese, and Portuguese
+a03098ca498a5c2f2a7094437e9283e28aafb0d3	a03098ca4	2026-02-16T23:51:29+01:00	docs(cron): add subagent announce retry troubleshooting section
+348ea6be96b31988c5ad334aacc1908a5906919d	348ea6be9	2026-02-16T23:51:25+01:00	docs: fix missing period in fly.io frontmatter description
+d2dd28203417d52090b8bb77fa5e832daa8c0b17	d2dd28203	2026-02-16T23:51:22+01:00	docs(exec): document pty for TTY-only CLIs (gog)
+f2756118621299aa3f981bc4299adc0ed7603a59	f27561186	2026-02-16T23:51:19+01:00	fix(sandbox): restore SHA-1 in slugifySessionKey to preserve workspace dirs (#18503)
+d799a3994f1bf2dd74f4e085cf1bd772dca40d98	d799a3994	2026-02-16T23:51:16+01:00	fix(doctor): reconcile gateway service token drift after re-pair
+5f821ed06731e81002b69af329a151da4efdafa2	5f821ed06	2026-02-16T23:51:12+01:00	fix(session): prevent stale threadId leaking into non-thread sessions
+01b37f1d3248029da8589e1e6559c76f2d38ac03	01b37f1d3	2026-02-16T23:51:09+01:00	fix(telegram): handle large file getFile errors gracefully
+1953b938e342ed3c1d6901d6d6f7c50f6cd9a273	1953b938e	2026-02-16T23:51:05+01:00	test(heartbeat): update runner tests to match current implementation
+d35172cce55e0ee0657db01e67b2d14c4778f748	d35172cce	2026-02-16T23:50:59+01:00	docs: add changelog entry for Telegram media placeholder fix
+0587e4cc73290674c32cc9f6edff11ff1b2e9178	0587e4cc7	2026-02-16T23:50:59+01:00	fix(agents): restrict MEDIA: token parsing to line start in tool results (#18510)
+93fbe6482b49ac51b7911ed3ea5e8246fc0a1414	93fbe6482	2026-02-16T23:50:56+01:00	fix(sessions): archive transcript files when pruning stale entries
+441401221d920f9d0bec39cfcea4589fd75745f3	441401221	2026-02-16T23:50:56+01:00	fix(media): clean expired files in subdirectories
+c89eb351ead5d232e836922bd64927ab626173ba	c89eb351e	2026-02-16T23:50:53+01:00	style: run oxfmt formatting on doctor-config-flow.ts
+304bfefaf91f32677ae216361f795d3e6b68200a	304bfefaf	2026-02-16T23:50:53+01:00	chore: remove unused channelName parameter from ensureWildcard
+b05273de61b69019fba7293583db9d10a0c40555	b05273de6	2026-02-16T23:50:53+01:00	fix: doctor --fix auto-repairs dmPolicy="open" missing allowFrom wildcard
+71dad89193b7b0f8635d574134e223664b772acf	71dad8919	2026-02-16T23:50:47+01:00	Revert "skills/video-quote-finder: add markdown PR hygiene checks"
+d0793cbb9b93e33f3308fa74612a36177ffa1390	d0793cbb9	2026-02-16T23:50:47+01:00	skills/video-quote-finder: add markdown PR hygiene checks
+28216956ec36b3b6410d2eab9e0b36add15ad875	28216956e	2026-02-16T23:50:47+01:00	docs: use markdown link to satisfy no-bare-urls lint
+84a37129fd52484d0a7075180d8020e8b0a1dd78	84a37129f	2026-02-16T23:50:47+01:00	docs: wrap original prompt blockquote for lint compliance
+e2f28ff4cbedd00f1c01031fcb5aa56f04061e7a	e2f28ff4c	2026-02-16T23:50:47+01:00	skills/video-quote-finder: strip URL fragments before adding timestamp
+61726a2fbde146b4583f94d029b41266cd1b9c55	61726a2fb	2026-02-16T23:50:47+01:00	skills: add video-quote-finder with timestamp links
+89ce1460e15d6f2219cc5ffb866b8b91f19ae2a1	89ce1460e	2026-02-16T23:50:42+01:00	feat(slack): add configurable stream modes
+087edec93f7be8c3210d06b2430ff08037f43b45	087edec93	2026-02-16T23:50:42+01:00	feat(slack): add draft preview cleanup lifecycle
+dfd5a7963146b8245413f9590e8addc6e610f258	dfd5a7963	2026-02-16T23:50:42+01:00	fix(slack): pass account token for draft final chat.update
+bec974aba9ac95612c8df41dd7b2cf43a981b961	bec974aba	2026-02-16T23:50:42+01:00	feat(slack): stream partial replies via draft message updates
+78c34bcf33faea611b6de85cb018605d4fe19d8d	78c34bcf3	2026-02-16T23:50:37+01:00	Add runtime quiting functionality to doctor.ts
+254041717019401a03f25e9e989c1785476d780a	254041717	2026-02-16T23:50:37+01:00	Add  to exit process when doctor has finished
+b6d934c2c7da1276ce5a001ef7f1d16773918f0c	b6d934c2c	2026-02-16T23:50:34+01:00	Agents: improve Windows scaffold helpers for venture studio
+c15385fc94402565a937e92160d69ba2f9a776bf	c15385fc9	2026-02-16T23:50:31+01:00	fix(telegram): enable voice-note transcription in DMs and add CLI fallback
+e8b03a86223a033b4969e4e534d77b5545f0e75f	e8b03a862	2026-02-16T23:50:27+01:00	fix(agents): replace anyOf with string in image tool schema
+6d31d1ecc6eace22f9d629103eff6c203a186f2f	6d31d1ecc	2026-02-16T23:50:24+01:00	fix(plugins): enforce high-priority override precedence
+2456b1758765333788600ed4d8c558a0a2151053	2456b1758	2026-02-16T23:50:24+01:00	test(plugins): add Layer 1+2 tests for model override hook
+b90eb5152001e0c50a231ffd1da06b583391324b	b90eb5152	2026-02-16T23:50:24+01:00	feat(plugins): add modelOverride/providerOverride to before_agent_start hook
+15dd2cda209ccabc9febc25e16eec620137ae744	15dd2cda2	2026-02-16T23:50:21+01:00	feat: show transcript file size in session status
+fc6d53c895df64f6e7350354b907e0d775d151a0	fc6d53c89	2026-02-16T23:50:18+01:00	fix: correct import path in test and restore deleted schema help entries
+6d2e3685d6c354d029d788c404c54c5a77d0d2af	6d2e3685d	2026-02-16T23:50:18+01:00	feat(tools): add URL allowlist for web_search and web_fetch
+e179d453c7d8aa3ffdc2dbd67fa5f5fbf93aa016	e179d453c	2026-02-16T23:50:14+01:00	fix: resolve #12770 - update Antigravity default model and trim leading whitespace in BlueBubbles replies
+0af795287a02933b71bc7cdaf49eb59510a0aee0	0af795287	2026-02-16T23:50:11+01:00	Fix: Doctor refers to deprecated auth command
+facfa410a7f282eb2054cec1304f69d9b2df12b7	facfa410a	2026-02-16T23:50:08+01:00	fix(tool-display): satisfy format/lint and address review feedback
+24f213e7edd4c1418aa059ebf00c6497d4c0f501	24f213e7e	2026-02-16T23:50:08+01:00	feat(tool-display): add intent-first details and exec summaries
+b9c45d003d145a5c3e61455d82dfd0aa15119304	b9c45d003	2026-02-16T23:50:05+01:00	chore: format scripts/ui.js with oxfmt
+b60b44b42e5931c5324346011d1128495022b526	b60b44b42	2026-02-16T23:50:05+01:00	fix(scripts): fix spawn EINVAL error on Windows in ui.js
+290f33759468f3a52603d92f26b5f7d469684887	290f33759	2026-02-16T23:50:01+01:00	fix: remove references to non-existent test file
+eec1f3e9dba9a7c44ff9db2ab4deed1c621141c2	eec1f3e9d	2026-02-16T23:50:01+01:00	fix: address code review feedback - move test data, fix patterns, rewrite docs as RFC
+5801c4f9830c0cab922d33e6750b87047069206a	5801c4f98	2026-02-16T23:50:01+01:00	feat(telegram): add outbound sanitizer leak corpus and docs
+c08e8c03597fbaa11d3e248ae46d7562bfa2b9cb	c08e8c035	2026-02-16T23:49:58+01:00	correct format
+a0191426dc0e317061155e797f42b75a09ed1797	a0191426d	2026-02-16T23:49:58+01:00	clean code - delete message
+f476c8b48b66fbdf89ab973f11e36be45b7e00b6	f476c8b48	2026-02-16T23:49:58+01:00	Fix #12767: Heartbeat  strip responsePrefix before HEARTBEAT_OK suppression
+feed5709842deb816cda8ac7e8aa08bc49423793	feed57098	2026-02-16T23:49:54+01:00	fix: syncs all credential types to agent auth.json
+12ce358da5ea190af1c3840e55d306f392d40c9a	12ce358da	2026-02-16T23:49:51+01:00	fix(failover): recognize 'abort' stop reason as timeout for model fallback
+32c66aff49fcdb295484dd94f56c9c8a8f0d9482	32c66aff4	2026-02-16T23:49:47+01:00	fix: add windowsHide: true to spawn in runCommandWithTimeout
+20957efa467403419442e1a45fd76d095fd7c6df	20957efa4	2026-02-16T23:49:44+01:00	fix(process): graceful process tree termination with SIGTERM before SIGKILL
+19ae7a4e17d80b7274ac04ad8d0ceff6b31afa85	19ae7a4e1	2026-02-16T23:49:41+01:00	fix(session-memory): fallback to rotated transcript after /new
+769f7631d57cccbd6310cd405f442dff3c5e51e5	769f7631d	2026-02-16T22:47:34Z	refactor(test): dedupe duplicate dispatch test flow
+af5d4ac7d3be14e0ee4517d01dbb7e2b5c872f82	af5d4ac7d	2026-02-16T22:47:26Z	refactor(test): dedupe doctor legacy migration fixtures
+389eb8ba10b617d84d6227fcc792b04757e5d714	389eb8ba1	2026-02-16T22:43:37Z	refactor(test): dedupe discord component registry fixtures
+abbe04b18493c362865f90201be844ead56f2647	abbe04b18	2026-02-16T22:43:30Z	refactor(discord): share attachment media resolution loop
+1aabe9712abfda3c86b45f1be4a0a87b25bcab7d	1aabe9712	2026-02-16T22:39:42Z	refactor(discord): dedupe reaction notification flow
+61859377a50922f384bc7850cf4a5ba557c66123	61859377a	2026-02-16T22:39:42Z	refactor(test): dedupe pi-tools loop detection test setup
+05bfb7f9f9f88f8fbc22f45f326cc41e475dc568	05bfb7f9f	2026-02-16T22:39:42Z	refactor(test): reuse discord message handler base context harness
+8947d2dea5491bd6e5d19630eb3ec2f488880ce0	8947d2dea	2026-02-16T23:32:12+01:00	Agents: format process poll backoff files
+23f5cc80a4deec20cf293b5ec0ad53f13d97bb96	23f5cc80a	2026-02-16T23:32:12+01:00	Agents: wire command poll backoff into process poll
+054745a7e00154bf6b19049bbd69333f93b26313	054745a7e	2026-02-16T22:30:39Z	refactor(test): dedupe slack monitor event fixtures
+11f3da7669fc89facc0307548ce87b5860789fd8	11f3da766	2026-02-16T22:30:39Z	refactor(test): dedupe cron service test harness setup
+21e5c0ce57c42d1b7671ac843be5b4ce64570fa3	21e5c0ce5	2026-02-16T23:27:23+01:00	chore: reorder latest changelog bullets by user impact
+4e930db432e1c0fc269fd4a40abfb46e804714cd	4e930db43	2026-02-16T14:13:17-08:00	fix: guard reminder note (#18588) (thanks @vignesh07)
+0f6b39ea572928553293df44abaca71ae2f75b72	0f6b39ea5	2026-02-16T17:10:14-05:00	Docs/Changelog: add missing entry for #18586 (#18604)
+5a26d1c6223f297a2ebcd094f2c04c5944b1951a	5a26d1c62	2026-02-16T14:07:16-08:00	Agent: guard reminder promises behind cron scheduling
+0cff8bc4e6977d7ba3a6ade0551c4548f30f8a2b	0cff8bc4e	2026-02-16T17:02:59-05:00	fix(telegram): include DM topic thread id in replies (#18586)
+1567d6cbb436ab9074006d8a2f9cd74d74fb76e7	1567d6cbb	2026-02-16T15:23:40-06:00	feat(discord): download attachments from forwarded messages (#17049)
+c593709d252a1efe70a8ce40d40627a35b818e46	c593709d2	2026-02-16T15:15:00-06:00	Discord: add per-button component allowlist
+fc8290af42f6c14d436618761656f9d64fd397be	fc8290af4	2026-02-16T22:10:21+01:00	CLI: normalize help command description casing (#18569)
+b25f334fa2c8016c8d855a962f8c533801e6078a	b25f334fa	2026-02-16T22:06:25+01:00	CLI: improve command descriptions in help output (#18486)
+05a83b9e97090b79b02cd64310b2a027607b2168	05a83b9e9	2026-02-16T14:22:49-06:00	Discord: add reusable component option
+fc60336c18b479ab374a2472993ee90e2f3ccb72	fc60336c1	2026-02-16T14:18:17-06:00	Discord: add native exec options
+e5eb5b3e43d78a0beca7bd917f65eeadb73a033d	e5eb5b3e4	2026-02-16T15:16:35-05:00	feat: add stuck loop detection and exponential backoff infrastructure for agent polling (#17118)
+1f99d8271284bcb2e8e7aee575ddfc594fe7b314	1f99d8271	2026-02-16T11:57:32-08:00	test (heartbeat): relax brittle reply option assertions
+3646625dc16ac11ec36c1686f35f714c5e0d83d8	3646625dc	2026-02-16T13:53:12-06:00	Infra: skip Discord text exec approvals
+81d2a91a909483672a05ff2e4792999569d62077	81d2a91a9	2026-02-16T13:48:46-06:00	fix(discord): send initial message for non-forum thread creation (#18117)
+7c240a2b5858d0c507ae31a610baff1079cb1dba	7c240a2b5	2026-02-16T13:38:39-06:00	feat(discord): faster reaction status state machine (watchdog + debounce) (#18248)
+c953cfdee7e9704b61c1a69c9416780d81284c2d	c953cfdee	2026-02-16T11:30:49-08:00	chore (changelog): note webchat command auth fix
+e95134ba3fa5dc2337fcce596d04677c18d29dc6	e95134ba3	2026-02-16T11:30:49-08:00	fix (commands): keep webchat auth on internal provider
+72e228e14b9f58679c1f797bd613026bedc6e2ce	72e228e14	2026-02-16T13:29:24-06:00	Heartbeat: allow suppressing tool warnings (#18497)
+3238bd78d9d593d48e7b49fe9d655554f13f9163	3238bd78d	2026-02-16T13:25:58-06:00	fix(discord): normalize bare numeric IDs in outbound target resolution
+250896cf6e75a4d9a34b0b918c8264e0cd14c723	250896cf6	2026-02-16T12:53:45-06:00	fix: correct contradictory test name (Greptile review)
+03cadc4b7aa428195807edef72f5849031152628	03cadc4b7	2026-02-16T12:53:45-06:00	fix(auth): auto-expire stale auth profile cooldowns and reset error count
+d3707147c033cf8b863c5c47119437f10ed484de	d3707147c	2026-02-16T12:45:08-06:00	chore: update carbon
+1cf3aba3f62fa140d0f766bf8bf5d637265dcf25	1cf3aba3f	2026-02-16T10:35:48-08:00	chore (changelog): note qmd multi-agent startup fix
+02c268eec1e56d5db6771c2b4ec1dd2f3c8091e0	02c268eec	2026-02-16T10:35:26-08:00	fix (gateway/memory): start qmd onBoot for all agents
+b0a01fe4828fedb997387d784518841eab4b0c79	b0a01fe48	2026-02-16T10:34:29-08:00	Agents/Tools: preflight exec script files for shell var injection (#18457)
+9b70849567de0b934ddf149f0b740dd350842c3e	9b7084956	2026-02-16T18:31:37Z	refactor(test): dedupe trusted-proxy auth test setup
+96eabcbe89596f9c66916d424b90be297ecf90a0	96eabcbe8	2026-02-16T18:31:31Z	refactor(test): share antigravity usage endpoint fixtures
+b0035a1e492ae4648a7be89e15cff64024be71b1	b0035a1e4	2026-02-16T18:31:27Z	refactor(test): table-drive web tool defaults checks
+8a1893a215a38eaa0e7f7cda510d1edeab3f0df8	8a1893a21	2026-02-16T18:25:04Z	refactor(test): table-drive legacy config policy assertions
+9372df45f2439060a3d3ba685a3744e98fa4ac1b	9372df45f	2026-02-16T18:25:04Z	refactor(test): table-drive auth choice option checks
+23480bb4e3cfe505cf350c04cf51e6007c6f9472	23480bb4e	2026-02-16T18:25:04Z	refactor(test): dedupe trigger model command fixtures
+9ff473fa052e458dbfde347afea0461236984748	9ff473fa0	2026-02-16T18:25:04Z	refactor(test): share sandbox config test helpers
+30c8361d0ad126f17f21615bd6cecd116b9b8b5f	30c8361d0	2026-02-16T18:25:04Z	refactor(test): dedupe isolated cron turn setup
+1b7301051b4ee0c0237d4712cdcd4ce415b052bd	1b7301051	2026-02-16T12:22:58-06:00	Config: require Discord ID strings (#18220)
+5d40d47501c19465761f503ebb12667b83eea84f	5d40d4750	2026-02-16T18:09:49Z	refactor(test): reduce dispatch-from-config setup duplication
+74c49c943d6f999f712e9dab998ccaf63060f4e3	74c49c943	2026-02-16T18:09:45Z	refactor(test): share web fetch e2e setup helpers
+9c6e879a06a5611cb1d99f90907511f40213ff22	9c6e879a0	2026-02-16T18:09:38Z	refactor(test): dedupe heartbeat runner e2e scaffolding
+c7e386982f04bdf44eca95121a70b33d3a30fb3d	c7e386982	2026-02-16T17:57:45Z	refactor(test): dedupe agent and memory cli test setup
+616d4692a91b957a23f5d523f82910c402cf885f	616d4692a	2026-02-16T17:57:45Z	refactor(hooks): share install temp-dir and archive fixtures
+9a29d7833ba61185d2dc39126c6c72c8e9374124	9a29d7833	2026-02-16T17:57:45Z	refactor(cli): dedupe browser and hooks command handlers
+5a39e13c929c4d6840242d42538b027741a7a0bf	5a39e13c9	2026-02-17T01:41:53+08:00	fix(ios): restore missing location monitor merge files (#18260)
+f2e12646b49ea2e88814dd4bd4f8e0c60015909c	f2e12646b	2026-02-16T17:39:53Z	docs(changelog): credit @Marvae for iOS onboarding QR (#18325)
+9e26fe44597adf46dbf6a53b3a037a9ec671e161	9e26fe445	2026-02-16T17:37:10Z	fix(ios): gate talk barge-in on isolated audio routes (#18265)
+b3859b488cbecf9287d7bef203b9c163ddc47665	b3859b488	2026-02-16T17:36:17Z	feat(ios): add background listening core toggle (#18261)
+ad27716d3f02ccbf10908086c8ed1008bc7b284a	ad27716d3	2026-02-16T17:33:42Z	feat(ios): add Talk voice directive hint toggle (#18250)
+d688188864b838259b79358ae4d16181f5f9cdda	d68818886	2026-02-16T17:22:26Z	refactor(tests): share outbound runner and delivery helpers
+71111c9978e6f784b51a1799a584ee6e63d00c6c	71111c997	2026-02-16T17:22:26Z	refactor(tests): dedupe gateway send and threading fixtures
+291275982c8dd6869e21198d28590e9b9be8483e	291275982	2026-02-16T17:22:26Z	refactor(web): reuse send api + access-control test helpers
+94a4dd0189c4118849ffb2cc3e5889954b323615	94a4dd018	2026-02-16T17:22:26Z	refactor(gateway): dedupe wizard and exec approval handler paths
+16327f21dadc12c4793d9a7bc8e033dacac09764	16327f21d	2026-02-16T22:48:47+05:30	feat(telegram): support inline button styles (#18241)
+a177f7b9fe2820e22db306321586f4326481f1b4	a177f7b9f	2026-02-16T17:06:40Z	refactor(tests): dedupe slack telegram and web monitor setup
+8df83d1835ce21b855a7882fc840a0cfdbe90ad5	8df83d183	2026-02-16T17:06:40Z	refactor(core): extract shared runtime and wizard schemas
+c37f65a449d96e06bfd35fddc0d6b326e2ededae	c37f65a44	2026-02-16T17:06:40Z	refactor(tests): share harnesses for cli and monitor fixtures
+b9919197550211cb88cb152fb06a7a3805127549	b99191975	2026-02-16T17:06:40Z	refactor(cron): dedupe next-run recompute paths
+8a67016646a01912a96b1f0ea555e8fa121508db	8a6701664	2026-02-16T12:04:53-05:00	Agents: raise bootstrap total cap and warn on /context truncation (#18229)
+5b185da3660d241341f2c3aa5cf001ebfcfa2ffd	5b185da36	2026-02-16T16:52:53Z	refactor(test): remove remaining command test duplication
+0d51869c3c2e5d397df23179ba1166c959db64a5	0d51869c3	2026-02-16T16:48:55Z	refactor(test): consolidate doctor health and sandbox fixtures
+2d8edf85ade6aff92bc40b642c57b3e26d5745da	2d8edf85a	2026-02-16T16:48:55Z	refactor(test): share onboarding and model auth test helpers
+ac5f6e7c9df59a466365fa6590ccd26cd5f9c066	ac5f6e7c9	2026-02-16T16:48:55Z	refactor(test): dedupe agent and status command fixtures
+44ef045614019e46a6897704683a72d279a964d7	44ef04561	2026-02-16T16:42:28Z	fix(canvas): port remaining iOS branch stability fixes (#18228)
+c8a536e30a175dccac68478d23963f17c4183343	c8a536e30	2026-02-16T10:34:18-06:00	fix(agents): scope message tool schema by channel (#18215)
+3a2fffefdb2ac1c854dac33fd736294ce1ffa064	3a2fffefd	2026-02-16T16:32:37Z	refactor(test): centralize doctor e2e runtime and snapshot scaffolding
+ffeeb835aa404fa26e8b0ce9ca9696279a005921	ffeeb835a	2026-02-16T16:32:37Z	refactor(test): extract shared doctor migration test setup
+261f5ee49246876d26d18fe05fb5016a0a4e380f	261f5ee49	2026-02-16T16:32:37Z	refactor(test): dedupe command config and model test fixtures
+130e59a9c09604f78e6e62da85392ed927547fc8	130e59a9c	2026-02-16T16:22:51Z	iOS: port onboarding + QR pairing flow stability (#18162)
+df6d0ee92bbf7bb5755d809050e62e5789b93ea8	df6d0ee92	2026-02-16T16:14:54Z	refactor(core): dedupe tool policy and IPv4 matcher logic
+110b1cf46fe90060b688063a0bdc7c8488cf7f13	110b1cf46	2026-02-16T16:10:18Z	refactor(test): centralize auth test env lifecycle cleanup
+9a1e1686857c45937f6b12df2b9eed3fdd17cfe0	9a1e16868	2026-02-16T16:07:22Z	iOS: port gateway connect/discovery stability + onboarding reset (#18164)
+def3a3ced1fa54e57e551e72a83b9823cf66f43d	def3a3ced	2026-02-16T16:03:22Z	refactor(test): reduce auth and channel setup duplication
+9adcaccd0bca5d811047196dfc6b6b2a61526776	9adcaccd0	2026-02-16T16:03:22Z	refactor(test): share non-interactive onboarding test helpers
+2e7fac2231021f85e8186e77c3777f8c63d6bb17	2e7fac223	2026-02-16T16:00:08Z	iOS: port talk redaction, accessibility, and ATS hardening (#18163)
+db3480f9b5084f220143511610936a936bbe949b	db3480f9b	2026-02-16T15:53:13Z	refactor(test): reuse provider-auth onboarding config helper
+6effcdb551a8c46a422cbe6f8f8e63afb53250dc	6effcdb55	2026-02-16T15:51:11Z	OpenClawKit: stabilize iOS ChatUI updates after gateway replies (#18165)
+f1351fc545303915135b0f832df1c2b8ed0be8de	f1351fc54	2026-02-16T15:44:33Z	refactor(test): centralize auth test agent-dir helpers
+36a5ff81350525a7397359f7db81c6eab355908a	36a5ff813	2026-02-16T15:42:50Z	refactor(test): consolidate provider-auth config snapshot typing
+a948a3bd0087de330d37df41a4a35bf241462875	a948a3bd0	2026-02-16T15:40:48Z	refactor(test): share gateway onboarding state-dir lifecycle
+a0e8f00b2064316a3bd379bd0b55519277b48788	a0e8f00b2	2026-02-16T15:38:37Z	refactor(test): simplify auth-choice profile assertions
+716872c174e53751e224447824e94341aa7c91c7	716872c17	2026-02-16T15:38:37Z	refactor(test): dedupe agents identity test setup
+68e39cf2c34404b1fe6ae111a1d2fbd7ba0f9dd6	68e39cf2c	2026-02-16T15:38:07Z	CLI: restore and harden qr --remote pairing behavior (#18166)
+1633c6fe984d0db1ed366bc2d39304d3d546c2a9	1633c6fe9	2026-02-16T15:25:45Z	refactor(test): dedupe auth-choice e2e setup plumbing
+94f455c693fbd59d8341544d9174baf02612637f	94f455c69	2026-02-16T15:25:45Z	refactor(test): share auth test env/profile helpers
+1d37389490c6924098f6dda3ed9d21154baf1222	1d3738949	2026-02-16T15:19:11Z	test: annotate harness mocks to avoid TS2742 in CI
+a1ca9291f3ce12345f0dcd55dce56d0892ffb7f1	a1ca9291f	2026-02-16T14:59:31Z	test(agents): fix reasoning replay input assertion helper
+93ca0ed54f9d0799d971ca43f4bc3afe77ee5e11	93ca0ed54	2026-02-16T14:59:31Z	refactor(channels): dedupe transport and gateway test scaffolds
+f717a1303966deed766f3109aa3f5c832c5f0b1a	f717a1303	2026-02-16T14:59:30Z	refactor(agent): dedupe harness and command workflows
+04892ee230e60696c6fc6b3819789aea2ecc7555	04892ee23	2026-02-16T14:59:30Z	refactor(core): dedupe shared config and runtime helpers
+544ffbcf7b250965d8debcb50c0c364a22e4aa9e	544ffbcf7	2026-02-16T14:59:30Z	refactor(extensions): dedupe connector helper usage
+bc55ffb160c712d71ad3136619bb81fd4d549a85	bc55ffb16	2026-02-16T14:58:38Z	test: isolate qr/setup-code token env in unit tests
+c9f2c3aef9f43f24acd8daf858b64c99254c9a60	c9f2c3aef	2026-02-16T14:58:38Z	test: trim redundant non-stop abort assertion
+fc9fae2c298eef2170ff8e9eb34a3abc05d217de	fc9fae2c2	2026-02-16T15:53:00+01:00	chore(changelog): restore 2026.2.15 and move entries to 2026.2.16
+599c890221f0226d1369a38e031b8e55abde5d31	599c89022	2026-02-16T14:48:14Z	CLI/Gateway: restore qr flow with --remote support (clean) (#18091)
+fec4be8dec67019bf058f0d5a1b9f4fb4cd49f1b	fec4be8de	2026-02-16T08:35:49-05:00	fix(cron): prevent daily jobs from skipping days (48h jump) #17852 (#17903)
+095d522099653367e1b76fa5bb09d4ddf7c8a57c	095d52209	2026-02-16T08:33:40-05:00	fix(security): create session transcript files with 0o600 permissions (#18066)
+6931f0fb50016dfcb3b3a3c5a402984ebc65884c	6931f0fb5	2026-02-16T08:24:55-05:00	refactor(telegram): avoid double-wrapping proxy fetch
+b4fa10ae67ca7144503000ceee4309ff0343ced1	b4fa10ae6	2026-02-16T08:24:55-05:00	refactor(infra): make fetch wrapping idempotent
+7b8cce09109fe2e73ff535959672fd6e89939fd6	7b8cce091	2026-02-16T08:24:55-05:00	test(config): normalize merge-patch regression fixture formatting
+5b8bfd261be7c4aba47547abc7e85551adeaa778	5b8bfd261	2026-02-16T08:24:55-05:00	test(gateway): cover mixed-id config.patch rollback
+f4b2fd00bc9013ae8f0e2a7aad5ae09fdbd720c1	f4b2fd00b	2026-02-16T08:24:55-05:00	fix(config): harden object-array merge-by-id fallback
+dddb1bc942521f5f195741674299d2014ad30fc6	dddb1bc94	2026-02-16T18:54:34+05:30	fix(telegram): fix streaming with extended thinking models overwriting previous messages/ also happens to Execution error (#17973)
+553d17f8af19856aa812b0c7c33e0b1b9f62aa11	553d17f8a	2026-02-16T08:20:24-05:00	refactor(agents): use silent token constant in prompts
+e3e8046a931701017c83f64fbf810af1d319102d	e3e8046a9	2026-02-16T08:17:23-05:00	fix(infra): avoid detached finally unhandled rejection in fetch wrapper (#18014)
+cb391f4bdc75f069ccf642842b25966932068ff2	cb391f4bd	2026-02-16T08:13:51-05:00	fix(config): prevent config.patch from destroying arrays when patch entries lack id (#18030)
+3a277e394e60c428cb3849831a536ee0d863117b	3a277e394	2026-02-16T08:10:52-05:00	test(agents): add cooldown expiry helper regressions
+d224776ffbb16e87600c7d7e52135e41f3ee343a	d224776ff	2026-02-16T08:10:52-05:00	refactor(agents): extract cooldown probe decision helper
+c2a0cf0c28a2596b995ca94952b6f278b0767dac	c2a0cf0c2	2026-02-16T08:09:02-05:00	fix(tts): update tool description to prevent duplicate audio delivery (#18046)
+39bb1b33222e44139128c3a9e04124df97e7d934	39bb1b332	2026-02-16T08:03:35-05:00	fix: auto-recover primary model after rate-limit cooldown expires (#17478) (#18045)
+244ed9db391aa964567ab38c868beed2b595e70a	244ed9db3	2026-02-16T18:10:24+05:30	fix(telegram): draft stream preview not threaded when replyToMode is on (#17880) (#17928)
+b2aa6e094db73210376a7ed3dc72f506398dfdaa	b2aa6e094	2026-02-16T16:21:10+05:30	fix(telegram): prevent non-abort slash commands from racing chat replies (#17899)
+bc67af6ad89bf036e93f1690a9d8f67552538554	bc67af6ad	2026-02-16T02:36:00-08:00	cron: separate webhook POST delivery from announce (#17901)
+d841c9b26b58737afe1bcdf8189f3699f317cb47	d841c9b26	2026-02-16T10:02:59Z	test: remove duplicate replyToTag assertion in split-tag case
+597f956a4fad89e7dca45021c94e1b51036dccd3	597f956a4	2026-02-16T10:01:58Z	test: remove duplicate existing-id all-mode planner case
+f043f2d8c9062055250cfd86f1abf597dd5cd998	f043f2d8c	2026-02-16T10:00:57Z	test: trim duplicate first-mode hasReplied assertion variant
+a4e7f256db157ffd7aac3a553b1f1f1cf68207fa	a4e7f256d	2026-02-16T09:59:59Z	test: drop redundant off-mode hasReplied assertion
+893f56b87d27bc7b1145c68057eee4433bc59c40	893f56b87	2026-02-16T09:59:09Z	test: remove redundant multi-variable template resolution case
+4da68afc73e0aa309cd18259e76a118ce9cecc46	4da68afc7	2026-02-16T09:58:05Z	test: remove duplicate off-mode existing-id planner case
+7cfd0aed5fd69ef9600d0d4f6447e09f07b1ef2a	7cfd0aed5	2026-02-16T09:56:46Z	test: remove duplicate non-date negative-case assertion
+d611db8049191e48c5aeadc3ad7bbce311eed496	d611db804	2026-02-16T09:55:44Z	test: remove duplicate provider-prefix assertion variant
+3eb9c2105c09f984f313adbedb5b0238e2d91248	3eb9c2105	2026-02-16T09:54:56Z	test: remove duplicate date-suffix assertion variant
+9f6462bd56b09a3739029e5b5cf459602ef7740c	9f6462bd5	2026-02-16T09:54:05Z	test: trim duplicate latest-suffix assertion variant
+2d034730720308841b4c99064eab230e313565f8	2d0347307	2026-02-16T09:52:16Z	test: trim duplicate provider-prefix assertion in short-model tests
+dbcdcc5d1930bff89a8d7200b46a9c63e084b88a	dbcdcc5d1	2026-02-16T09:51:09Z	test: remove duplicate positive template-variable detection case
+c4297a8d604a1e163eb090ffab2c227973021564	c4297a8d6	2026-02-16T09:49:58Z	test: remove redundant no-provider short-model case
+deef9f91bf663b2be24a24cc5ec28cfdb12d018b	deef9f91b	2026-02-16T09:48:51Z	test: remove duplicate multi-variable template check case
+523193a91fe0ab30ddc9a81b475871667e4e02f6	523193a91	2026-02-16T09:47:45Z	test: remove duplicate static template-variable false case
+cd04385f9ffe572763ce9e6f122ea4a36688781b	cd04385f9	2026-02-16T09:46:44Z	test: remove redundant provider-plus-date model-name case
+82fa526bb06792d19b03db4a794e8fa1ee11dc9c	82fa526bb	2026-02-16T09:45:51Z	test: remove duplicate undefined template-variable guard case
+3fb4a7eb531e89779fa5fc99c635e2a9ca3a8793	3fb4a7eb5	2026-02-16T09:44:16Z	test: remove duplicate hook-wake heartbeat empty-file case
+7a6928712bb697427b9c2547d5f454dde75f82e7	7a6928712	2026-02-16T09:43:01Z	test: remove redundant explicit telegram heartbeat target case
+9b351fcbd8217af6e6db1c2ae4dc8ccc8a6d950c	9b351fcbd	2026-02-16T09:41:50Z	test: remove duplicate whatsapp group heartbeat target case
+d3ddf893c27d817c0fda5d1ba276d2345cfe0a9e	d3ddf893c	2026-02-16T09:39:48Z	test: remove redundant store-rotation integration prune case
+a597bd26d4b03dfa220ffabfe8de5ccf4851d8fa	a597bd26d	2026-02-16T09:37:42Z	test: remove duplicate direct-enabled whatsapp ack variant
+6fa150a890b79c59ade6d04822f42d4fb3de9520	6fa150a89	2026-02-16T09:36:02Z	test: trim redundant whatsapp mention-true ack reaction case
+93ad783c1bee8f416e53ceaeca1186ce1b56957a	93ad783c1	2026-02-16T09:34:35Z	test: remove redundant slash channel-policy integration case
+acc6b622893f5e3a7ec762e93b4d1d933c48be29	acc6b6228	2026-02-16T09:32:38Z	test: remove low-value private-channel lookup slash edge case
+fec1566f0425c82e15f2ebcc62655a6b97cd625d	fec1566f0	2026-02-16T09:30:33Z	test: remove duplicate ack-reaction none-scope branch case
+ced5148afd33c14dc5dd2b1ab9d1bfb34f7ec320	ced5148af	2026-02-16T09:29:41Z	test: remove redundant identity emoji response-prefix case
+c0973f24c6b43af2705bb341315a7e26bf08a03a	c0973f24c	2026-02-16T09:28:20Z	test: remove low-value concurrency passthrough unit case
+6a392b84937309f26e0396c3d5dc01a58734873f	6a392b849	2026-02-16T09:27:12Z	test: trim redundant ack-reaction removeAfterReply guard case
+f8ae538985635bfce11c0da5e481dd6f26d83bfc	f8ae53898	2026-02-16T09:25:34Z	test: remove low-value slash arg-menu payload-shape case
+b63f9b70666ec388240f82a7d040acefa710d4f1	b63f9b706	2026-02-16T09:23:03Z	test: remove redundant configured memory-flush prompt case
+4e3429ae6eb8383531f263c7199102aa1ad0cc68	4e3429ae6	2026-02-16T09:22:17Z	test: remove low-value typing-without-consumer variant
+78976d3f6f95e4c5fcfe78de5d3916b1fa1672be	78976d3f6	2026-02-16T09:21:39Z	test: remove low-value dm-fallback slash access edge case
+e30900f93e6bbb09f57b1f5ed50a6eb835132559	e30900f93	2026-02-16T09:20:40Z	test: remove low-value deprecated pruneDays e2e mapping case
+cef02df9d5551fcc1b99ff461fb9be711fd02839	cef02df9d	2026-02-16T09:19:55Z	test: remove redundant explicit-deny slash policy case
+0f7ad510201c51c60e73e1047005caba3ef8b11d	0f7ad5102	2026-02-16T09:18:36Z	test: remove low-signal malformed slash button edge case
+4e16893c61d0266c64830afbab3a7594f74ebbf2	4e16893c6	2026-02-16T09:17:47Z	test: remove low-value memory-flush ro workspace case
+192dbc3ba98ea4c6ee321fcdf8d874b5c21bf0c8	192dbc3ba	2026-02-16T09:16:11Z	test: drop duplicate role-ordering exception rewrite case
+d0b0ca9fcfa19fe6b21473cf77c4d183bb057943	d0b0ca9fc	2026-02-16T09:15:18Z	test: remove low-value open-policy slash channel case
+22c53af604e34b405c49e0a039b425ab2376a4b6	22c53af60	2026-02-16T09:13:56Z	test: remove redundant saveSessionStore cap e2e case
+54948a1d44ef6c20103bcc6799eb8a21ca848687	54948a1d4	2026-02-16T09:13:05Z	test: remove redundant maintenance config mapping e2e case
+22a1a56e7e1b9fb39fd6bbb60618897246629fcb	22a1a56e7	2026-02-16T09:11:17Z	test: remove low-value maintenance defaults e2e assertion
+15f8c577979f1a2d9792bf737d60c072907b116f	15f8c5779	2026-02-16T09:10:11Z	test: speed up subagent announce e2e and drop duplicate defer case
+404a8bc35f54db74bc22fe363b3ab48903ffeb9f	404a8bc35	2026-02-16T09:07:24Z	test: remove redundant pruning-plus-capping e2e case
+7a4c131d6b34d3709a24ab984a705c06e46bb0b0	7a4c131d6	2026-02-16T09:05:38Z	test: remove low-value mirrored-text media-filename unit case
+b156aafab9ab230040bcccd6ed87d6f5ca3e200e	b156aafab	2026-02-16T09:04:20Z	test: remove low-value direct metadata-mapping unit case
+838d875fcb95e4bc84345ca74ecead0100bcb01a	838d875fc	2026-02-16T09:03:07Z	test: remove low-value custom-root agent-extraction path case
+7932387df205498ad88a94421c2ffbd2d5d5a7c5	7932387df	2026-02-16T09:02:08Z	test: remove low-value stale-prune no-updatedAt edge case
+4d2ba58da5c7d190e6f412c544ed99fc3853b4e3	4d2ba58da	2026-02-16T09:00:54Z	test: remove low-value legacy dm-direct fallback permutation
+7d26eae3ee1d257443a0e86fc8d4bf265297b1d5	7d26eae3e	2026-02-16T09:00:02Z	test: remove low-value no-updatedAt cap-priority edge case
+5dc02aa55e33f868b59d1cccd0d4d1762f49f710	5dc02aa55	2026-02-16T08:58:43Z	test: remove low-value concurrent store-entry merge permutation
+c8704297b274d756967fc0a93dcf08cc7ea45887	c8704297b	2026-02-16T08:57:45Z	test: remove low-value relative traversal session-file guard case
+eb7b5c02c3f0ccba3d0717f3e2cc22905e6bf115	eb7b5c02c	2026-02-16T08:56:28Z	test: remove low-value cross-storepath lock parallelism case
+314f193030d026a9c0065ddc74612d9726083ac5	314f19303	2026-02-16T09:56:11+01:00	fix(ci): run scope detection on blacksmith runners
+d5bc5ab7ba50d5783fbb15cd95da9260d1e7ecf0	d5bc5ab7b	2026-02-16T08:54:55Z	test: remove low-value resolveStorePath tilde-expansion unit case
+fecd6234310e75ecadc2ff6ae23b853e6f592447	fecd62343	2026-02-16T08:53:51Z	test: remove duplicate reset precedence permutation case
+1e4cf489e0dbd7a54daa09eca887f6738afb0d1d	1e4cf489e	2026-02-16T09:53:36+01:00	fix(ci): keep main runs alive while coalescing newer pushes
+5d8f43ae8e85186a7b6a00f17f1827de79bd3c9a	5d8f43ae8	2026-02-16T08:52:55Z	test: remove duplicate explicit-agent fallback path case
+896f9efcb732e9837dc282b31ccecb4c8851218c	896f9efcb	2026-02-16T08:51:41Z	test: remove low-value absolute-in-dir session-file happy path
+f448e4bf77aeae5d1dfc45bd55679c481c9d65d0	f448e4bf7	2026-02-16T08:50:59Z	test: remove low-value lock queue cleanup bookkeeping case
+ada7a6289f4d59b6f556de54f15c10b4114921c5	ada7a6289	2026-02-16T09:50:37+01:00	fix(ci): dedupe docker release runs by ref
+731d72e119845bbf4b78e334a2ee3e5f9a11ffb9	731d72e11	2026-02-16T08:49:41Z	test: remove redundant in-dir relative session-file acceptance case
+bf801f51592b78a2219a789be1e1b378f47b6b47	bf801f515	2026-02-16T08:48:23Z	test: remove low-value unknown-session mirror guard case
+929a96c2f8a0eef20ec170c1083f51e24d62d072	929a96c2f	2026-02-16T08:47:45Z	test: remove low-signal mirrored-text trim unit case
+2983ef0243b319ed02823a126387abee0ebd8cb0	2983ef024	2026-02-16T09:47:07+01:00	fix(ci): use ref-based concurrency across workflows
+b5183c93d698e52f360f2006bc75ca9b80d8e9d5	b5183c93d	2026-02-16T08:46:49Z	test: remove low-value lock-storePath guard wrapper test
+bd0e7d3d225ff68106ea4d58547032b1efbc446f	bd0e7d3d2	2026-02-16T08:45:30Z	test: remove low-value positive session-id validation case
+19dfdfe5a80dfb9afb3a50b06c6b2a213cdb3e34	19dfdfe5a	2026-02-16T08:44:46Z	test: remove low-value missing-session-key mirror guard case
+2d6b605cc3352a784e90676d0b65b66334dbaed4	2d6b605cc	2026-02-16T08:44:01Z	test: remove low-value session-file options wrapper assertion
+025d4152d177ddf75cd4f4368e6096566ed91838	025d4152d	2026-02-16T09:42:58+01:00	fix(ci): key concurrency by ref instead of sha
+f9419e26bb1a1e79387662d5bd6eb346bb6dbf83	f9419e26b	2026-02-16T08:42:38Z	test: remove duplicate empty-text mirror integration case
+a4f86dc433a2e24327952fbf7a5480c5aa5a6699	a4f86dc43	2026-02-16T08:41:46Z	test: remove low-value session-file options agent-only case
+0c035c85ab09cb446f0df1802eb6f019dfc81d22	0c035c85a	2026-02-16T08:40:34Z	test: remove redundant single-error lock queue recovery case
+aabc09bb9bfbf067bfefa6200fbac16d46d9df7e	aabc09bb9	2026-02-16T08:39:43Z	test: remove duplicate lock-queue cleanup success case
+0d2e13fb73cba39a1ef80388197a7e2b597ce992	0d2e13fb7	2026-02-16T08:38:18Z	test: remove redundant transcript-path wrapper case
+4f05d045b91bb9debc1b6e1d7e095b4a9e5d35a6	4f05d045b	2026-02-16T08:37:19Z	test: remove duplicate absolute outside-session-path guard case
+3daaa19426649e991c2edf9ae00bc3917607229e	3daaa1942	2026-02-16T09:36:54+01:00	fix(ci): use JDK 17 for Android SDK setup
+ec00efb38dc3e5da01a680d288d1cf0ce9876c2d	ec00efb38	2026-02-16T08:36:30Z	test: remove duplicate reset-by-type direct selection case
+83a5f7ba8c2bc3e706505cd5902601fba4949cfd	83a5f7ba8	2026-02-16T08:35:14Z	test: remove duplicate passthrough storePath guard case
+6a759c919166eb5bcb098b2c063db9dd5d9ac893	6a759c919	2026-02-16T08:34:22Z	test: remove duplicate empty-storePath guard case
+f6b7736744da11996ee4166ebb20f2742d796cd5	f6b773674	2026-02-16T08:33:33Z	test: remove redundant absolute topic-suffix session-file case
+b6a9741ba41cbbbd733eecb7520bab80401f28b9	b6a9741ba	2026-02-16T14:00:34+05:30	refactor(telegram): simplify send/dispatch/target handling (#17819)
+1f607bec491f31a067281bc48c8e9b0efe742ac1	1f607bec4	2026-02-16T08:24:46Z	test: remove low-value no-rotation file-size case
+3dbb69da059981d1e5b4fa628bc4a4457babeadb	3dbb69da0	2026-02-16T08:23:52Z	test: remove duplicate session file options fallback case
+49d383ba7cc743faf188c5a7d70fd983f00454b5	49d383ba7	2026-02-16T08:23:09Z	test: remove redundant default-root explicit fallback case
+e72e8ebe62a9d322d0e7d5725c2d248aea4093a8	e72e8ebe6	2026-02-16T08:22:23Z	test: remove redundant default-root extracted fallback case
+374ad8c813830fb25d05b220401cad4ccb577448	374ad8c81	2026-02-16T08:20:51Z	test: remove redundant all-stale pruning case
+6f4da72cb5ae7223e1e8e6959914373eb4740565	6f4da72cb	2026-02-16T08:19:06Z	test: remove redundant cap-entry default-fallback case
+facf53cc3f5239610e8a02cd3a746a2b214fde19	facf53cc3	2026-02-16T08:17:51Z	test: remove redundant stale-prune default-fallback case
+eaec65656f6d030badc3d0d63b302f0652f4ae77	eaec65656	2026-02-16T08:16:34Z	test: remove redundant cap-entry under-limit case
+dfaca933c6a68a5cd4cf1c410247cf14a728e34e	dfaca933c	2026-02-16T08:15:20Z	test: remove redundant rotate timestamp case
+aaf308d7ec882bb271322910e71ff9cb0e9ec126	aaf308d7e	2026-02-16T08:13:57Z	test: remove redundant stale-prune under-limit case
+d115d48a72f94d1e5cdb78933f1488ed13975c3f	d115d48a7	2026-02-16T08:12:38Z	test: remove redundant rotate missing-file no-op case
+d174c3873734d397c9615736bc0669d83f98a0aa	d174c3873	2026-02-16T08:11:40Z	test: remove redundant stale-prune boundary case
+005dbdd13e5036b889d05e4c07ebfdb2cfcf45a8	005dbdd13	2026-02-16T08:09:56Z	test: remove redundant stale-prune empty-store case
+c31e33cd181797937d147d3e32e6c3faaa3788d5	c31e33cd1	2026-02-16T08:08:59Z	test: remove redundant stale-prune return-count case
+f4fbfae97efc9b0236ff4f32abb5ab2022f9b7e7	f4fbfae97	2026-02-16T08:07:35Z	test: remove redundant cap-entry empty-store case
+f349d40e62198cfbe3ef67b392a24d793cd5a0ef	f349d40e6	2026-02-16T08:06:41Z	test: remove redundant cap-entry return-count case
+d71779b46f59587e3729c024b350cfd147933b7f	d71779b46	2026-02-16T08:05:26Z	test: remove redundant session-rotation exact-limit case
+df062fdb63ba1e10c1ef7a7e807a1cf45f5eb88d	df062fdb6	2026-02-16T08:04:24Z	test: remove redundant cap-entry exact-limit case
+52ddaed795beba559fb35dd8f9d6e21bc8e65d13	52ddaed79	2026-02-16T08:03:02Z	test: remove redundant elide exact-limit case
+b7a20d8e8db1a7784baf95cda509040e5d479bde	b7a20d8e8	2026-02-16T08:02:10Z	test: remove redundant depth-1 subagent session case
+5cb228fdd01875137e4f49683ef6bf6f49ef9e11	5cb228fdd	2026-02-16T08:00:47Z	test: remove redundant quick-reply truncation case
+8fd6d4d6dd7cb3c999bfb14d6d1b36cc52a381b2	8fd6d4d6d	2026-02-16T07:59:19Z	test: remove redundant messageAction default-text case
+242e8f5c434503e37743cbe5b7ffab9740bb8e2c	242e8f5c4	2026-02-16T07:58:00Z	test: remove low-signal line account listing coverage
+4aab640fd1a76504bbfbdaa02905101856891dd9	4aab640fd	2026-02-16T07:56:41Z	test: remove redundant default-account normalization case
+35b6ccd62c5a5b0084dc9d6e3489eebae5d68fec	35b6ccd62	2026-02-16T07:55:39Z	test: remove redundant rich-menu action passthrough case
+7e1f542233cb502dacd5e46786d8bc9eea9e824c	7e1f54223	2026-02-16T07:54:37Z	test: remove redundant uriAction passthrough case
+5927c536309fcc102f36fc1b9ec9843923c70779	5927c5363	2026-02-16T07:53:10Z	test: remove redundant postback displayText passthrough case
+85055772181eda25b47bff33e7e1f4686ac9b085	850557721	2026-02-16T07:52:08Z	test: remove redundant line account-id env listing case
+b18b85dc7724862cbad5451c9321ca573b293c46	b18b85dc7	2026-02-16T07:51:04Z	test: remove redundant default rich-menu command smoke case
+f3eb003db955a6fb5b25617158de855c466cc74f	f3eb003db	2026-02-16T07:50:02Z	test: remove redundant quick-reply creation smoke case
+0448693f8f17dd15ce385d8f279da35932f3a5a3	0448693f8	2026-02-16T07:49:15Z	test: remove redundant messageAction passthrough case
+e86647889c316980cc4b6643d417318e990e282a	e86647889	2026-02-16T07:47:36Z	test: remove redundant datetimepicker passthrough case
+993a5e63a1900594ff63b6f4bc7ae301951a9c6c	993a5e63a	2026-02-16T07:46:48Z	test: remove redundant yes-no label passthrough case
+c01e97f1242c50a5d997f299dbbc7a279c1df21d	c01e97f12	2026-02-16T07:45:09Z	test: remove redundant list-card action passthrough case
+bf2d78505ecec1c8e0cf5c0d3a7130858704b19e	bf2d78505	2026-02-16T07:43:03Z	test: remove redundant notification title passthrough case
+91337b4b6f5b577d6c57e8ab71284365106a247b	91337b4b6	2026-02-16T07:42:09Z	test: remove redundant confirm alt-text passthrough case
+f74d56bd3b62a86d161a600f1896efe95d26a956	f74d56bd3	2026-02-16T07:40:45Z	test: remove redundant image-card aspect ratio passthrough case
+56d0ad6942c7dc3d99424c0811d662312acb159d	56d0ad694	2026-02-16T07:39:50Z	test: remove redundant action-card hero passthrough case
+5997a4b0effb52c5c62c26b59e0b7cb60a5e2e6e	5997a4b0e	2026-02-16T07:39:01Z	test: remove redundant media-player image passthrough case
+720aa3c1e65575c8d4fdd16286982dd64aa91284	720aa3c1e	2026-02-16T07:37:41Z	test: drop redundant line info-card default footer case
+223e2a7127a23979186bae55b4cc4225986cfa28	223e2a712	2026-02-16T07:36:45Z	test: remove redundant button thumbnail passthrough case
+31ab8ad46d1f73e2c37919825b5e3a331df36cb1	31ab8ad46	2026-02-16T07:35:16Z	test: remove overlapping short line grid layout case
+82a8fc0bc7a503741eca0575f16128be2e1b25bc	82a8fc0bc	2026-02-16T07:34:18Z	test: remove redundant yes-no default template case
+227e31d791fba0de665c8a6259a000cad2945d69	227e31d79	2026-02-16T07:32:30Z	test: remove redundant line default menu config case
+357b1e8feed5138e30595e0b75b9dffaadc9bb23	357b1e8fe	2026-02-16T07:30:37Z	test: remove duplicate line account listing case
+4c46c23ca8f945a2163b74381f366fb511c8c41a	4c46c23ca	2026-02-16T07:29:10Z	test: remove redundant default line account id case
+189b2e0588c96e10ca9b5ba1ab5e2c8444295f68	189b2e058	2026-02-16T07:28:02Z	test: remove redundant line default-menu bounds case
+a39c2263e5a4cac821062066601b1c83799330b8	a39c2263e	2026-02-16T07:26:43Z	test: prune overlapping line markdown conversion cases
+0490d0e1735b093dfe938547d529fe0c3bf7078b	0490d0e17	2026-02-16T07:25:16Z	test: drop redundant product carousel limit case
+64a0339d58bf64221110f766a5fdf322a5892ef9	64a0339d5	2026-02-16T07:23:40Z	test: trim redundant line quick-reply account checks
+077130bdb8a534c102749293e741859490f0b3c6	077130bdb	2026-02-16T07:22:30Z	test: remove overlapping line webhook/account cases
+12d6b3b0c98a753c8b09fa90188a7bb31940931b	12d6b3b0c	2026-02-16T07:20:57Z	test: prune redundant line action-type checks
+3028a1bd3e9046af82a0deaef0a2a8dabbcb7340	3028a1bd3	2026-02-16T07:19:41Z	test: remove redundant line template type assertions
+57e055ddb594b452bf14a47481c6834b4692fe0e	57e055ddb	2026-02-16T07:17:39Z	test: remove line text quick-reply passthrough tests
+4fd008e918a399b34a5465949e36cd2058b3b540	4fd008e91	2026-02-16T07:16:46Z	test: remove redundant flex message wrapper test
+d39b8541f8802110be947a7bbe11b5d38b09918d	d39b8541f	2026-02-16T07:15:47Z	test: prune redundant markdown extractor plain-text negatives
+ac4183edd713afcd2e66fba12a8e262b51c48268	ac4183edd	2026-02-16T07:14:54Z	test: remove redundant line existence assertions
+838963d66c747d568096549b3e562594c57f9002	838963d66	2026-02-16T07:13:47Z	test: drop low-signal line media player footer assertion
+4852dd4503c4e9b63ba8efdcc26b92659beccb55	4852dd450	2026-02-16T07:12:52Z	test: remove duplicate line flex wrapper coverage
+4d1cb661fc800c350ea18306d86da061cd39ec88	4d1cb661f	2026-02-16T07:11:16Z	test: remove redundant line link menu wrapper test
+3bd961f00a6a86ae3afd5e315283d260d56f334d	3bd961f00	2026-02-16T07:10:19Z	test: drop duplicate line quick-reply wrapper assertion
+583345fdfee63e6b99b0a7c9eeb6c8385c34f25b	583345fdf	2026-02-16T07:09:31Z	test: collapse redundant markdown conversion micro-tests
+3d550ed4c309bcf5bfd9e905ee458cb0f6466104	3d550ed4c	2026-02-16T07:08:32Z	test: remove low-signal line card existence tests
+c37cc5ffad3b2c5d1ca2193189e2d2dbfd7268fd	c37cc5ffa	2026-02-16T07:07:07Z	test: trim redundant markdown strip and table layout checks
+b83ccfba13392b406e9d1e54d79716a8dc3ac574	b83ccfba1	2026-02-16T07:04:56Z	test: remove redundant line flex baseline checks
+8ea890e8fb16663358f30d67cf2fd5b849246b65	8ea890e8f	2026-02-16T07:03:51Z	test: remove duplicate line quick-reply assertions
+ae6060d777ad51e9ab4e0ef1ef1d5e60ede583f3	ae6060d77	2026-02-16T07:02:37Z	test: remove redundant line markdown conversion smoke checks
+ec708b6ab589b6a111f02d400a65b65d65cff0f0	ec708b6ab	2026-02-16T07:01:43Z	test: trim redundant line action helper smoke checks
+944a32cf028add711fcf801c0a8b66d63f2c8ad8	944a32cf0	2026-02-16T06:59:46Z	test: remove redundant line flex smoke checks
+c4880675e1cfdcc6825eb897dbc37bf97aa0b415	c4880675e	2026-02-16T06:58:33Z	test: prune redundant line template constructor checks
+8b6537d85710cc46ee36b16370b638910591ae97	8b6537d85	2026-02-16T06:57:15Z	test: trim redundant line template shape checks
+12c3821acb0ee765a25cac83463003d5888166ff	12c3821ac	2026-02-16T06:55:49Z	test: prune low-signal line flex template checks
+a69c06e3cc290286874b001d7b228a4fa315f571	a69c06e3c	2026-02-16T06:53:13Z	test: remove duplicate daemon profile trim wrappers
+67aa7eefe5a7b6416b721ef517df315db92578ad	67aa7eefe	2026-02-16T06:51:50Z	test: remove redundant sticker thread id assertion
+425c715a05dbd1144b990f5d18aab47a3218299a	425c715a0	2026-02-16T06:50:44Z	test: remove duplicate sticker recipient normalization checks
+dcba3e5699d1d6e0f1b5f4ced0b95dfef46ef281	dcba3e569	2026-02-16T06:49:17Z	test: trim redundant telegram thread+reply combination checks
+27083e6f1aa6b1892c66c474d38641812854e559	27083e6f1	2026-02-16T06:47:45Z	test: remove redundant telegram requireMention negative case
+18bb2423161fe741eb9ee8bb86a07d9274a5c6c9	18bb24231	2026-02-16T06:46:21Z	test: remove duplicate line action creator coverage
+68ea063958eebb8d888298faed789ff98166b1e0	68ea06395	2026-02-15T22:45:01-08:00	🤖 fix: preserve openai reasoning replay ids (#17792)
+eefda1314f4563ef90224a8c178248578e2c931b	eefda1314	2026-02-16T06:44:38Z	test: drop duplicate telegram username allowFrom check
+a8a22920f1b4fd149f48c052e4f42e23d1784d72	a8a22920f	2026-02-16T06:43:24Z	test: remove duplicate telegram allowFrom cases
+a8084b24d66359a503e5815281848d7a56815129	a8084b24d	2026-02-16T06:40:26Z	test: trim additional low-signal flex template checks
+97d5ff3500343b40900292d7b9655d7b31ca0d97	97d5ff350	2026-02-16T06:38:41Z	test: remove low-signal flex template option-only assertions
+abb7618b0f8bd0387450893f886303227e995dc5	abb7618b0	2026-02-16T06:37:38Z	test: remove pass-through rich menu action mode checks
+1ec0f3b81d11f6c61c99d135a45388a6afb5f147	1ec0f3b81	2026-02-16T06:36:15Z	test: drop redundant daemon profile normalization wrappers
+6c3e7896c576aa050eef93a6754a7a16e861e2bb	6c3e7896c	2026-02-16T06:34:05Z	test: remove duplicate lowercase default profile daemon path cases
+2a5fa426f2ebd7ab7336424ffbd288870f12957f	2a5fa426f	2026-02-16T06:32:59Z	test: remove redundant schtasks command parsing cases
+29203884c2f5d4a97b86959688b2ce240203d413	29203884c	2026-02-16T06:31:36Z	test: consolidate gateway profile normalization coverage
+91e120870f974ca0d24dbacba614d6a0814fb779	91e120870	2026-02-16T06:29:20Z	test: remove duplicate uppercase default profile daemon cases
+6a9ead38138782ba344055245dc20e89bb5753e8	6a9ead381	2026-02-16T06:28:15Z	test: remove duplicate profile-specific daemon constant cases
+cb998aa7f9a4f8ee94989fc51efbad1bcb287db1	cb998aa7f	2026-02-16T06:27:19Z	test: remove duplicate systemd exec-start split assertion
+ac02e45a88c0b4ecc19ae92798fd336ab805577c	ac02e45a8	2026-02-16T06:25:18Z	test: drop redundant empty-profile extraction cases
+8f603ec03d8396ada9684de69900f00977cdfbf0	8f603ec03	2026-02-16T06:23:34Z	test: remove duplicate default-profile casing checks
+84e0ee3c31010f6a48f2cf4862d6ab021704d62b	84e0ee3c3	2026-02-16T06:22:04Z	test: remove duplicate uppercase default profile case
+da2bdbef7e16aae07c86dd74bb117b8035b03bbd	da2bdbef7	2026-02-16T06:21:13Z	test: remove duplicate systemd exec-start split case
+1be7c4ba8e508cc42c490530969e9b15bc6cf3e1	1be7c4ba8	2026-02-16T06:19:49Z	test: move session store pruning integration suite to e2e lane
+a82df1015b706b0cafb31464ba4dbcb235cf4639	a82df1015	2026-02-16T06:16:33Z	test: remove duplicate hr spacing assertion
+a0b459b8f92e63ed97526763946c3ccb5ef8078d	a0b459b8f	2026-02-16T06:15:26Z	test: remove duplicate undefined-profile default cases
+28118ca051fe16a1e589b52433cdc0458a91b291	28118ca05	2026-02-16T06:14:23Z	test: drop duplicate internal hook lifecycle case
+d374a6465801b8650da2dcccc1d90d21b27cde34	d374a6465	2026-02-16T06:13:46Z	test: move skills-cli integration coverage to e2e lane
+0895bb6de678cc5959a83be25cae28d10d12f911	0895bb6de	2026-02-16T06:11:01Z	test: move skills-install fallback suite to e2e lane
+189cba01008fb7e2762a37b3ae5761792183bd77	189cba010	2026-02-16T06:08:44Z	test: remove duplicate sandbox access memory-flush case
+108ebc380f6a97d0b957eddeead3cb5651d2c193	108ebc380	2026-02-16T06:06:24Z	test: remove duplicate registry throw assertion
+93e62d8e3e94b7580141920cd89e7193b09ad6e2	93e62d8e3	2026-02-16T06:04:58Z	test: remove duplicate slack dm authorization case
+ed28ad28229ff433b1508e42f4cee9e767d9b49f	ed28ad282	2026-02-16T06:03:09Z	test: remove duplicate configured canonical key case
+00bbddeef53a15090e1e1435c1a3c0f019afbfe9	00bbddeef	2026-02-16T06:01:07Z	test: move git hook regression to e2e lane
+5ac59e6e02a698b87753e56fb6ea9426cc46bcdc	5ac59e6e0	2026-02-16T05:58:49Z	test: remove duplicate availability-unavailable fallback case
+bfb5a44089574bdc3eee9b7f7d1baf0e5fd6fb51	bfb5a4408	2026-02-16T05:56:26Z	test: speed up plugin optional tools suite
+599195fb31091de20b591003326e1e4b050f80d4	599195fb3	2026-02-16T05:53:54Z	test: trim duplicate antigravity availability case
+705d83aec7959502c8f5d548a07cde9f05371237	705d83aec	2026-02-16T05:41:58Z	test: drop duplicate z-ai alias filter case
+c80017e7043cef2b3f7e1a61d632a5ffca5c00de	c80017e70	2026-02-16T05:39:42Z	test: trim duplicate z.ai provider alias case
+9e67f9d889ac118de0ee413fffc7034fbd410881	9e67f9d88	2026-02-16T05:36:55Z	test: remove duplicate invalid slash-button case
+9383f850460d6e6f80e5f448a1e170618f019cae	9383f8504	2026-02-16T05:34:08Z	test: trim redundant web media prefix coverage
+5212d1c79e8173aeb138c39dda4b51606fec8ea3	5212d1c79	2026-02-16T06:26:08+01:00	test: make sandbox symlink-escape assertion platform-aware
+7aa7b04fb07ced1d87f616c48db3434375868007	7aa7b04fb	2026-02-16T05:22:00Z	test: rebalance isolated unit test lane
+b3d3f3636001b84d08ebdf29616cf1b1224d7590	b3d3f3636	2026-02-16T05:20:22Z	test: speed up slack slash monitor tests
+2b6f8548c92ac23dbf350b34c0d8c95eab03fedd	2b6f8548c	2026-02-16T05:15:55Z	test: trim pre-commit hook integration setup
+9684ae4c6d50ac0da6b30a6db9919b882c5ddff1	9684ae4c6	2026-02-16T05:09:47Z	test: tighten process timeout thresholds with stabilized emit guard
+39fa81dc96e9360ec771160df9b93757e174006e	39fa81dc9	2026-02-16T06:08:47+01:00	chore: bump version to 2026.2.16
+f1654b4ba26b0e1002ec410980a5e2469abc7d9c	f1654b4ba	2026-02-16T04:50:19Z	test: isolate telegram bot behavior suite from unit-fast lane
+0b780789bca1e1a6d4d82b776f21e9f3ca2ec9d0	0b780789b	2026-02-16T04:48:55Z	test: further reduce process timeout waits in fast suites
+795874711bc01862358d0c60ffb90630c2dac978	795874711	2026-02-16T04:45:44Z	test: shorten process timeout waits in exec and supervisor suites
+17d8e2a1c86f6a8c08cafa4b6b43ed632fa6f93b	17d8e2a1c	2026-02-16T04:43:33Z	test: reduce supervisor no-output wait threshold
+c53e4e6c8ff4cf63a713a889f725df0a3e2265bf	c53e4e6c8	2026-02-16T04:41:45Z	test: trim exec timeout waits for faster suite runtime
+4f5bc0a49321e1d88e5cd2fb7265c0ddeecdcfd3	4f5bc0a49	2026-02-16T05:38:58+01:00	chore(release): align 2026.2.15 metadata
+92ec3ddc143fdf2f16e2a39a9fb62f7000ba03ba	92ec3ddc1	2026-02-16T04:35:54Z	test: drop brittle pre-commit script structure test
+510889d439a28182e65a10b19ed766456c6af570	510889d43	2026-02-16T04:34:51Z	test: isolate slack slash and telegram bootstrap suites
+ceddb4a593405bacc2f222e95c828d0be8dd1d0d	ceddb4a59	2026-02-16T05:32:42+01:00	style(memory): format flaky ci test files
+794808b16904a59c67b7058a1d512627969fdc2e	794808b16	2026-02-16T04:31:30Z	test: isolate hook installer suite from unit-fast lane
+fb6dba2058434e64d9e3bfa84ac27ec91b04925e	fb6dba205	2026-02-16T05:30:02+01:00	fix(ci): align tar override and lockfile to 7.5.9
+c62b90a2b7000538954268cf7c415f74e43c7224	c62b90a2b	2026-02-16T09:57:29+05:30	fix(telegram): stop block streaming from splitting messages when streamMode is off (#17704)
+1b223dbdd8c00369c950a75f3d8ed02a9b0fa8d4	1b223dbdd	2026-02-16T04:24:00Z	test: isolate git-hooks integration and stabilize exec timeout
+e7ccbd144583efe9ce36129432ec282ea0391caf	e7ccbd144	2026-02-16T04:20:21Z	test: isolate block-streaming suite from unit-fast lane
+bc65e787c81673de9a33f2f7c4e77edacfec61d7	bc65e787c	2026-02-16T04:17:38Z	test: trim process no-output timeout waits
+3e1986f11927654418a7f32affa68b6db0ecd29b	3e1986f11	2026-02-15T20:15:12-08:00	chore (changelog): note qmd collection isolation fix
+b32ae6fa0c234bfaaa9fc36e958ccdd1ceab8e9d	b32ae6fa0	2026-02-15T20:14:45-08:00	fix (memory/qmd): isolate managed collections per agent
+5d436f48b29a7170454d65720932cc2c46af3dc4	5d436f48b	2026-02-16T05:13:49+01:00	docs: add mac beta release runbook note
+90800cd23ea8e7ba4910349cc35da35d42898482	90800cd23	2026-02-16T05:10:59+01:00	chore(release): update appcast for 2026.2.15
+f52805a7835a96657d462349dddef4a0bd82eb38	f52805a78	2026-02-16T04:10:51Z	test: reuse heartbeat suite fixtures across cases
+a7385aa8ac8565508ef9f6aa91b926bf9a9969bb	a7385aa8a	2026-02-16T04:08:50Z	test: reduce process timeout test latency
+e8a50e41a5717f897fa623f42c9d6bc6c0d4f74a	e8a50e41a	2026-02-16T04:03:24Z	test: reuse fixtures in skills install fallback suite
+83ce48302f98db74a6ed6c4037995f82a6922a57	83ce48302	2026-02-16T04:00:53Z	test: trim timeout-heavy exec and telegram cases
+25dc4293bf939adf25eaf7ddb3a80208def575e0	25dc4293b	2026-02-16T03:58:43Z	test: speed up isolated-agent and pty test suites
+3fe22ea2fd18a8598ea15ac911422fd5b59baf12	3fe22ea2f	2026-02-16T04:50:24+01:00	chore(release): align .15 changelog ordering and release notes
+31939397a92d7e3791e7900e38fc9d8fb3ce8abe	31939397a	2026-02-16T03:49:05Z	test: optimize hot-path test runtime
+9b2e1769c5620ee5c4450ed5c38a852d3d0effd6	9b2e1769c	2026-02-16T09:18:35+05:30	docs(contributing): update maintainers list (#17719)
+61a865031faf723f86c8c8dc6e3b4dc3b7b02db4	61a865031	2026-02-16T04:45:42+01:00	fix: sync pnpm lockfile for docker onboard
+ae6fe67550ac86ecf816caa6b61d1c8b18f4c600	ae6fe6755	2026-02-16T03:41:58Z	test: align e2e coverage with supervisor session flow
+702b94fe8fb849e076525c22c4780c7bcb7ee679	702b94fe8	2026-02-16T03:39:41Z	style(line): format files to unblock ci check
+b5a63e18f99e0d4dbb7a4ad178f27cb2159b0804	b5a63e18f	2026-02-16T04:36:24+01:00	test(sandbox): add array-order hash and recreate regression tests
+78277152cad34ffbfa7e46fa3364f9379b0eb24c	78277152c	2026-02-15T19:35:25-08:00	test(heartbeat): cover telegram showOk suppression
+d1fca442b4ee3342c820a231c3ce73546534951a	d1fca442b	2026-02-16T04:33:47+01:00	refactor(sandbox): centralize sha256 helpers
+3c467baa2d2a8469aef9a89b6ab98ee4d7e47f64	3c467baa2	2026-02-15T22:32:51-05:00	test(skills): add status-to-install apt fallback coverage
+c8e110e2e3c1f3489a6519de7c4c2fb472daacbb	c8e110e2e	2026-02-15T22:32:51-05:00	refactor(skills): extract installer strategy helpers
+41ded303b4f6dae5afa854531ff837c3276ad60b	41ded303b	2026-02-16T04:32:03+01:00	fix(sandbox): preserve array order in config hashing
+cbf58d2e1c835d9a5b077fef52e88a10a23d1449	cbf58d2e1	2026-02-15T19:31:52-08:00	fix(memory): harden context window cache collisions
+559c8d9930eebb5356506ff1a8cd3dbaec92be77	559c8d993	2026-02-16T04:30:59+01:00	fix: replace deprecated SHA-1 in sandbox config hash
+aef1d55300083c951c27ac3ee629e99f3b450906	aef1d5530	2026-02-16T04:27:12+01:00	fix(cron): normalize skill-filter snapshots and split isolated run helpers
+6754a926ee227f72f894044a883b5fdaad047662	6754a926e	2026-02-16T03:26:07Z	fix(pairing): support legacy telegram allowFrom migration
+18c6f40d32b51e9675503f6111300bff2aab55e2	18c6f40d3	2026-02-15T19:25:33-08:00	chore (changelog): credit LINE webhook fail-closed hardening
+c7bc7249c3beacf0094aa5d3535cd21118ec4d1b	c7bc7249c	2026-02-15T19:25:33-08:00	test (security/line): cover missing webhook auth startup paths
+beb77229c0518434de661e2d0305be099b74f672	beb77229c	2026-02-15T19:25:33-08:00	fix (security/line): fail closed when webhook auth is missing
+d19b746928e99507d6192340210cb0360e308abf	d19b74692	2026-02-15T22:25:26-05:00	feat(skills): add cross-platform install fallback for non-brew environments (#17687)
+9df21da1290779bd846c98b3edc4aed3de7c320a	9df21da12	2026-02-15T19:20:38-08:00	chore (changelog): credit memory flush runtime date fix
+3087657679dab983be06244b66be87decd59ad8d	308765767	2026-02-15T19:20:38-08:00	test (memory/compaction): cover resolved memory flush prompt semantics
+a61c2dc4bd69edca3534c8ec3fe2fedd68473b28	a61c2dc4b	2026-02-15T21:19:25-06:00	Discord: add component v2 UI tool support (#17419)
+b4a9eacd76251a666900ba9e504573c775f871ea	b4a9eacd7	2026-02-16T04:18:42+01:00	chore: format qmd-manager test
+ac2ede5bb1d55b4119b95f6420c55c20123783fc	ac2ede5bb	2026-02-16T04:18:24+01:00	fix(telegram): treat no-op editMessage as success
+7089885ac49eea95de6a0bd5b96496a70302c9fb	7089885ac	2026-02-15T19:17:06-08:00	chore (changelog): credit unicode FTS tokenization fix
+82631d225cf61b901d0deaf3580b4868086d03ea	82631d225	2026-02-15T19:16:02-08:00	chore (changelog): credit sandbox prompt path guidance fix
+799049f586dc59792f56ae688a44237929652aad	799049f58	2026-02-15T19:16:02-08:00	fix (agents/sandbox): clarify container-vs-host workspace paths in prompt
+ab1dc89a2d9a494e3f9792c314fe5bfde0c33cbd	ab1dc89a2	2026-02-16T04:15:03+01:00	chore(deps): update dependencies
+0b3d4b8e571772cd69ce029a4767c33538b02f68	0b3d4b8e5	2026-02-15T19:12:10-08:00	chore (changelog): credit control-ui scope bypass fix
+eed02a2b574b323a57949bc28b6332328336a4f5	eed02a2b5	2026-02-15T19:12:06-08:00	fix (security/gateway): preserve control-ui scopes in bypass mode
+a203430aa34d2ad2a76ad1d7b356c06346727fd1	a203430aa	2026-02-15T19:10:06-08:00	chore (changelog): credit pairing account isolation fix
+6cf7c02d4ac6d2f1e78d9e2413b14cb909c2cb1f	6cf7c02d4	2026-02-15T19:10:06-08:00	feat (cli): add account selector for pairing commands
+6957354d4819de65d3cb74eb1fd888b96a0d38b6	6957354d4	2026-02-15T19:10:06-08:00	fix (telegram/whatsapp): use account-scoped pairing allowlists
+ee10feb80e7c895609fd00f15036b3584a1b2b9a	ee10feb80	2026-02-15T19:10:06-08:00	fix (security/pairing): scope pairing stores by account
+61c99352640ff9746fcd613262201377ea5b2ffb	61c993526	2026-02-16T04:09:39+01:00	fix: correct indentation in cron isolated-agent run.ts
+e5dbfde7e1230dfc58069c57c7ec1826e24cc4c6	e5dbfde7e	2026-02-16T04:09:39+01:00	test(cron): add empty-skills edge case for skill filter coverage
+053affffecec45aa88fea29e123b69236b4bc1ab	053affffe	2026-02-16T04:09:39+01:00	fix(cron): pass agent-level skill filter to isolated cron sessions
+e1e46dc11bfda6bea2dca41fe80a3b1dbce059fd	e1e46dc11	2026-02-16T04:06:46+01:00	docs: reorder 2026.2.15 changelog entries by impact
+7cd288a8a07608976b0ffd2961c16776f880c42a	7cd288a8a	2026-02-16T04:06:09+01:00	docs: add plugin release fast path notes
+38ac4b808327af7214aea25941685d1d6f4d0a0e	38ac4b808	2026-02-16T03:06:03Z	test(pty): stabilize non-windows signal assertion
+e7a053b4ddfe45310a42eafcf5232d5cca83ba18	e7a053b4d	2026-02-15T19:03:59-08:00	chore (changelog): credit qmd session collection rebind fix
+85430c8495cf60770d9ae0432a050efcfe83f600	85430c849	2026-02-15T19:03:55-08:00	fix (memory/qmd): rebind drifted managed collection paths
+8e162d9319ea63196b2bba11edbd28a7466e0c26	8e162d931	2026-02-15T19:01:08-08:00	chore (changelog): credit inbound metadata id fix
+bed8e7abe6e43cd7cf9bd29310fed257cd5ab442	bed8e7abe	2026-02-15T19:01:08-08:00	fix (auto-reply): expose inbound message identifiers in trusted metadata
+82333add95862359b1d1c361aace6e1efd02d577	82333add9	2026-02-16T03:00:25Z	test(sessions): cover sandbox session-tools context
+7a4a068124d683ade0e071ce2ca2040c32493f42	7a4a06812	2026-02-16T02:59:30Z	test(sessions): add access and resolution helper coverage
+1a03aad24649036a75d8abb351c9dc75061acd6a	1a03aad24	2026-02-16T03:56:49+01:00	refactor(sessions): split access and resolution helpers
+2f621876f1b459a4fe6a9cd8dea736d7e56220c5	2f621876f	2026-02-16T02:56:23Z	test(gateway): cover basePath bootstrap config endpoint
+6dfefa1be10078b0e92a00761ca6f8cc6deeeadc	6dfefa1be	2026-02-16T02:55:24Z	test(ui): cover trailing-slash bootstrap basePath
+c876d24d8946f630b2193ddc83b24b18b4a5257b	c876d24d8	2026-02-16T02:54:06Z	test: expand prompt and update hint coverage
+6802b155a806e9b6a5d2a4ef8461becef82c9278	6802b155a	2026-02-15T21:53:49-05:00	fix: stop LLM retry loop when browser control service is unavailable (#17673)
+17a148c8a847d4270bf22201c8cf0f79f4b8ce66	17a148c8a	2026-02-16T03:51:38+01:00	fix: always include long-wait polling guidance in prompt
+abd26b6e54d3623889e7e7f997aced7e8665653d	abd26b6e5	2026-02-16T03:50:39+01:00	refactor(ui): reuse Control UI bootstrap path constant
+8985f23de740a18dd2f101cd75b6d6f3ba67d552	8985f23de	2026-02-16T03:50:39+01:00	test(gateway): move Control UI http coverage
+c6e6023e3ac6b71cf531395414cb376426f54f2a	c6e6023e3	2026-02-16T03:50:39+01:00	refactor(gateway): share Control UI bootstrap contract and CSP
+6e7c1c16e75f386d753688c10619e333f54121f6	6e7c1c16e	2026-02-16T03:48:51+01:00	test: remove duplicate legacy sessions_spawn e2e file
+52e240d10de00a063ecc9a4edbc7bcf73334db57	52e240d10	2026-02-16T02:47:47Z	test(status): add coverage for update summary + timestamps
+b6305e97256d67e439719faacf5af3de9727d6e1	b6305e972	2026-02-16T03:47:28+01:00	test(skills): split installer security coverage
+2363e1b0853a028e47f90dcc1066e3e9809d65f1	2363e1b08	2026-02-16T03:47:28+01:00	fix(security): restrict skill download target paths
+c6c53437f7da033b94a01d492e904974e7bda74c	c6c53437f	2026-02-16T03:47:10+01:00	fix(security): scope session tools and webhook secret fallback
+fbe6d7c701b6f98d272e9d18cb14d260e8cff564	fbe6d7c70	2026-02-16T02:45:00Z	ci: include a2ui sources in onboarding docker build
+2a53eff8569610f48a96d1f9804e1ac8bd47d67e	2a53eff85	2026-02-16T02:45:00Z	perf: speed up slack slash handler tests
+cd37c52624bfab1879f1b02e53e5592a26801f2d	cd37c5262	2026-02-16T02:45:00Z	perf: speed up slack slash tests
+17e5a5015c47755f4cf4103e0d58cebd13d478c4	17e5a5015	2026-02-16T02:45:00Z	perf: avoid async cron timer callbacks
+8515ae6eea03bfd815b29c25eda8a7295073ac08	8515ae6ee	2026-02-16T02:45:00Z	perf: consolidate telegram bot test harness
+d1de66b6cf9898f31b56b8827a3002753c5b24fd	d1de66b6c	2026-02-16T02:45:00Z	perf: speed up gateway lock tests
+7eeba3de85078d23bb012e7d63eaf0ba9918e38f	7eeba3de8	2026-02-16T02:45:00Z	perf: speed up telegram bot suite setup
+38c91c5a13976cfa6ef651edf6d002fdc0bf8834	38c91c5a1	2026-02-16T02:45:00Z	test: speed up skills-cli integration
+88033002ba19b62171fbc5b70e3aed3f24c4dad1	88033002b	2026-02-16T02:45:00Z	test: consolidate nodes screen helpers
+f835301aed98dfdb0e0647f743ce73f49af9fe7f	f835301ae	2026-02-16T02:45:00Z	test: consolidate channel helper suites
+4d4f693f925a63140ef894c9a91d485aa366815f	4d4f693f9	2026-02-16T02:45:00Z	test: consolidate media store header extension coverage
+d95be2c384a3fcf0f91cb00436bd429ff4a1ec0e	d95be2c38	2026-02-16T02:45:00Z	fix: preserve sandbox allow-all semantics
+014d45f7eeb82a32ea88e81667dde171723a36dc	014d45f7e	2026-02-16T02:45:00Z	test: tighten relay smoke + slack token validation
+4d9e310dadf28bec608e217667fac9d325293a50	4d9e310da	2026-02-16T02:45:00Z	test: strengthen ports, tool policy, and note wrapping
+f50e1e801556ad2219d8c6df3819c45a4218b7f2	f50e1e801	2026-02-16T02:45:00Z	perf(test): fold gateway discover tests into run-loop
+aa1e4962da4f74e643e4fd22d068920111822464	aa1e4962d	2026-02-16T02:45:00Z	perf(test): fold doctor legacy migration harness cases
+ea07d3fdd814be139371eae275a459fa10d97640	ea07d3fdd	2026-02-16T02:45:00Z	perf(test): consolidate auth/pty/health mini suites
+f142048293c242150dc773c411f0e7e29a9df037	f14204829	2026-02-16T02:45:00Z	perf(test): fold tool-policy + doctor workspace entrypoints
+5fe47e7be677eac9dfb3a5b2baf2fc0b38e2873c	5fe47e7be	2026-02-16T02:45:00Z	perf(test): fold ports + terminal note suites
+3f44ea244f8074fef72c14f76ddeb9f590f977bb	3f44ea244	2026-02-16T02:45:00Z	perf(test): fold health + signal mention tests
+6b2f40652f17114adf9406f3f1e835489d604838	6b2f40652	2026-02-16T02:45:00Z	perf(test): consolidate daemon test entrypoints
+00e79ac897971b6b4a0e2ba227023b9b94bb536b	00e79ac89	2026-02-16T02:45:00Z	perf(test): consolidate pi-embedded helpers e2e suites
+efe530acdd6a953d06f028b09d157be1125176c3	efe530acd	2026-02-16T02:45:00Z	perf(test): fold session key utils into routing session key suite
+d69496c4494c82a7285413b7b9ecf7deb5fd4459	d69496c44	2026-02-16T02:45:00Z	perf(test): fold small config suites into config misc
+9386075b7b6dc5a3d2e921daa787963c6c71af69	9386075b7	2026-02-16T02:45:00Z	perf(test): fold node-host runner tests into sanitize env suite
+e64dd7b56ab5acb168e33c95c8f324c482accc10	e64dd7b56	2026-02-16T02:45:00Z	perf(test): fold markdown list spacing into nested lists suite
+0e4eada580fa15142db880174ed7b45198adad0b	0e4eada58	2026-02-16T02:45:00Z	perf(test): fold telegram update offset store into token suite
+65b5dbd6c1eee6fcbad4c676c5a2d81879f6431f	65b5dbd6c	2026-02-16T02:45:00Z	perf(test): fold telegram sent-message cache tests into send suite
+e770728cb5c1d0a15ebd008c4b960ec0d12a8429	e770728cb	2026-02-16T02:45:00Z	perf(test): fold telegram download tests into fetch suite
+cb80901cf9d94d915b549178cf9c40eabac23ba5	cb80901cf	2026-02-16T02:45:00Z	perf(test): fold cron system event filter into system events suite
+3e0076c9ced442b35739d1059e7e9971a7608643	3e0076c9c	2026-02-16T02:45:00Z	perf(test): drop redundant index entrypoint tests
+02124094bfb529af1667ecf176d742c9d8d3c33e	02124094b	2026-02-16T02:45:00Z	perf(test): fold acp event mapper tests into client suite
+37f030a671ea7ee72b40582fc04dc67cbc3a70c8	37f030a67	2026-02-16T02:45:00Z	perf(test): fold console prefix tests into logger suite
+be3c431011b3376908f865e3bfb3a327ed7692e2	be3c43101	2026-02-16T02:45:00Z	perf(test): fold gateway config schema tests into config misc
+b97c5d6158331aa65b201c9f1e21378e87dee2a2	b97c5d615	2026-02-16T02:45:00Z	perf(test): fold sender identity checks into channel config suite
+2b4ebcb5701ed1f3b1d09c48a445e2f82f8a6fae	2b4ebcb57	2026-02-16T02:45:00Z	chore: remove accidental a2ui bundle artifacts
+2acc0b0f47299c87c432759effc7105a69556762	2acc0b0f4	2026-02-16T02:45:00Z	perf(test): fold globals unit tests into logger suite
+056070c2bfb09fd1c865b26e92495f740c881c95	056070c2b	2026-02-16T02:44:59Z	perf(test): fold cron webhook schema coverage into config misc
+04004c56636bb979a826d15f81a4841223e6b985	04004c566	2026-02-16T02:44:59Z	perf(test): consolidate models-config provider unit tests
+e1350ff9765c5aa9c1ed1a15a6ee244357c6423a	e1350ff97	2026-02-16T02:44:59Z	perf(test): fold imessage rpc client guard into targets suite
+8d2029a03d2909312e1398a901047de846e861d8	8d2029a03	2026-02-16T02:44:59Z	perf(test): fold qr-image tests into web login suite
+58ab60c0fc18c6a62fdfbb0113830ec4e79748b7	58ab60c0f	2026-02-16T02:44:59Z	perf(test): fold tls fingerprint normalization into ssrf suite
+7c27c2d659dc9de547e2145a9d93291a87ff282f	7c27c2d65	2026-02-16T02:42:55Z	refactor(daemon-cli): share status text styling
+c1655982d4f98c09c497b196999ee336328fa6f3	c1655982d	2026-02-16T03:42:11+01:00	refactor: centralize pre-commit file filtering
+91c49dd0ea6787b07224de1d0468cff81c127632	91c49dd0e	2026-02-16T02:41:30Z	refactor(status): share registry summary formatting
+8eecf97cc5a60f795b1eb6fd705c5484e1353913	8eecf97cc	2026-02-16T02:39:55Z	refactor(cli): share gmail webhook option parsing
+46e714058cb0fd466f4348462fa268b940286d18	46e714058	2026-02-16T02:38:00Z	refactor(subagents): dedupe list row builder
+1547bb6a073190dda709f0540af7c6d069bcc8d2	1547bb6a0	2026-02-16T02:36:18Z	refactor(auto-reply): share abort persistence
+0c8bb361ca1874ddc93b2e5cecae588f4ed6a93e	0c8bb361c	2026-02-16T02:36:18Z	refactor(gateway-tool): share write metadata parsing
+ddcc7a1a5d27161bd547b58a03dc484609d17000	ddcc7a1a5	2026-02-15T20:33:51-06:00	fix(discord): dedupe native skill commands by skillName (#17365)
+d9d5b53b42c80f471acbee0e2a781fc806a0e190	d9d5b53b4	2026-02-16T02:32:59Z	refactor(logging): share local iso timestamp format
+cf69907015b659e5025efb735ee31bd05c4ee3d5	cf6990701	2026-02-16T03:30:53+01:00	fix(security): redact Telegram bot tokens in errors
+09566b1693f0c04fed9f8476bc42d05574452f55	09566b169	2026-02-15T20:30:17-06:00	fix(discord): preserve channel session keys via channel_id fallbacks (#17622)
+39d5590230db9144b514995c947b9f063f3b360b	39d559023	2026-02-16T02:29:07Z	refactor(line): reuse reply chunk deps type
+35c5d2be5c408849a9a7a93cb4cc2207978857da	35c5d2be5	2026-02-16T02:27:01Z	refactor(telegram): share group allowFrom resolution
+b88f377623a0858dcc905800d3593246b8335523	b88f37762	2026-02-16T03:23:45+01:00	fix: make fast-tool stub type portable
+ba84b12535b7d272cb4793109afc56dd332b32a0	ba84b1253	2026-02-16T03:23:45+01:00	fix: harden pre-commit hook against option injection
+dc9808a6745449edd2c8d40e91812b9955b6bbd0	dc9808a67	2026-02-16T02:21:39Z	refactor(gateway): dedupe transcript tail preview
+60ad2c2e96ac0cfe206c1ea1e7c4627035857de5	60ad2c2e9	2026-02-16T02:19:53Z	refactor(device-pairing): share token update context
+a7cbce1b3de2db87300c5c11f4be2ab3a2d29623	a7cbce1b3	2026-02-16T03:19:50+01:00	refactor(security): tighten sandbox bind validation
+a74251d415f3f25f8013d45718ff8b516a783d02	a74251d41	2026-02-16T02:17:45Z	refactor(agents): dedupe fast tool stubs
+cbc3de6c975da0cbf000a8a85a0ecb2271d6b371	cbc3de6c9	2026-02-16T03:15:57+01:00	docs(changelog): fix conflict marker
+01b1e350b20f970833f55ce437a78152adee2d3b	01b1e350b	2026-02-16T03:15:57+01:00	docs: note Control UI XSS fix
+3b4096e02e7e335f99f5986ec1bd566e90b14a7e	3b4096e02	2026-02-16T03:15:57+01:00	fix(ui): load Control UI bootstrap config via JSON endpoint
+adc818db4a4b3b8d663e7674ef20436947514e1b	adc818db4	2026-02-16T03:15:57+01:00	fix(gateway): serve Control UI bootstrap config and lock down CSP
+568fd337beac6ff209bb5d16669ec2ed4e506151	568fd337b	2026-02-16T02:15:02Z	refactor(web-fetch): dedupe firecrawl fallback
+d9ca051a1d4f95ab832bf17cbc640891fba6f0aa	d9ca051a1	2026-02-16T02:11:12Z	refactor(auto-reply): share slash parsing for config/debug
+1b6704ef53257f892c9220f5115d303d5a7185fd	1b6704ef5	2026-02-16T03:05:16+01:00	docs: update sandbox bind mount guidance
+887b209db47f1f9322fead241a1c0b043fd38339	887b209db	2026-02-16T03:04:06+01:00	fix(security): harden sandbox docker config validation
+d4bdcda32403cb8d1f100ae9e27a82f0ffaa04ca	d4bdcda32	2026-02-16T02:03:15Z	refactor(nodes-cli): share node.invoke param builder
+966957fc666d26255f700913171b8c31b0570d9c	966957fc6	2026-02-16T01:58:30Z	refactor(nodes-cli): share pending pairing table
+555eb3f62c2fe6de78e6fdd4572d28c639d57d2e	555eb3f62	2026-02-16T01:55:40Z	refactor(discord): share member access state
+93b9f1ec5fdfabd2f890aab07d0f42ac50da8034	93b9f1ec5	2026-02-16T02:53:40+01:00	docs(changelog): note prompt path injection hardening
+6254e96acf16e70ceccc8f9b2abecee44d606f79	6254e96ac	2026-02-16T02:53:40+01:00	fix(security): harden prompt path sanitization
+19f53543d25c4ae78d268b706a8d95efeed19423	19f53543d	2026-02-16T01:52:30Z	refactor(utils): share chunkItems helper
+618008b483f668d1c44be67160bfca5d029b0712	618008b48	2026-02-16T01:49:16Z	refactor(channels): share directory allowFrom parsing
+31d1ed351f6ee97c78b99dcdff7d6fe8b0481bde	31d1ed351	2026-02-16T01:47:52Z	refactor(channels): dedupe status account bits
+22c1210a1699a6c6bfebc784de9469c38c3785c6	22c1210a1	2026-02-16T01:45:51Z	refactor(auto-reply): share directive level resolution
+273d70741fa1780fd5182f2672a24ab29121a4c8	273d70741	2026-02-16T01:41:35Z	refactor(supervisor): share env normalization
+07be14c02de6abc4e0fb8a51991ee8ca5dbbadc5	07be14c02	2026-02-16T01:39:39Z	refactor(gateway): dedupe chat session abort flow
+5b2cb8ba11c74a2127670e7db6007b9029cd69e2	5b2cb8ba1	2026-02-16T01:37:03Z	refactor(cron): dedupe finished event emit
+1d7b2bc9c80fbb6764d9b0928d1964411616db5f	1d7b2bc9c	2026-02-16T01:35:46Z	refactor(slack): dedupe slash reply delivery
+a881bd41ebfa00cc514c8c2a3dead15758f8af95	a881bd41e	2026-02-16T01:35:46Z	refactor(outbound): dedupe plugin outbound context
+cd44a0d01e9fe195dcc6b031b8597957257d3571	cd44a0d01	2026-02-16T02:32:05+01:00	fix: codex and similar processes keep dying on pty, solved by refactoring process spawning (#14257)
+a73e7786e7dc63c239234cee7f64af5c2870cbb5	a73e7786e	2026-02-16T01:29:01Z	refactor(cron): share runnable job filter
+2679089e9e4b5f4d44240bf08abe9ea189a171ac	2679089e9	2026-02-16T01:27:40Z	refactor(cron): dedupe next-run recompute loop
+c95a61aa9d6b12e90d4143affc7a2418014dd2c1	c95a61aa9	2026-02-16T01:26:37Z	refactor(cron): dedupe read-only load flow
+73a97ee255391f1dcaca70f4db4468abbf413975	73a97ee25	2026-02-16T01:25:06Z	refactor(gateway): share node invoke error handling
+b1dca644bc014f594139c08ce5f78b2f52e562a4	b1dca644b	2026-02-16T01:21:54Z	refactor(gateway): share restart request parsing
+b743e652c0a00e673cd2962a35ed718850566d2e	b743e652c	2026-02-16T01:19:01Z	refactor(gateway): reuse shared validators + baseHash
+71cee673b2ef2e637120c247cf315afa644f076b	71cee673b	2026-02-16T01:15:31Z	fix(gateway): satisfy server-method lint
+dc5d23484854aad5dbf7beefd961e19242cb8794	dc5d23484	2026-02-16T01:13:52Z	refactor(gateway): share server-method param validation
+a5cbd036deb002496a0b6ec7e10bd685fdbcdee8	a5cbd036d	2026-02-16T01:08:36Z	refactor(gateway): dedupe wizard param validation
+260a514467d99b168a9439a6ad993327d5a8add9	260a51446	2026-02-16T01:06:18Z	refactor(slack): share channel config entry type
+067509fa44d7d405937e2b72110f2a697f8ba85d	067509fa4	2026-02-16T01:05:27Z	refactor(onboarding): dedupe WhatsApp owner allowlist
+e84b20a52755a526403269c167dd5fd35768c21f	e84b20a52	2026-02-16T01:03:02Z	refactor(status-issues): share enabled/configured account gate
+4aaafe532256368f08a8655dc4a8215b98d30b22	4aaafe532	2026-02-16T01:01:22Z	refactor(net): share hostname normalization
+d5ee766afe786dd6ee50ac40cdaede420f894d28	d5ee766af	2026-02-16T00:59:42Z	refactor(outbound): dedupe channel handler params
+00c91c3678bac82ffc7e8592b10826818a92b25b	00c91c367	2026-02-16T00:57:28Z	refactor(outbound): dedupe queued delivery param types
+4ab25a2889e01ade62322ff9e6b636a43a16574c	4ab25a288	2026-02-16T00:56:28Z	refactor(outbound): reuse message gateway call
+14fb2c05b1331223e4063a376b5f8ae8786eef31	14fb2c05b	2026-02-15T16:55:28-08:00	Gateway/Control UI: preserve partial output on abort (#15026)
+57d5a8df86ffb43aaf9a9f8b5bf74bda20df1906	57d5a8df8	2026-02-16T00:54:37Z	refactor(outbound): dedupe directory list call
+b6871d9c0f6ec423e9abf3803a34e397b8563e01	b6871d9c0	2026-02-16T00:52:27Z	refactor(outbound): dedupe attachment hydration
+f03ea76db30ec10c8f3040f3260cc4583486a518	f03ea76db	2026-02-16T00:49:00Z	fix(slack): tighten threadId type to satisfy lint
+753491ab8065bf9ddde859ce8cdd01be3bb4889d	753491ab8	2026-02-16T00:48:32Z	refactor(slack): dedupe outbound send flow
+d00adfe98cde07d22c3e8b21924622198cdc7606	d00adfe98	2026-02-16T00:47:19Z	refactor(signal): dedupe outbound media limit resolve
+2b2c3a071b5e9052d024b66964940d1d088425fe	2b2c3a071	2026-02-16T00:46:18Z	refactor(imessage): dedupe outbound media limit resolve
+f8fbeb52b0f16b9ac74dae325ffd70b3ecfb15a6	f8fbeb52b	2026-02-16T00:46:11Z	refactor(protocol): dedupe cron/config schemas
+cb46ea037f5f36359ee7e0dbd902b4468bf0d3c5	cb46ea037	2026-02-16T00:43:15Z	refactor(models): dedupe set default model updates
+dece9e8b0786efef78aac743dd68565064970d70	dece9e8b0	2026-02-16T00:41:28Z	refactor(update): share package.json readers
+32221e194acaf0b06e075d3186e10eaccb1450b2	32221e194	2026-02-16T00:39:11Z	refactor(probe): share withTimeout
+5ecc364d55a8b22d32fea73de60f1bd0e7049bcb	5ecc364d5	2026-02-16T00:37:19Z	fix(daemon): drop unused formatGatewayServiceDescription import
+0dbc51aa55bd9fa9f174a15d58d5077673340fe3	0dbc51aa5	2026-02-16T00:36:43Z	refactor(daemon): share service description resolve
+58cf37ceeb08a8a9b7e8de9e73a6a0b4076b96e4	58cf37cee	2026-02-16T00:34:10Z	refactor(memory): reuse batch utils in gemini
+652318e56a23b60734210bcf1b3964031d34d170	652318e56	2026-02-16T00:32:16Z	refactor(media): share http error handling
+d8691ff4ec4c4467b7d49c07743903e504c8b2db	d8691ff4e	2026-02-16T00:29:01Z	refactor(memory): share sync progress helpers
+8251f7c235b99554d4ec6fd950238067ad0a3923	8251f7c23	2026-02-16T00:26:03Z	refactor(memory): dedupe batch helpers
+ae1880acf6be5271e7f1308859382870e9301bc2	ae1880acf	2026-02-16T00:23:33Z	refactor(frontmatter): share openclaw manifest parsing
+fddf8a6f4ae77fbd0848858c145273376c9ab530	fddf8a6f4	2026-02-16T00:22:36Z	perf(test): fold pi extensions runtime registry tests into agents suite
+412c1d0af17e6ee9cb72a5b04945cc68234b112d	412c1d0af	2026-02-16T00:21:30Z	perf(test): fold logger import side-effects test into diagnostic suite
+166cf6a3e04c7df42bea70a7ad5ce2b9df46d147	166cf6a3e	2026-02-16T01:21:11+01:00	fix(web_fetch): cap response body before parsing
+fd3d452f1f622aa23e64384e9367624553eda066	fd3d452f1	2026-02-16T00:19:34Z	fix(ci): fix ui cron test mock signature
+fdd0e78d1ba1768eb2476df7a2244be25c14e2a4	fdd0e78d1	2026-02-16T00:18:27Z	perf(test): fold exec approvals socket defaults into main suite
+60ce38d216fa9ea7a98d10d408f035ed988c2884	60ce38d21	2026-02-16T00:18:27Z	perf(test): drop redundant line signature unit test
+acb2a1ce37769e1fad01939d9d891bacb0aef28a	acb2a1ce3	2026-02-16T00:18:27Z	perf(test): fold discord voice hardening into web media suite
+ba3a0e7adb27f3597ba2da90c65ba1972c91f0f7	ba3a0e7ad	2026-02-16T00:18:27Z	perf(test): fold gateway server utils into misc suite
+3a7b1b36b64b4cb81ac14424a48f5183af77749f	3a7b1b36b	2026-02-16T00:18:27Z	perf(test): consolidate shared utility suites
+3830a4b58eedf0077212106eeab9f5a347dd0c71	3830a4b58	2026-02-16T00:18:27Z	perf(test): fold acp session store assertions into mapper suite
+6288c5177434f1bab6577fdc496e2be6f84cd3d7	6288c5177	2026-02-16T00:18:27Z	perf(test): fold secret equality assertions into audit extra suite
+a508c34731d685a94ca440437acf57f3af1ac766	a508c3473	2026-02-16T00:18:27Z	perf(test): fold signal daemon log parsing into probe suite
+5baa08ed13bc0f16371e090cd38ec73c7491dfa4	5baa08ed1	2026-02-16T00:18:27Z	perf(test): fold model-default assertions into command utils suite
+55fd88e96712504f8217f3116ffe2c4b1de0ab18	55fd88e96	2026-02-16T00:18:27Z	perf(test): consolidate utils parsing helpers
+725f63f72401405b5398563b74573dd98eecab53	725f63f72	2026-02-16T00:18:27Z	perf(test): fold restart recovery helper into spawn utils suite
+c82dc02b4d4089d46b15994f24cbba1375eb0c3b	c82dc02b4	2026-02-16T00:18:27Z	perf(test): fold tui command parsing into tui suite
+2cf060f7744112a3793612c47e060066b65d6ebc	2cf060f77	2026-02-16T00:18:27Z	perf(test): consolidate media-understanding misc suites
+5529473af98f7a5b8744f70df24534adb0dd350b	5529473af	2026-02-16T00:18:27Z	perf(test): fold browser server-context helper into utils suite
+5e3b211d932fbaca32a89a94c103bff202452251	5e3b211d9	2026-02-16T00:18:27Z	perf(test): fold gmail watcher assertions into hooks install suite
+3fd40fc5a3a007f7eb75837e66ef4c31f55503a0	3fd40fc5a	2026-02-16T00:18:27Z	perf(test): fold media constants assertions into mime suite
+f934725ccdbedce29a18354e128641eba4cb758a	f934725cc	2026-02-16T00:18:27Z	perf(test): consolidate channel misc suites
+5709b3070003d578b927d4dc5a1ddc26505c3337	5709b3070	2026-02-16T00:18:27Z	perf(test): consolidate config misc suites
+2d5004cee481ace6a63c883440cab0b6c4d64e92	2d5004cee	2026-02-16T00:18:27Z	perf(test): consolidate CLI utility tests
+1287abe0b5a1ecd7b4fd363cb1a90bc7a29a82b0	1287abe0b	2026-02-16T00:18:27Z	perf(test): consolidate browser utility tests
+a91bcd2cf477efe14199f4b9b9a10421f6ce0e29	a91bcd2cf	2026-02-16T00:18:27Z	fix(test): avoid fake-timers hang in gateway lock
+67bfe8fb803f71742a8d6344e4a7dd02c95e65a0	67bfe8fb8	2026-02-16T00:18:26Z	perf(test): cut gateway unit suite overhead
+be4a490c237c4de3f39e73fa297f5382e8dde57f	be4a490c2	2026-02-16T00:16:57Z	refactor(test): fix update-cli env restore
+e9ed5febc5aabfc770df23ab4e6c2d4194bd92f1	e9ed5febc	2026-02-16T00:16:00Z	refactor(test): dedupe token exchange env cleanup
+72baa58edde5aebc16dccb83f8d1bb19da2018b6	72baa58ed	2026-02-16T00:15:20Z	refactor(test): fix copilot env restore
+76015aab234cd09332e5754ae8ddb19c2e49a43b	76015aab2	2026-02-16T00:14:48Z	refactor(test): dedupe copilot env restores
+115cfb4430d0526ea64f7a9f5f77c3d81da75e3e	115cfb443	2026-02-15T16:14:17-08:00	gateway: add cron finished-run webhook (#14535)
+ab000bc4110980c32e5f26045872bcacc4ef33d4	ab000bc41	2026-02-16T00:13:01Z	refactor(test): dedupe qianfan env restore
+e3a93d6705988c0fb7a8cccfca4310f87cdc5cd6	e3a93d670	2026-02-16T00:12:23Z	refactor(test): dedupe safe-bins mocks
+7857096d297ec8b792f8bf0e3f7d713d9f15439b	7857096d2	2026-02-16T00:08:35Z	refactor(test): reuse env snapshot in model scan
+cedd520f257298acfbdfceb3d44a458a65f0cddc	cedd520f2	2026-02-16T00:08:00Z	refactor(test): simplify state dir env helpers
+4bdb857ecadce2b4bd1f7858b116f561e6d5fcac	4bdb857ec	2026-02-16T09:07:09+09:00	chore: Use proper pnpm caching in one CI step.
+997b9ad232e1f5b5e50ec5aba610e90c5e432cf1	997b9ad23	2026-02-16T00:05:02Z	refactor(test): dedupe provider api key env restore
+e075a33ca3d408b06ae86654aa4c34f820d91bb9	e075a33ca	2026-02-16T00:03:54Z	refactor(test): simplify oauth/profile env restore
+c07036e8134f93dd97ef33d3dafed71635dbcccb	c07036e81	2026-02-16T09:03:29+09:00	chore: Update deps.
+ee2fa5f4114cf12e8173c1eae18c0847a355653e	ee2fa5f41	2026-02-16T00:02:32Z	refactor(test): reuse env snapshots in unit suites
+07dea4c6cc2dccd0fc598237e397067fc85d9c57	07dea4c6c	2026-02-15T23:59:28Z	refactor(test): dedupe auth choice env cleanup
+7bb0b7d1fc72a86e6aaf56debfeddb5d1d8d4cec	7bb0b7d1f	2026-02-15T23:58:06Z	refactor(test): simplify config io env snapshot
+a90e007d50e14c37e3666d7eca6842b45229a35c	a90e007d5	2026-02-15T23:56:57Z	refactor(test): reuse env snapshot in gateway ws harness
+94e84e6f75294bdeccae63e321f2ec8a28ee0771	94e84e6f7	2026-02-15T23:56:06Z	refactor(test): clean up gateway tool env restore
+e9c8540e210918f7a5c12ee12401112acdfde2f2	e9c8540e2	2026-02-15T23:55:11Z	refactor(test): simplify model auth env restore
+961ca61b0eb987c7bd80fcd4d0d1a0b22c8d716c	961ca61b0	2026-02-15T23:53:55Z	refactor(test): dedupe onboard auth env cleanup
+f809ff5e55a63a40b1928962900b1bc352db27ef	f809ff5e5	2026-02-15T23:51:24Z	refactor(test): reuse env snapshot helper
+d27a763eec2b18d67765043bf280cfc08f1e6f36	d27a763ee	2026-02-15T23:42:20Z	refactor(test): reuse env helper in temp home harness
+abd009b092664ab78429476180e6db68fcd2633c	abd009b09	2026-02-15T23:34:52Z	refactor(test): dedupe openresponses server setup
+f0e373b82ee344ae0bb6b1f4b70adb8a141db86a	f0e373b82	2026-02-15T23:34:02Z	refactor(test): simplify state dir env restore
+35ab521e07d946fa0960ac7575b7f175aa214d00	35ab521e0	2026-02-15T23:34:02Z	refactor(test): simplify voicewake env cleanup
+d8d9d3724f9a8cf3292949ea69ae5383a775e263	d8d9d3724	2026-02-16T00:31:51+01:00	docs(agents): add GHSA patch/publish notes
+e3445f59c986b4a4c587369e0ae79e3670aad72e	e3445f59c	2026-02-16T00:31:51+01:00	docs(changelog): note inter-session provenance security fix
+a68ed3f64c5715c168e1411aecc7bdc2083fde4e	a68ed3f64	2026-02-15T23:22:58Z	refactor(test): reuse env snapshots in gateway call tests
+31980bcaf1b8a4b4c49267b712fcd4df911a6bd7	31980bcaf	2026-02-15T23:18:16Z	refactor(test): dedupe gateway env restores
+70f86e326d97ef5b9ba1e7eccb0cf5e6991fc934	70f86e326	2026-02-15T23:15:07Z	refactor(test): reuse shared env snapshots
+bed0e076205cc040416c588645e7b7cd444d5413	bed0e0762	2026-02-15T23:14:42Z	fix(cli): clear plugin manifest cache after install
+632b71c7f84b8f805df3ae59c35c25654b79505a	632b71c7f	2026-02-15T23:14:42Z	fix(test): avoid inheriting process.env in nix config e2e
+eef13235ad0188d5d20de81d89da10fd87751bc6	eef13235a	2026-02-15T23:14:42Z	fix(test): make sessions_spawn e2e harness ordering stable
+89155aa6c63a1318ca8e628158da69bd3c06c377	89155aa6c	2026-02-15T23:14:42Z	fix(test): load sessions_spawn harness before tools
+bbcbabab74a3412f55f66a40402cd7735a8da34e	bbcbabab7	2026-02-15T23:14:42Z	fix(ci): repair e2e mocks and tool schemas
+0e2d8b8a1ee052437fce80a58e6fa89d206d19d0	0e2d8b8a1	2026-02-15T23:14:42Z	perf(test): consolidate channel action suites
+c5288300a1ad385fbc4d1d1a3451e7f9cb29f6dc	c5288300a	2026-02-15T23:14:42Z	perf(test): consolidate reply flow suites
+a7f6c956751a3cc7d79990ef847e0a6270f8baaf	a7f6c9567	2026-02-15T23:14:42Z	perf(test): consolidate slack monitor suites
+74294a4653425097389f43f3b9a44d6436a478f0	74294a465	2026-02-15T23:14:42Z	perf(test): consolidate web auto-reply suites
+c59a472ca2256de1f6e8bc5ffe62a021c70a88dc	c59a472ca	2026-02-15T23:14:42Z	perf(test): consolidate memory tool e2e suites
+722bfaa9c968e003ea1ea407051f25ac25ce1d8e	722bfaa9c	2026-02-15T23:14:42Z	perf(test): consolidate reply plumbing/state suites
+37086d0c3e4cb72d2ecab8c4b3b0f5473739a3c9	37086d0c3	2026-02-15T23:14:42Z	perf(test): consolidate sessions tool e2e suites
+a1c50b4ee36091de70c739e899a6394acfe55e28	a1c50b4ee	2026-02-15T23:14:42Z	perf(test): consolidate channel plugin suites
+d75cd4078729c662aa72084ed831429dc350ba52	d75cd4078	2026-02-15T23:14:42Z	perf(test): consolidate reply utility suites
+34b088ede63d23190f81c7e38518a92df9bcf77c	34b088ede	2026-02-15T23:14:42Z	perf(test): consolidate infra outbound suites
+36b5f0c9a8e68b24c0921e1296e38db3c0f5f0d9	36b5f0c9a	2026-02-15T23:14:42Z	perf(test): consolidate gateway server-methods suites
+704c8ed530c484f58c8bb2f4736b1ed1938a4c07	704c8ed53	2026-02-15T23:14:42Z	perf(test): consolidate sessions config suites
+2158b09b9dc52706d00ca8811f41195047c21d4b	2158b09b9	2026-02-15T23:14:42Z	perf(test): consolidate discord monitor utils
+ed276d3e50f367710ceb4b353e8d8e1881808c54	ed276d3e5	2026-02-15T23:14:42Z	perf(test): consolidate inbound reply suites
+53ec78319d7cb89e7a2cdd998dbc15466a85d000	53ec78319	2026-02-15T23:14:42Z	perf(test): consolidate session suites
+51709c63fe18e0e7b5effdcad5393613da57664c	51709c63f	2026-02-15T23:14:42Z	perf(test): consolidate model selection suites
+f8925b758860a38a67d887c3608514fd8f36fc54	f8925b758	2026-02-15T23:14:42Z	perf(test): consolidate reply commands suites
+023091ded3563f9cbcffc1ee0a2788e4129f8be6	023091ded	2026-02-15T23:14:42Z	perf(test): consolidate slack tool-result suites
+ce922915abd1ba9513bb282fa3df541683cebaeb	ce922915a	2026-02-15T23:14:42Z	perf(test): consolidate telegram send suites
+f749365b1ce2aaed4eab7297cc4ffb203a37e5e5	f749365b1	2026-02-15T23:14:42Z	perf(test): consolidate telegram create bot suites
+4fc72226fa68e24354ac806b1284558a10ce3814	4fc72226f	2026-02-15T23:14:42Z	perf(test): speed up slack slash suite
+def74465eb8f689300e253c1237a1069d6469cfa	def74465e	2026-02-15T23:14:42Z	perf(test): consolidate runReplyAgent suites
+a91553c7cf69688b1246d0e4e6774be0fb0ca734	a91553c7c	2026-02-15T23:14:42Z	perf(slack): consolidate slash tests
+65ea200c31863f249cdf780cdfa0f9587790c67e	65ea200c3	2026-02-15T23:12:57Z	refactor(test): share env var helpers
+0b56472cf52c800a165e18705123568aaa389bf7	0b56472cf	2026-02-15T23:07:50Z	refactor(test): dedupe ios/android gateway client id tests
+8ba16a894f465c4bc4be9c0ae6a7231ebb9fd797	8ba16a894	2026-02-15T23:06:34Z	refactor(test): reuse withGatewayServer in auth/http suites
+99909f7bc795b9837235dc010f38927e55a41561	99909f7bc	2026-02-15T23:02:27Z	refactor(test): share gateway server start helper
+1b455b6d9fc5ddb99e0a15e62754ad0149af34d5	1b455b6d9	2026-02-15T22:43:27Z	refactor(test): dedupe gateway hooks server setup
+6b4590be069c3628273d3392fa4131c6a85e4de9	6b4590be0	2026-02-15T22:40:28Z	fix(agents): stabilize sessions_spawn e2e suite
+a948212ca7ddc01250d374f2d6a2b1efdece7463	a948212ca	2026-02-15T14:20:54-08:00	fix(ui): show session labels in selector and standardize session key prefixes
+d491c789a3664e4ac7965fbf31beebfbfbf1942d	d491c789a	2026-02-15T22:19:08Z	refactor(test): share gateway ws e2e harness
+e58884925aee4ea6dd002018d18c4775b1143f73	e58884925	2026-02-15T22:12:07Z	refactor(test): reuse pi embedded subscribe session harness
+a1ff0e476755aae04673026c116ffe3dfeee9f8a	a1ff0e476	2026-02-15T22:12:02Z	refactor(test): dedupe sessions_spawn thinking assertions
+8e7b7a2b220bc0a4aa71a6d9c92022d36acabbab	8e7b7a2b2	2026-02-15T22:08:13Z	refactor(test): dedupe commands e2e wizard setup
+d9d93485d9b819240c5c4ffd14f6264704434e26	d9d93485d	2026-02-15T22:04:07Z	refactor(test): share tool hook handler ctx
+5fb4032fb67da8e33c26ad7c9f9a285505017177	5fb4032fb	2026-02-15T22:02:09Z	refactor(test): share overflow compaction mocks
+7c822d039b69f7ccc5b97f740a2348376549e9e2	7c822d039	2026-02-15T16:01:00-06:00	feat(plugins): expose llm input/output hook payloads (openclaw#16724) thanks @SecondThread
+3c6cff575897b11dbbe340c6c78f3a42582751bf	3c6cff575	2026-02-15T21:57:23Z	refactor(config): share agent sandbox schema
+511719424d934144070891baf93126c00235b6b4	511719424	2026-02-15T21:55:56Z	refactor(test): dedupe terminal restore stubs
+8cd20e220fbce3c1ed5beb94ece0db9e2bc9104b	8cd20e220	2026-02-15T21:53:12Z	refactor(infra): share jsonl transcript reader
+c92bcf24c446eb41d2562e31cde579760413ba12	c92bcf24c	2026-02-15T21:51:38Z	refactor(infra): dedupe device pairing token updates
+0c7785151600f67b79a764f9951abda100bd41f8	0c7785151	2026-02-15T15:50:44-06:00	fix(agents): mark required-param tool errors as non-retryable (#17533)
+50abdaf33b56e963d445aecd4fa7128001619167	50abdaf33	2026-02-15T21:48:46Z	refactor(infra): dedupe openclaw root candidate scan
+012b674f313b628653414c9a8bbbfed79cf76bf6	012b674f3	2026-02-15T21:47:51Z	refactor(infra): share isTailnetIPv4 helper
+c9bb6bd0d8689db5669a5e64fef4725211643254	c9bb6bd0d	2026-02-15T21:46:08Z	refactor(infra): extract json file + async lock helpers
+ff4f59ec9062bfa675257f8fd5ef30df1f5e21db	ff4f59ec9	2026-02-15T13:45:17-08:00	feat(image-tool): support multiple images in a single tool call (#17512)
+27deda2221a9a0bb45017f0a60d312d435148281	27deda222	2026-02-15T21:42:35Z	fix(test): drop unused gateway e2e PluginRegistry imports
+c3812a1ffb9cfd3e2a8eee8b3f0beb49d290eb01	c3812a1ff	2026-02-15T21:41:18Z	refactor(test): share gateway e2e registry helper
+84601bf96bfc9c723483327550399c85b4e58f6c	84601bf96	2026-02-15T21:34:15Z	fix(test): fix pi embedded subscribe harness typing
+aabe4d9b456d29c892a02a0d91c0f09e6468fb35	aabe4d9b4	2026-02-15T21:31:23Z	refactor(test): reuse env snapshot helper
+856e1a3187a80ef970c2a0ce076044e225663e67	856e1a318	2026-02-15T21:29:15Z	refactor(test): share skills e2e helper
+5958454710b661eaad13ff8853262dca662a14bf	595845471	2026-02-15T21:27:07Z	refactor(test): share auth profile order fixtures
+a02e5759cc081b4e78702b5b65b4e0aa20e9fb97	a02e5759c	2026-02-15T21:18:53Z	refactor(test): dedupe pi embedded subscribe e2e harness
+059573a48d33851f0fb2cdc730bec314c67fa8a0	059573a48	2026-02-15T13:12:10-08:00	chore (changelog): attribute issues #17515 #17466 #17505 #17404
+150c5815eb81abf8b36d757d6469781f8060515a	150c5815e	2026-02-15T13:12:10-08:00	fix (agents): honor configured contextWindow overrides
+69418cca2091efde2463cf7884fabd50d7228f00	69418cca2	2026-02-15T13:12:10-08:00	fix (tui): preserve copy-sensitive token wrapping
+5c233f4ded959502f1e7ca9d7d6dac67e804644c	5c233f4de	2026-02-15T21:09:59Z	fix(ui): drop unused vi in test helper
+c623c51cf4e81cdfab17c1e42941f46718a85566	c623c51cf	2026-02-15T21:09:32Z	refactor(ui): share app mount hooks
+2ac3e780e3b995f284e8af9642e813c46be55946	2ac3e780e	2026-02-15T21:07:10Z	refactor(test): dedupe followup queue fixtures
+4920ca65db7e513950cedd33d90c71fcdb5f3e84	4920ca65d	2026-02-15T20:59:13Z	refactor(ui): dedupe usage session rows
+02ff9f43eaa6adf267a14da1979def805366e514	02ff9f43e	2026-02-15T20:54:21Z	refactor(test): dedupe image tool e2e fixtures
+b4f14d6f7aa0850e1c06bb01d16f320073500d2d	b4f14d6f7	2026-02-15T15:42:43-05:00	Gateway: hide BOOTSTRAP in agent files after onboarding completes (#17491)
+3cd786cc2df48c13dc63689dde3a548cb9ea65c5	3cd786cc2	2026-02-15T20:40:47Z	refactor(swift): share discovery status text
+778959b3dc27acde01b8f257341d2136070989ac	778959b3d	2026-02-15T20:38:26Z	refactor(ios): dedupe gateway helpers
+ef2c66a16b2e2b50bcee99f57cd6f47def408f76	ef2c66a16	2026-02-15T20:33:14Z	refactor(camera): centralize JPEG transcode cap
+b30ed6ca4cc44cd97bdd35535c4f768bd4c844ab	b30ed6ca4	2026-02-15T20:24:06Z	refactor(ios): share EventKit auth gating
+71009ab1b6b091e26804f7232bfeee195e6d54ae	71009ab1b	2026-02-15T20:22:40Z	refactor(macos): share tailnet IPv4 detection
+c8779ef61d72a3f3789e3ee6e716c5ba0cbb960d	c8779ef61	2026-02-15T20:19:55Z	refactor(macos): share pairing alert plumbing
+218189318d91a835576b9eb36f72fb49dbb63936	218189318	2026-02-15T20:17:43Z	refactor(swift): share primary IPv4 lookup
+f37b1c11e068025c45d2dd1db0a39eb86540eb27	f37b1c11e	2026-02-15T20:12:50Z	refactor(macos): centralize presence system info
+375e16170d4594fb37f73b2563176827dbb59758	375e16170	2026-02-15T20:07:12Z	refactor(macos): dedupe file watcher
+3a075f029272c9f813fec18adbfb12fbf44c6361	3a075f029	2026-02-15T20:05:25Z	fix(macos): drop duplicate AnyCodable helpers
+c75fe7e3cda102536556c630c607bd48753c6bf1	c75fe7e3c	2026-02-15T20:03:48Z	fix(swift): make SwiftPM tests deterministic
+a3419e48abd22a28dcb75551d7eaecea9fb195ce	a3419e48a	2026-02-15T20:00:40Z	refactor(swift): dedupe AnyCodable
+8ccbd00e1bf1633d5ebe53a92d026f1ed2d037e6	8ccbd00e1	2026-02-15T20:00:36Z	chore: ignore OpenClawKit SwiftPM artifacts
+6c33bd9c67c4001f33e536d13173eed4dc936736	6c33bd9c6	2026-02-15T19:41:39Z	ci: reduce node test OOM on linux
+59c0b2bb370c751bee29c1ba2d419507342df098	59c0b2bb3	2026-02-15T19:37:40Z	refactor(auth): reuse oauth auth result helper
+342e9cac03d214fc2eb73cd98770ae7c1c1c6ebd	342e9cac0	2026-02-15T19:37:40Z	refactor(status): reuse plugin-sdk status helpers
+bdfa2b490bab2613549eab6c0092dc243c5a0e64	bdfa2b490	2026-02-15T19:37:40Z	refactor(media): reuse buildAgentMediaPayload
+00e63da3360fd12a0b5981b67d0e5aca55da5609	00e63da33	2026-02-15T19:37:40Z	refactor(webhooks): reuse plugin-sdk webhook path helpers
+80eb91d9e759d696556babf31ff64d576635ee4b	80eb91d9e	2026-02-15T19:37:40Z	refactor(plugin-sdk): add shared helper utilities
+108f0ef8c4a95c85fec7f4609042a07cee2089a6	108f0ef8c	2026-02-15T19:29:28Z	fix(test): remove stale cleanup calls in cron regressions
+92f8c0fac3713654301570b612154e8d15ce0417	92f8c0fac	2026-02-15T19:29:27Z	perf(test): speed up suites and reduce fs churn
+8fdde0429e81b763af5b37cbd855bcb20324ef79	8fdde0429	2026-02-15T19:29:27Z	perf(auto-reply): avoid skill scans for inline directives
+38f430e1335f88503f69f914ccecc04f4fb943ba	38f430e13	2026-02-15T19:29:27Z	perf(models): lazy-load heavy deps in models list
+5c5af2b14e45aa7a8970f4508ab0f76da5cdf3a4	5c5af2b14	2026-02-15T19:29:27Z	perf(wizard): lazy-load onboarding deps
+c25026f2b3c1d4a2f0ebcea51d3973e9818adceb	c25026f2b	2026-02-15T19:29:27Z	perf(plugins): lazy-create jiti loader
+a6158873f579eb0247a2e714b25386e21283c1b7	a6158873f	2026-02-15T19:29:27Z	refactor(imessage): split monitor inbound processing
+a8f3a579d4f805d3b51005d5c08915a580d3eb90	a8f3a579d	2026-02-15T19:29:27Z	perf(telegram): lazy import proxy + timeout deps in audit
+a4b958efcda976654b84d278a62d1362a49099e0	a4b958efc	2026-02-15T19:29:27Z	perf(test): cover embedding chunk limits without indexing
+e3f4cabf49de682141735df0de7bf6fecb20f92c	e3f4cabf4	2026-02-15T19:29:27Z	perf(test): speed up update-cli unit tests
+a742d44133bb285a6ffef632f58e4cb81f671df4	a742d4413	2026-02-15T19:29:27Z	perf(test): stub config + persistence in subagent registry tests
+b2088d2e1dd9fdf1a4d139b2504483f7ac845864	b2088d2e1	2026-02-15T19:29:27Z	perf(test): speed up process poll timeout tests
+88548784ce47336f76cd2bf47bdcdbf455d3539d	88548784c	2026-02-15T19:25:11Z	fix(bluebubbles): use Buffer for multipart body
+719280d73712e37b73c2c4fe5cb3aa5a27793395	719280d73	2026-02-15T19:24:03Z	refactor(bluebubbles): share multipart helpers
+de103773c79d5ecec291c75d48db3d56d6a9aa73	de103773c	2026-02-15T19:21:42Z	refactor(tlon): share urbit poke/scry ops
+0653e8d2ec6aa1dddde87d4885b349fa6e20a9f3	0653e8d2e	2026-02-15T19:21:37Z	refactor(matrix): dedupe group config resolution
+699136f89a6e01ff3d36653538a643c16bae8207	699136f89	2026-02-15T19:21:31Z	refactor(msteams): share credential prompt
+824901083beff0404af665207e59b5538f6761bc	824901083	2026-02-15T19:09:05Z	refactor(pi): dedupe compaction failure
+a2ceadcc2acb8c47acd63293ff94a22bf4237f81	a2ceadcc2	2026-02-15T19:08:47Z	refactor(gateway): dedupe assistant delta parsing
+5248b759fef4b0e673e85e2a21ca1750d095441c	5248b759f	2026-02-15T19:06:54Z	refactor(shared): reuse isPidAlive
+c682634188dbdd517af870c1d28315a0928fe4df	c68263418	2026-02-15T13:05:46-06:00	fix(discord): role-based allowlist never matches (Carbon Role objects stringify to mentions) (#16369)
+c7b6d6a14e83ab8ce0ae71eeb22622d259ec72c6	c7b6d6a14	2026-02-15T19:05:00Z	refactor(plugins): reuse createEmptyPluginRegistry
+99fda7b92008f7fd1cb0f62366ab7177346abeaa	99fda7b92	2026-02-15T19:00:27Z	refactor(models): share fallback command logic
+6a4144f5372f19cb48a0963e00f8ddec020806cd	6a4144f53	2026-02-15T18:55:01Z	refactor(auto-reply): dedupe chunk early returns
+6f2f88d3ad6267f82f0119f277032a4e3f507b3f	6f2f88d3a	2026-02-15T18:50:36Z	refactor(status): reuse Requirements types
+c118f6c6883a465d9da4d8ae22fcabcae889bc0e	c118f6c68	2026-02-15T18:50:36Z	fix(discord): fix component parsing and modal field typing
+f92900fc2011506018f0a45acf1ef92e46bc55a0	f92900fc2	2026-02-15T12:45:46-06:00	Revert "Discord: add preflight role allowlist regression test"
+99caaef6ccb8e01faaac84c72e0e3ccd8fcf055f	99caaef6c	2026-02-15T12:45:46-06:00	Revert "Docs: add discord role allowlist changelog entry"
+137079fc2165ae0f0e837bdb80a14b99c6b386a7	137079fc2	2026-02-15T12:45:46-06:00	refactor(shared): share entry requirements evaluation
+a5b87338e5b4c2949d10fde402deaf7975ce37e1	a5b87338e	2026-02-15T18:35:09Z	refactor(onboard): reuse applyAgentDefaultModelPrimary
+8678b10aefa73f4a387915fa5547499e802cbc7c	8678b10ae	2026-02-15T12:33:31-06:00	Docs: add discord role allowlist changelog entry
+41f546faa58c7f8ff660bbb03684c5d0236c8d52	41f546faa	2026-02-15T12:33:31-06:00	Discord: add preflight role allowlist regression test
+95c986dee10487e1a1dac18cf8697be7f4692a40	95c986dee	2026-02-15T18:32:18Z	refactor(models): share model picker auth checker
+d9c891eb90aebb845949045a1cb25427c61fea95	d9c891eb9	2026-02-15T18:30:34Z	refactor(channels): share threading tool context
+b2d8b95906e7e3599b9681061c271fa50d62fc61	b2d8b9590	2026-02-15T18:28:25Z	refactor(models): dedupe MiniMax provider models
+a2c695126d103c40ca8e6b13d9a155a2b05626a2	a2c695126	2026-02-15T18:27:02Z	refactor(browser): reuse CDP fetch helpers
+394e69a2f8b49ea06337d8923f781d79266ac1fb	394e69a2f	2026-02-15T18:25:47Z	refactor(cli): share browser resize output helper
+7ef956d224abd35befe89fd4f5fa7cfd04bc7f94	7ef956d22	2026-02-15T18:22:10Z	refactor(browser): share client-actions url helpers
+7773c5410b592f68649df110de0f8bac277dd2ac	7773c5410	2026-02-15T18:17:05Z	refactor(telegram): share allowFrom normalization
+dce3e4bd9494d0fc2f2023bbb87eb276d40f30a6	dce3e4bd9	2026-02-15T18:14:03Z	refactor(cli): dedupe hook enable/disable logic
+65f8b46c15f6a9f97c8908fa5f1d7a5207a27f15	65f8b46c1	2026-02-15T18:12:15Z	fix(ci): stabilize media and session store tests
+01ca3da8eee0fb24b7121fca03528d7d9c3ed541	01ca3da8e	2026-02-15T18:06:48Z	refactor(gateway): share tailscale prompt constants
+2e758d36910b009b3fe178c89bdb72dee486c68d	2e758d369	2026-02-15T18:02:55Z	refactor(gateway): share node event sessionKey parsing
+be9b5cefbd86f8de2c33d6f95de7147fe73c3c86	be9b5cefb	2026-02-15T17:57:13Z	fix(ci): stabilize state-dir dependent tests
+813b96a80499e40fbf65e77f691635e76cd51b3c	813b96a80	2026-02-15T17:49:30Z	refactor(commands): share cleanup plan resolver
+1f1e97674f7930093d47c4bb778e6d4df4e4d303	1f1e97674	2026-02-15T17:45:16Z	refactor(allowlists): share user entry collection
+04f00f8ef239047575d357847c2f04a8e7a3965a	04f00f8ef	2026-02-15T17:41:14Z	refactor(commands): share default model applier
+9084c4e3452d8612004c4f58c22999f01922f7ec	9084c4e34	2026-02-15T17:39:21Z	refactor(pi): share session manager runtime registry
+c6b3736fe750870912a7d9cc592e6e84f5f12c93	c6b3736fe	2026-02-15T11:36:54-06:00	fix: dedupe probe/token base types (#16986) (thanks @iyoda)
+a0e763168f64efeea28639d63f65fe73b06d0e59	a0e763168	2026-02-15T17:36:08Z	refactor(exec-approvals): share socket default merge
+5c88d3c9f14c62e3b5a7afcfb5b3e99d5497ffc9	5c88d3c9f	2026-02-15T17:33:08Z	refactor(media): share fileExists
+b6069fc68c2ae92e7c06967b565e363612f57903	b6069fc68	2026-02-15T11:30:25-06:00	feat: support per-channel ackReaction config (#17092) (thanks @zerone0x)
+b3ef3fca7587a17774624271ff0f0a8c76ba4293	b3ef3fca7	2026-02-15T17:29:08Z	refactor(cron): share legacy delivery helpers

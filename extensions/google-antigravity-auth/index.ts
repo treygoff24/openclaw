@@ -8,12 +8,8 @@ import {
   type ProviderAuthContext,
 } from "openclaw/plugin-sdk";
 
-// OAuth constants - decoded from pi-ai's base64 encoded values to stay in sync
-const decode = (s: string) => Buffer.from(s, "base64").toString();
-const CLIENT_ID = decode(
-  "MTA3MTAwNjA2MDU5MS10bWhzc2luMmgyMWxjcmUyMzV2dG9sb2poNGc0MDNlcC5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbQ==",
-);
-const CLIENT_SECRET = decode("R09DU1BYLUs1OEZXUjQ4NkxkTEoxbUxCOHNYQzR6NnFEQWY=");
+const CLIENT_ID_ENV_VAR = "OPENCLAW_ANTIGRAVITY_CLIENT_ID";
+const CLIENT_SECRET_ENV_VAR = "OPENCLAW_ANTIGRAVITY_CLIENT_SECRET";
 const REDIRECT_URI = "http://localhost:51121/oauth-callback";
 const AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -57,9 +53,21 @@ function shouldUseManualOAuthFlow(isRemote: boolean): boolean {
   return isRemote || isWSL2Sync();
 }
 
+function resolveOauthClientCredentials(): { clientId: string; clientSecret: string } {
+  const clientId = process.env[CLIENT_ID_ENV_VAR]?.trim();
+  const clientSecret = process.env[CLIENT_SECRET_ENV_VAR]?.trim();
+  if (!clientId || !clientSecret) {
+    throw new Error(
+      `Missing Google OAuth credentials. Set ${CLIENT_ID_ENV_VAR} and ${CLIENT_SECRET_ENV_VAR}.`,
+    );
+  }
+  return { clientId, clientSecret };
+}
+
 function buildAuthUrl(params: { challenge: string; state: string }): string {
+  const { clientId } = resolveOauthClientCredentials();
   const url = new URL(AUTH_URL);
-  url.searchParams.set("client_id", CLIENT_ID);
+  url.searchParams.set("client_id", clientId);
   url.searchParams.set("response_type", "code");
   url.searchParams.set("redirect_uri", REDIRECT_URI);
   url.searchParams.set("scope", SCOPES.join(" "));
@@ -171,12 +179,13 @@ async function exchangeCode(params: {
   code: string;
   verifier: string;
 }): Promise<{ access: string; refresh: string; expires: number }> {
+  const { clientId, clientSecret } = resolveOauthClientCredentials();
   const response = await fetch(TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
+      client_id: clientId,
+      client_secret: clientSecret,
       code: params.code,
       grant_type: "authorization_code",
       redirect_uri: REDIRECT_URI,

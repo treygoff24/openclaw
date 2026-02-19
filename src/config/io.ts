@@ -24,6 +24,7 @@ import {
   applyModelDefaults,
   applySessionDefaults,
   applyTalkApiKey,
+  stripToolDisclosureDefaults,
   applyToolDisclosureDefaults,
 } from "./defaults.js";
 import { restoreEnvVarRefs } from "./env-preserve.js";
@@ -901,7 +902,8 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
         : cfgToWrite;
     // Do NOT apply runtime defaults when writing — user config should only contain
     // explicitly set values. Runtime defaults are applied when loading (issue #6070).
-    const stampedOutputConfig = stampConfigVersion(outputConfig);
+    const strippedOutputConfig = stripToolDisclosureDefaults(outputConfig);
+    const stampedOutputConfig = stampConfigVersion(strippedOutputConfig);
     const json = JSON.stringify(stampedOutputConfig, null, 2).trimEnd().concat("\n");
     const nextHash = hashConfigRaw(json);
     const previousHash = resolveConfigSnapshotHash(snapshot);

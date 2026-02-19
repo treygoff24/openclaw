@@ -24,6 +24,17 @@ const DEFAULT_TOOL_DISCLOSURE_INCLUDE_CATEGORY_SUMMARY = true;
 const DEFAULT_TOOL_DISCLOSURE_STICKY_TURNS = 4;
 const DEFAULT_TOOL_DISCLOSURE_STICKY_MAX_TOOLS = 12;
 
+type ToolDisclosureLike = {
+  mode?: "off" | "auto_intent";
+  alwaysAllow?: string[];
+  maxActiveTools?: number;
+  minConfidence?: number;
+  lowConfidenceFallback?: "full" | "widen";
+  includeCategorySummary?: boolean;
+  stickyTurns?: number;
+  stickyMaxTools?: number;
+};
+
 const DEFAULT_MODEL_ALIASES: Readonly<Record<string, string>> = {
   // Anthropic (pi-ai catalog uses "latest" ids without date suffix)
   opus: "anthropic/claude-opus-4-6",
@@ -522,6 +533,71 @@ export function applyToolDisclosureDefaults(cfg: OpenClawConfig): OpenClawConfig
       },
     },
   };
+}
+
+function isDefaultToolDisclosureAlwaysAllow(value: string[] | undefined): boolean {
+  if (value === undefined) {
+    return true;
+  }
+  if (value.length !== DEFAULT_TOOL_DISCLOSURE_ALWAYS_ALLOW.length) {
+    return false;
+  }
+  return value.every((entry, index) => entry === DEFAULT_TOOL_DISCLOSURE_ALWAYS_ALLOW[index]);
+}
+
+function isDefaultToolDisclosureConfig(toolDisclosure: ToolDisclosureLike): boolean {
+  return (
+    (toolDisclosure.mode === undefined || toolDisclosure.mode === "off") &&
+    isDefaultToolDisclosureAlwaysAllow(toolDisclosure.alwaysAllow) &&
+    (toolDisclosure.maxActiveTools === undefined ||
+      toolDisclosure.maxActiveTools === DEFAULT_TOOL_DISCLOSURE_MAX_ACTIVE_TOOLS) &&
+    (toolDisclosure.minConfidence === undefined ||
+      toolDisclosure.minConfidence === DEFAULT_TOOL_DISCLOSURE_MIN_CONFIDENCE) &&
+    (toolDisclosure.lowConfidenceFallback === undefined ||
+      toolDisclosure.lowConfidenceFallback === DEFAULT_TOOL_DISCLOSURE_LOW_CONFIDENCE_FALLBACK) &&
+    (toolDisclosure.includeCategorySummary === undefined ||
+      toolDisclosure.includeCategorySummary === DEFAULT_TOOL_DISCLOSURE_INCLUDE_CATEGORY_SUMMARY) &&
+    (toolDisclosure.stickyTurns === undefined ||
+      toolDisclosure.stickyTurns === DEFAULT_TOOL_DISCLOSURE_STICKY_TURNS) &&
+    (toolDisclosure.stickyMaxTools === undefined ||
+      toolDisclosure.stickyMaxTools === DEFAULT_TOOL_DISCLOSURE_STICKY_MAX_TOOLS)
+  );
+}
+
+export function stripToolDisclosureDefaults(cfg: OpenClawConfig): OpenClawConfig {
+  const defaults = cfg.agents?.defaults;
+  const toolDisclosure = defaults?.toolDisclosure as ToolDisclosureLike | undefined;
+  if (!defaults || !toolDisclosure) {
+    return cfg;
+  }
+  if (!isDefaultToolDisclosureConfig(toolDisclosure)) {
+    return cfg;
+  }
+
+  const nextDefaults = { ...defaults };
+  delete nextDefaults.toolDisclosure;
+  if (Object.keys(nextDefaults).length > 0) {
+    return {
+      ...cfg,
+      agents: {
+        ...cfg.agents,
+        defaults: nextDefaults,
+      },
+    };
+  }
+
+  const nextAgents = { ...cfg.agents };
+  delete nextAgents.defaults;
+  if (Object.keys(nextAgents).length > 0) {
+    return {
+      ...cfg,
+      agents: nextAgents,
+    };
+  }
+
+  const nextCfg = { ...cfg };
+  delete nextCfg.agents;
+  return nextCfg;
 }
 
 export function resetSessionDefaultsWarningForTests() {

@@ -559,6 +559,7 @@ export function buildAgentSystemPrompt(params: {
     }),
     "## Workspace Files (injected)",
     "These user-editable files are loaded by OpenClaw and included below in Project Context.",
+    "Treat injected AGENTS.md and TOOLS.md content as binding workspace guidance and follow it before taking action.",
     "",
     ...buildReplyTagsSection(isMinimal),
     ...buildMessagingSection({

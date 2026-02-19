@@ -322,6 +322,10 @@ describe("buildAgentSystemPrompt", () => {
       ],
     });
 
+    expect(prompt).toContain("## Workspace Files (injected)");
+    expect(prompt).toContain(
+      "Treat injected AGENTS.md and TOOLS.md content as binding workspace guidance and follow it before taking action.",
+    );
     expect(prompt).toContain("# Project Context");
     expect(prompt).toContain("## AGENTS.md");
     expect(prompt).toContain("Alpha");
@@ -510,6 +514,19 @@ describe("buildSubagentSystemPrompt", () => {
     expect(prompt).toContain("`subagents` tool");
     expect(prompt).toContain("announce their results back to you automatically");
     expect(prompt).toContain("Do NOT repeatedly poll `subagents list`");
+  });
+
+  it("instructs subagents to follow injected AGENTS.md and TOOLS.md guidance", () => {
+    const prompt = buildSubagentSystemPrompt({
+      childSessionKey: "agent:main:subagent:abc",
+      task: "research task",
+      childDepth: 1,
+      maxSpawnDepth: 2,
+    });
+
+    expect(prompt).toContain(
+      "Read and obey AGENTS.md and TOOLS.md guidance included in Project Context.",
+    );
   });
 
   it("does not include spawning guidance for depth-1 leaf when maxSpawnDepth == 1", () => {

@@ -5,7 +5,7 @@ import {
   registerInternalHook,
   type AgentBootstrapHookContext,
 } from "../hooks/internal-hooks.js";
-import { makeTempWorkspace } from "../test-helpers/workspace.js";
+import { makeTempWorkspace, writeWorkspaceFile } from "../test-helpers/workspace.js";
 import { resolveBootstrapContextForRun, resolveBootstrapFilesForRun } from "./bootstrap-files.js";
 import type { WorkspaceBootstrapFile } from "./workspace.js";
 
@@ -35,6 +35,34 @@ describe("resolveBootstrapFilesForRun", () => {
     const files = await resolveBootstrapFilesForRun({ workspaceDir });
 
     expect(files.some((file) => file.path === path.join(workspaceDir, "EXTRA.md"))).toBe(true);
+  });
+
+  it("filters bootstrap files to AGENTS.md and TOOLS.md for subagent sessions", async () => {
+    const workspaceDir = await makeTempWorkspace("openclaw-bootstrap-subagent-filter-");
+    await writeWorkspaceFile({ dir: workspaceDir, name: "AGENTS.md", content: "agents" });
+    await writeWorkspaceFile({ dir: workspaceDir, name: "TOOLS.md", content: "tools" });
+    await writeWorkspaceFile({ dir: workspaceDir, name: "SOUL.md", content: "persona" });
+
+    const files = await resolveBootstrapFilesForRun({
+      workspaceDir,
+      sessionKey: "agent:main:subagent:child",
+    });
+
+    expect(files.map((file) => file.name).toSorted()).toEqual(["AGENTS.md", "TOOLS.md"]);
+  });
+
+  it("applies subagent allowlist when only sessionId is provided", async () => {
+    const workspaceDir = await makeTempWorkspace("openclaw-bootstrap-subagent-session-id-");
+    await writeWorkspaceFile({ dir: workspaceDir, name: "AGENTS.md", content: "agents" });
+    await writeWorkspaceFile({ dir: workspaceDir, name: "TOOLS.md", content: "tools" });
+    await writeWorkspaceFile({ dir: workspaceDir, name: "SOUL.md", content: "persona" });
+
+    const files = await resolveBootstrapFilesForRun({
+      workspaceDir,
+      sessionId: "agent:main:subagent:child",
+    });
+
+    expect(files.map((file) => file.name).toSorted()).toEqual(["AGENTS.md", "TOOLS.md"]);
   });
 });
 

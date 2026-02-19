@@ -28,6 +28,8 @@ export type EmbeddedPiAgentMeta = {
     cacheWrite?: number;
     total?: number;
   };
+  /** Tool names actually called during the run (deduped, ordered by first use). */
+  toolCallNames?: string[];
 };
 
 export type EmbeddedPiRunMeta = {

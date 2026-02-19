@@ -1,9 +1,11 @@
 import { z } from "zod";
 import {
   HeartbeatSchema,
-  AgentSandboxSchema,
-  AgentModelSchema,
   MemorySearchSchema,
+  SandboxBrowserSchema,
+  SandboxDockerSchema,
+  SandboxPruneSchema,
+  ToolDisclosureSchema,
 } from "./zod-schema.agent-runtime.js";
 import {
   BlockStreamingChunkSchema,
@@ -38,6 +40,17 @@ export const AgentDefaultsSchema = z
             params: z.record(z.string(), z.unknown()).optional(),
             /** Enable streaming for this model (default: true, false for Ollama to avoid SDK issue #1205). */
             streaming: z.boolean().optional(),
+            /** Per-model default thinking level (overrides global thinkingDefault). */
+            thinkingDefault: z
+              .union([
+                z.literal("off"),
+                z.literal("minimal"),
+                z.literal("low"),
+                z.literal("medium"),
+                z.literal("high"),
+                z.literal("xhigh"),
+              ])
+              .optional(),
           })
           .strict(),
       )
@@ -46,7 +59,6 @@ export const AgentDefaultsSchema = z
     repoRoot: z.string().optional(),
     skipBootstrap: z.boolean().optional(),
     bootstrapMaxChars: z.number().int().positive().optional(),
-    bootstrapTotalMaxChars: z.number().int().positive().optional(),
     userTimezone: z.string().optional(),
     timeFormat: z.union([z.literal("auto"), z.literal("12"), z.literal("24")]).optional(),
     envelopeTimezone: z.string().optional(),
@@ -55,6 +67,7 @@ export const AgentDefaultsSchema = z
     contextTokens: z.number().int().positive().optional(),
     cliBackends: z.record(z.string(), CliBackendSchema).optional(),
     memorySearch: MemorySearchSchema,
+    toolDisclosure: ToolDisclosureSchema,
     contextPruning: z
       .object({
         mode: z.union([z.literal("off"), z.literal("cache-ttl")]).optional(),
@@ -91,10 +104,10 @@ export const AgentDefaultsSchema = z
     compaction: z
       .object({
         mode: z.union([z.literal("default"), z.literal("safeguard")]).optional(),
-        reserveTokens: z.number().int().nonnegative().optional(),
-        keepRecentTokens: z.number().int().positive().optional(),
         reserveTokensFloor: z.number().int().nonnegative().optional(),
         maxHistoryShare: z.number().min(0.1).max(0.9).optional(),
+        lastTurnInjection: z.boolean().optional(),
+        lastTurnMaxTokens: z.number().int().positive().optional(),
         memoryFlush: z
           .object({
             enabled: z.boolean().optional(),
@@ -128,7 +141,6 @@ export const AgentDefaultsSchema = z
     humanDelay: HumanDelaySchema.optional(),
     timeoutSeconds: z.number().int().positive().optional(),
     mediaMaxMb: z.number().positive().optional(),
-    imageMaxDimensionPx: z.number().int().positive().optional(),
     typingIntervalSeconds: z.number().int().positive().optional(),
     typingMode: z
       .union([
@@ -143,31 +155,41 @@ export const AgentDefaultsSchema = z
     subagents: z
       .object({
         maxConcurrent: z.number().int().positive().optional(),
-        maxSpawnDepth: z
-          .number()
-          .int()
-          .min(1)
-          .max(5)
-          .optional()
-          .describe(
-            "Maximum nesting depth for sub-agent spawning. 1 = no nesting (default), 2 = sub-agents can spawn sub-sub-agents.",
-          ),
-        maxChildrenPerAgent: z
-          .number()
-          .int()
-          .min(1)
-          .max(20)
-          .optional()
-          .describe(
-            "Maximum number of active children a single agent session can spawn (default: 5).",
-          ),
+        providerLimits: z.record(z.string(), z.number().int().positive()).optional(),
         archiveAfterMinutes: z.number().int().positive().optional(),
-        model: AgentModelSchema.optional(),
+        allowRecursiveSpawn: z.boolean().optional(),
+        maxDepth: z.number().int().min(1).max(10).optional(),
+        maxChildrenPerAgent: z.number().int().min(1).max(20).optional(),
+        model: z
+          .union([
+            z.string(),
+            z
+              .object({
+                primary: z.string().optional(),
+                fallbacks: z.array(z.string()).optional(),
+              })
+              .strict(),
+          ])
+          .optional(),
+        runTimeoutSeconds: z.number().int().nonnegative().optional(),
         thinking: z.string().optional(),
       })
       .strict()
       .optional(),
-    sandbox: AgentSandboxSchema,
+    sandbox: z
+      .object({
+        mode: z.union([z.literal("off"), z.literal("non-main"), z.literal("all")]).optional(),
+        workspaceAccess: z.union([z.literal("none"), z.literal("ro"), z.literal("rw")]).optional(),
+        sessionToolsVisibility: z.union([z.literal("spawned"), z.literal("all")]).optional(),
+        scope: z.union([z.literal("session"), z.literal("agent"), z.literal("shared")]).optional(),
+        perSession: z.boolean().optional(),
+        workspaceRoot: z.string().optional(),
+        docker: SandboxDockerSchema,
+        browser: SandboxBrowserSchema,
+        prune: SandboxPruneSchema,
+      })
+      .strict()
+      .optional(),
   })
   .strict()
   .optional();

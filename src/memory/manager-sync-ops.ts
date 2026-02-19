@@ -784,6 +784,17 @@ export abstract class MemoryManagerSyncOps {
     const staleRows = this.db
       .prepare(`SELECT path FROM files WHERE source = ?`)
       .all("sessions") as Array<{ path: string }>;
+    const stalePaths = staleRows
+      .map((row) => row.path)
+      .filter((stalePath) => !activePaths.has(stalePath));
+    if (this.settings.sync.sessions.retainEmbeddings) {
+      if (stalePaths.length > 0) {
+        log.debug("memory sync: retaining stale session indexed paths (retainEmbeddings=true)", {
+          count: stalePaths.length,
+        });
+      }
+      return;
+    }
     for (const stale of staleRows) {
       if (activePaths.has(stale.path)) {
         continue;

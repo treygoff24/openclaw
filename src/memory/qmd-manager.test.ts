@@ -407,6 +407,82 @@ describe("QmdMemoryManager", () => {
     expect(addSessions).toBeDefined();
   });
 
+  it("removes orphaned exported session markdown when retainEmbeddings=false", async () => {
+    cfg = {
+      ...cfg,
+      agents: {
+        defaults: {
+          memorySearch: {
+            sync: {
+              sessions: {
+                retainEmbeddings: false,
+              },
+            },
+          },
+        },
+        list: [{ id: agentId, default: true, workspace: workspaceDir }],
+      },
+      memory: {
+        backend: "qmd",
+        qmd: {
+          includeDefaultMemory: false,
+          update: { interval: "0s", debounceMs: 0, onBoot: false },
+          paths: [{ path: workspaceDir, pattern: "**/*.md", name: "workspace" }],
+          sessions: { enabled: true },
+        },
+      },
+    } as OpenClawConfig;
+
+    const exportDir = path.join(stateDir, "agents", agentId, "qmd", "sessions");
+    await fs.mkdir(exportDir, { recursive: true });
+    const orphanPath = path.join(exportDir, "orphan.md");
+    await fs.writeFile(orphanPath, "# stale\n", "utf-8");
+
+    const { manager } = await createManager({ cfg, agentId, mode: "full" });
+    await manager.sync({ reason: "manual", force: true });
+    await manager.close();
+
+    await expect(fs.stat(orphanPath)).rejects.toThrow();
+  });
+
+  it("retains orphaned exported session markdown when retainEmbeddings=true", async () => {
+    cfg = {
+      ...cfg,
+      agents: {
+        defaults: {
+          memorySearch: {
+            sync: {
+              sessions: {
+                retainEmbeddings: true,
+              },
+            },
+          },
+        },
+        list: [{ id: agentId, default: true, workspace: workspaceDir }],
+      },
+      memory: {
+        backend: "qmd",
+        qmd: {
+          includeDefaultMemory: false,
+          update: { interval: "0s", debounceMs: 0, onBoot: false },
+          paths: [{ path: workspaceDir, pattern: "**/*.md", name: "workspace" }],
+          sessions: { enabled: true },
+        },
+      },
+    } as OpenClawConfig;
+
+    const exportDir = path.join(stateDir, "agents", agentId, "qmd", "sessions");
+    await fs.mkdir(exportDir, { recursive: true });
+    const orphanPath = path.join(exportDir, "orphan.md");
+    await fs.writeFile(orphanPath, "# stale\n", "utf-8");
+
+    const { manager } = await createManager({ cfg, agentId, mode: "full" });
+    await manager.sync({ reason: "manual", force: true });
+    await manager.close();
+
+    await expect(fs.readFile(orphanPath, "utf-8")).resolves.toContain("# stale");
+  });
+
   it("times out qmd update during sync when configured", async () => {
     vi.useFakeTimers();
     cfg = {

@@ -109,6 +109,11 @@ export type SessionEntry = {
   lastAccountId?: string;
   lastThreadId?: string | number;
   skillsSnapshot?: SessionSkillSnapshot;
+  toolDisclosureState?: {
+    stickyToolNames: string[];
+    lastSelectionConfidence: number;
+    lastSelectionAt: number;
+  };
   systemPromptReport?: SessionSystemPromptReport;
 };
 
@@ -191,13 +196,27 @@ export type SessionSystemPromptReport = {
     entries: Array<{ name: string; blockChars: number }>;
   };
   tools: {
+    fullCount: number;
+    activeCount: number;
+    disclosureMode: "off" | "auto_intent";
     listChars: number;
     schemaChars: number;
+    schemaCharsFullEstimate: number;
+    schemaCharsActive: number;
+    schemaCharsSaved: number;
+    selectionConfidence: number;
+    stickyMaxToolsApplied?: number;
+    selectedBy: {
+      always: string[];
+      sticky: string[];
+      intent: string[];
+    };
     entries: Array<{
       name: string;
       summaryChars: number;
       schemaChars: number;
       propertiesCount?: number | null;
+      selectedBy?: Array<"always" | "sticky" | "intent">;
     }>;
   };
 };

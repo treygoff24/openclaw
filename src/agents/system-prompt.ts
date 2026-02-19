@@ -1,9 +1,10 @@
 import type { ReasoningLevel, ThinkLevel } from "../auto-reply/thinking.js";
-import { SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
 import type { MemoryCitationsMode } from "../config/types.memory.js";
-import { listDeliverableMessageChannels } from "../utils/message-channel.js";
+import type { ToolDisclosureMode } from "../config/types.tools.js";
 import type { ResolvedTimeFormat } from "./date-time.js";
 import type { EmbeddedContextFile } from "./pi-embedded-helpers.js";
+import { SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
+import { listDeliverableMessageChannels } from "../utils/message-channel.js";
 import { sanitizeForPromptLiteral } from "./sanitize-for-prompt.js";
 
 /**
@@ -111,9 +112,6 @@ function buildMessagingSection(params: {
     "## Messaging",
     "- Reply in current session → automatically routes to the source channel (Signal, Telegram, etc.)",
     "- Cross-session messaging → use sessions_send(sessionKey, message)",
-    "- Sub-agent orchestration → use subagents(action=list|steer|kill)",
-    "- `[System Message] ...` blocks are internal context and are not user-visible by default.",
-    `- If a \`[System Message]\` reports completed cron/subagent work and asks for a user update, rewrite it in your normal assistant voice and send that update (do not forward raw system text or default to ${SILENT_REPLY_TOKEN}).`,
     "- Never use exec/curl for provider messaging; OpenClaw handles all routing internally.",
     params.availableTools.has("message")
       ? [
@@ -124,7 +122,7 @@ function buildMessagingSection(params: {
           `- If multiple channels are configured, pass \`channel\` (${params.messageChannelOptions}).`,
           `- If you use \`message\` (\`action=send\`) to deliver your user-visible reply, respond with ONLY: ${SILENT_REPLY_TOKEN} (avoid duplicate replies).`,
           params.inlineButtonsEnabled
-            ? "- Inline buttons supported. Use `action=send` with `buttons=[[{text,callback_data,style?}]]`; `style` can be `primary`, `success`, or `danger`."
+            ? "- Inline buttons supported. Use `action=send` with `buttons=[[{text,callback_data}]]` (callback_data routes back as a user message)."
             : params.runtimeChannel
               ? `- Inline buttons not enabled for ${params.runtimeChannel}. If you need them, ask to set ${params.runtimeChannel}.capabilities.inlineButtons ("dm"|"group"|"all"|"allowlist").`
               : "",
@@ -175,6 +173,8 @@ export function buildAgentSystemPrompt(params: {
   reasoningTagHint?: boolean;
   toolNames?: string[];
   toolSummaries?: Record<string, string>;
+  toolCategorySummaryLines?: string[];
+  toolDisclosureMode?: ToolDisclosureMode;
   modelAliasLines?: string[];
   userTimezone?: string;
   userTime?: string;
@@ -204,8 +204,8 @@ export function buildAgentSystemPrompt(params: {
   sandboxInfo?: {
     enabled: boolean;
     workspaceDir?: string;
-    containerWorkspaceDir?: string;
     workspaceAccess?: "none" | "ro" | "rw";
+    containerWorkspaceDir?: string;
     agentWorkspaceMount?: string;
     browserBridgeUrl?: string;
     browserNoVncUrl?: string;
@@ -246,7 +246,8 @@ export function buildAgentSystemPrompt(params: {
     sessions_history: "Fetch history for another session/sub-agent",
     sessions_send: "Send a message to another session/sub-agent",
     sessions_spawn: "Spawn a sub-agent session",
-    subagents: "List, steer, or kill sub-agent runs for this requester session",
+    report_completion: "Report structured completion status for a spawned sub-agent run",
+    report_progress: "Report progress checkpoints for a spawned sub-agent run",
     session_status:
       "Show a /status-equivalent status card (usage + time + Reasoning/Verbose/Elevated); use for model-use questions (📊 session_status); optional per-session model override",
     image: "Analyze an image with the configured image model",
@@ -274,7 +275,8 @@ export function buildAgentSystemPrompt(params: {
     "sessions_list",
     "sessions_history",
     "sessions_send",
-    "subagents",
+    "report_completion",
+    "report_progress",
     "session_status",
     "image",
   ];
@@ -318,6 +320,10 @@ export function buildAgentSystemPrompt(params: {
   }
 
   const hasGateway = availableTools.has("gateway");
+  const toolDisclosureMode = params.toolDisclosureMode ?? "off";
+  const toolCategorySummaryLines = (params.toolCategorySummaryLines ?? [])
+    .map((line) => line.trim())
+    .filter(Boolean);
   const readToolName = resolveToolName("read");
   const execToolName = resolveToolName("exec");
   const processToolName = resolveToolName("process");
@@ -367,7 +373,7 @@ export function buildAgentSystemPrompt(params: {
       : sanitizedWorkspaceDir;
   const workspaceGuidance =
     params.sandboxInfo?.enabled && sanitizedSandboxContainerWorkspace
-      ? `For read/write/edit/apply_patch, file paths resolve against host workspace: ${sanitizedWorkspaceDir}. For bash/exec commands, use sandbox container paths under ${sanitizedSandboxContainerWorkspace} (or relative paths from that workdir), not host paths. Prefer relative paths so both sandboxed exec and file tools work consistently.`
+      ? `For read/write/edit/apply_patch, file paths resolve against host workspace: ${sanitizedWorkspaceDir}. Prefer relative paths so both sandboxed exec and file tools work consistently.`
       : "Treat this directory as the single global workspace for file operations unless explicitly instructed otherwise.";
   const safetySection = [
     "## Safety",
@@ -421,13 +427,31 @@ export function buildAgentSystemPrompt(params: {
           "- sessions_list: list sessions",
           "- sessions_history: fetch session history",
           "- sessions_send: send to another session",
-          "- subagents: list/steer/kill sub-agent runs",
           '- session_status: show usage/time/model state and answer "what model are we using?"',
         ].join("\n"),
+    availableTools.has("exec")
+      ? [
+          "",
+          "### QMD (Local Docs Search)",
+          "QMD is installed globally. Use via `exec`.",
+          '- `qmd search "query" -c prospera` — fast keyword search (Próspera docs)',
+          '- `qmd search "query" -c dev` — fast keyword search (dev projects)',
+          '- `qmd vsearch "query"` — semantic vector search',
+          '- `qmd query "query"` — hybrid + reranking (best quality)',
+          '- `qmd get "path" --full` — retrieve full document',
+          '- `qmd search "query" --json -n 10` — structured JSON output',
+        ].join("\n")
+      : "",
     "TOOLS.md does not control tool availability; it is user guidance for how to use external tools.",
-    `For long waits, avoid rapid poll loops: use ${execToolName} with enough yieldMs or ${processToolName}(action=poll, timeout=<ms>).`,
-    "If a task is more complex or takes longer, spawn a sub-agent. Completion is push-based: it will auto-announce when done.",
-    "Do not poll `subagents list` / `sessions_list` in a loop; only check status on-demand (for intervention, debugging, or when explicitly asked).",
+    toolDisclosureMode === "auto_intent"
+      ? "Progressive disclosure is active: tools shown above are the current active subset."
+      : "",
+    toolDisclosureMode === "auto_intent" && toolCategorySummaryLines.length > 0
+      ? "High-level capability coverage:"
+      : "",
+    ...(toolDisclosureMode === "auto_intent" ? toolCategorySummaryLines : []),
+    toolDisclosureMode === "auto_intent" && toolCategorySummaryLines.length > 0 ? "" : "",
+    "If a task is more complex or takes longer, spawn a sub-agent. It will do the work for you and ping you when it's done. You can always check up on it.",
     "",
     "## Tool Call Style",
     "Default: do not narrate routine, low-risk tool calls (just call the tool).",
@@ -442,7 +466,10 @@ export function buildAgentSystemPrompt(params: {
     "- openclaw gateway status",
     "- openclaw gateway start",
     "- openclaw gateway stop",
-    "- openclaw gateway restart",
+    "- openclaw gateway restart --soft",
+    "Prefer the gateway tool restart action when available.",
+    "If you must use CLI, use `openclaw gateway restart --soft`.",
+    "Do not run a hard gateway restart via exec; it may drop in-flight tool results.",
     "If unsure, ask the user to run `openclaw help` (or `openclaw gateway --help`) and paste the output.",
     "",
     ...skillsSection,
@@ -454,6 +481,8 @@ export function buildAgentSystemPrompt(params: {
           "Get Updates (self-update) is ONLY allowed when the user explicitly asks for it.",
           "Do not run config.apply or update.run unless the user explicitly requests an update or config change; if it's not explicit, ask first.",
           "Actions: config.get, config.schema, config.apply (validate + write full config, then restart), update.run (update deps or git, then restart).",
+          "Prefer the gateway tool restart action. If using CLI, run `openclaw gateway restart --soft`.",
+          "Do not run a hard gateway restart via exec; it may drop in-flight tool results.",
           "After restart, OpenClaw pings the last active session automatically.",
         ].join("\n")
       : "",
@@ -489,7 +518,7 @@ export function buildAgentSystemPrompt(params: {
             ? `Sandbox container workdir: ${sanitizeForPromptLiteral(params.sandboxInfo.containerWorkspaceDir)}`
             : "",
           params.sandboxInfo.workspaceDir
-            ? `Sandbox host mount source (file tools bridge only; not valid inside sandbox exec): ${sanitizeForPromptLiteral(params.sandboxInfo.workspaceDir)}`
+            ? `Sandbox host workspace: ${sanitizeForPromptLiteral(params.sandboxInfo.workspaceDir)}`
             : "",
           params.sandboxInfo.workspaceAccess
             ? `Agent workspace access: ${params.sandboxInfo.workspaceAccess}${

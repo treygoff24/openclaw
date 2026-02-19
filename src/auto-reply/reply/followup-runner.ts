@@ -155,6 +155,7 @@ export function createFollowupRunner(params: {
               sessionFile: queued.run.sessionFile,
               workspaceDir: queued.run.workspaceDir,
               config: queued.run.config,
+              toolDisclosureState: sessionEntry?.toolDisclosureState,
               skillsSnapshot: queued.run.skillsSnapshot,
               prompt: queued.prompt,
               extraSystemPrompt: queued.run.extraSystemPrompt,
@@ -212,6 +213,8 @@ export function createFollowupRunner(params: {
           modelUsed,
           providerUsed: fallbackProvider,
           contextTokensUsed,
+          systemPromptReport: runResult?.meta?.systemPromptReport,
+          toolCallNames: runResult?.meta?.agentMeta?.toolCallNames,
           logLabel: "followup",
         });
       }

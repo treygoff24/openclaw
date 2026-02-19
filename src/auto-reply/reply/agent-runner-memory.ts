@@ -1,30 +1,31 @@
 import crypto from "node:crypto";
+import type { OpenClawConfig } from "../../config/config.js";
+import type { TemplateContext } from "../templating.js";
+import type { VerboseLevel } from "../thinking.js";
+import type { GetReplyOptions } from "../types.js";
+import type { FollowupRun } from "./queue.js";
+import { resolveAgentModelFallbacksOverride } from "../../agents/agent-scope.js";
 import { runWithModelFallback } from "../../agents/model-fallback.js";
 import { isCliProvider } from "../../agents/model-selection.js";
 import { runEmbeddedPiAgent } from "../../agents/pi-embedded.js";
 import { resolveSandboxConfigForAgent, resolveSandboxRuntimeStatus } from "../../agents/sandbox.js";
-import type { OpenClawConfig } from "../../config/config.js";
-import { type SessionEntry, updateSessionStoreEntry } from "../../config/sessions.js";
+import {
+  resolveAgentIdFromSessionKey,
+  type SessionEntry,
+  updateSessionStoreEntry,
+} from "../../config/sessions.js";
 import { logVerbose } from "../../globals.js";
 import { registerAgentRunContext } from "../../infra/agent-events.js";
-import type { TemplateContext } from "../templating.js";
-import type { VerboseLevel } from "../thinking.js";
-import type { GetReplyOptions } from "../types.js";
-import {
-  buildEmbeddedRunBaseParams,
-  buildEmbeddedRunContexts,
-  resolveModelFallbackOptions,
-} from "./agent-runner-utils.js";
+import { buildThreadingToolContext, resolveEnforceFinalTag } from "./agent-runner-utils.js";
 import {
   resolveMemoryFlushContextWindowTokens,
   resolveMemoryFlushPromptForRun,
   resolveMemoryFlushSettings,
   shouldRunMemoryFlush,
 } from "./memory-flush.js";
-import type { FollowupRun } from "./queue.js";
 import { incrementCompactionCount } from "./session-updates.js";
 
-export async function runMemoryFlushIfNeeded(params: {
+export type RunMemoryFlushParams = {
   cfg: OpenClawConfig;
   followupRun: FollowupRun;
   sessionCtx: TemplateContext;
@@ -37,7 +38,26 @@ export async function runMemoryFlushIfNeeded(params: {
   sessionKey?: string;
   storePath?: string;
   isHeartbeat: boolean;
-}): Promise<SessionEntry | undefined> {
+};
+
+const pendingMemoryFlushes = new Map<string, Promise<void>>();
+
+const resolveMemoryFlushKey = (params: RunMemoryFlushParams): string | undefined => {
+  const explicitKey = params.sessionKey?.trim();
+  if (explicitKey) {
+    return explicitKey;
+  }
+  const runSessionKey = params.followupRun.run.sessionKey?.trim();
+  if (runSessionKey) {
+    return runSessionKey;
+  }
+  const sessionId = params.followupRun.run.sessionId?.trim();
+  return sessionId || undefined;
+};
+
+export async function runMemoryFlushIfNeeded(
+  params: RunMemoryFlushParams,
+): Promise<SessionEntry | undefined> {
   const memoryFlushSettings = resolveMemoryFlushSettings(params.cfg);
   if (!memoryFlushSettings) {
     return params.sessionEntry;
@@ -74,7 +94,6 @@ export async function runMemoryFlushIfNeeded(params: {
       reserveTokensFloor: memoryFlushSettings.reserveTokensFloor,
       softThresholdTokens: memoryFlushSettings.softThresholdTokens,
     });
-
   if (!shouldFlushMemory) {
     return params.sessionEntry;
   }
@@ -97,34 +116,68 @@ export async function runMemoryFlushIfNeeded(params: {
     .join("\n\n");
   try {
     await runWithModelFallback({
-      ...resolveModelFallbackOptions(params.followupRun.run),
+      cfg: params.followupRun.run.config,
+      provider: params.followupRun.run.provider,
+      model: params.followupRun.run.model,
+      agentDir: params.followupRun.run.agentDir,
+      fallbacksOverride: resolveAgentModelFallbacksOverride(
+        params.followupRun.run.config,
+        resolveAgentIdFromSessionKey(params.followupRun.run.sessionKey),
+      ),
       run: (provider, model) => {
-        const { authProfile, embeddedContext, senderContext } = buildEmbeddedRunContexts({
-          run: params.followupRun.run,
-          sessionCtx: params.sessionCtx,
-          hasRepliedRef: params.opts?.hasRepliedRef,
-          provider,
-        });
-        const runBaseParams = buildEmbeddedRunBaseParams({
-          run: params.followupRun.run,
-          provider,
-          model,
-          runId: flushRunId,
-          authProfile,
-        });
+        const authProfileId =
+          provider === params.followupRun.run.provider
+            ? params.followupRun.run.authProfileId
+            : undefined;
         return runEmbeddedPiAgent({
-          ...embeddedContext,
-          ...senderContext,
-          ...runBaseParams,
+          sessionId: params.followupRun.run.sessionId,
+          sessionKey: params.sessionKey,
+          agentId: params.followupRun.run.agentId,
+          messageProvider: params.sessionCtx.Provider?.trim().toLowerCase() || undefined,
+          agentAccountId: params.sessionCtx.AccountId,
+          messageTo: params.sessionCtx.OriginatingTo ?? params.sessionCtx.To,
+          messageThreadId: params.sessionCtx.MessageThreadId ?? undefined,
+          // Provider threading context for tool auto-injection
+          ...buildThreadingToolContext({
+            sessionCtx: params.sessionCtx,
+            config: params.followupRun.run.config,
+            hasRepliedRef: params.opts?.hasRepliedRef,
+          }),
+          senderId: params.sessionCtx.SenderId?.trim() || undefined,
+          senderName: params.sessionCtx.SenderName?.trim() || undefined,
+          senderUsername: params.sessionCtx.SenderUsername?.trim() || undefined,
+          senderE164: params.sessionCtx.SenderE164?.trim() || undefined,
+          sessionFile: params.followupRun.run.sessionFile,
+          workspaceDir: params.followupRun.run.workspaceDir,
+          agentDir: params.followupRun.run.agentDir,
+          config: params.followupRun.run.config,
+          toolDisclosureState: params.sessionEntry?.toolDisclosureState,
+          skillsSnapshot: params.followupRun.run.skillsSnapshot,
           prompt: resolveMemoryFlushPromptForRun({
             prompt: memoryFlushSettings.prompt,
             cfg: params.cfg,
           }),
           extraSystemPrompt: flushSystemPrompt,
+          ownerNumbers: params.followupRun.run.ownerNumbers,
+          enforceFinalTag: resolveEnforceFinalTag(params.followupRun.run, provider),
+          provider,
+          model,
+          authProfileId,
+          authProfileIdSource: authProfileId
+            ? params.followupRun.run.authProfileIdSource
+            : undefined,
+          thinkLevel: params.followupRun.run.thinkLevel,
+          verboseLevel: params.followupRun.run.verboseLevel,
+          reasoningLevel: params.followupRun.run.reasoningLevel,
+          execOverrides: params.followupRun.run.execOverrides,
+          bashElevated: params.followupRun.run.bashElevated,
+          timeoutMs: params.followupRun.run.timeoutMs,
+          runId: flushRunId,
           onAgentEvent: (evt) => {
             if (evt.stream === "compaction") {
               const phase = typeof evt.data.phase === "string" ? evt.data.phase : "";
-              if (phase === "end") {
+              const willRetry = Boolean(evt.data.willRetry);
+              if (phase === "end" && !willRetry) {
                 memoryCompactionCompleted = true;
               }
             }
@@ -169,4 +222,39 @@ export async function runMemoryFlushIfNeeded(params: {
   }
 
   return activeSessionEntry;
+}
+
+export function scheduleMemoryFlushIfNeeded(params: RunMemoryFlushParams): Promise<void> {
+  const key = resolveMemoryFlushKey(params);
+  if (key) {
+    const existing = pendingMemoryFlushes.get(key);
+    if (existing) {
+      return existing;
+    }
+  }
+
+  let task: Promise<void>;
+  task = (async () => {
+    const updatedEntry = await runMemoryFlushIfNeeded(params);
+    if (updatedEntry && params.sessionStore && params.sessionKey) {
+      params.sessionStore[params.sessionKey] = updatedEntry;
+    }
+  })()
+    .catch((err) => {
+      logVerbose(`memory flush scheduler failed: ${String(err)}`);
+    })
+    .finally(() => {
+      if (key && pendingMemoryFlushes.get(key) === task) {
+        pendingMemoryFlushes.delete(key);
+      }
+    });
+
+  if (key) {
+    pendingMemoryFlushes.set(key, task);
+  }
+  return task;
+}
+
+export async function waitForScheduledMemoryFlush(key: string): Promise<void> {
+  await pendingMemoryFlushes.get(key);
 }

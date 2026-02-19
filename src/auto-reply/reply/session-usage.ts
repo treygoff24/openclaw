@@ -1,4 +1,5 @@
 import { setCliSessionId } from "../../agents/cli-session.js";
+import { normalizeToolName } from "../../agents/tool-policy.js";
 import {
   deriveSessionTotalTokens,
   hasNonzeroUsage,
@@ -11,25 +12,73 @@ import {
 } from "../../config/sessions.js";
 import { logVerbose } from "../../globals.js";
 
-function applyCliSessionIdToSessionPatch(
-  params: {
-    providerUsed?: string;
-    cliSessionId?: string;
-  },
-  entry: SessionEntry,
-  patch: Partial<SessionEntry>,
-): Partial<SessionEntry> {
-  const cliProvider = params.providerUsed ?? entry.modelProvider;
-  if (params.cliSessionId && cliProvider) {
-    const nextEntry = { ...entry, ...patch };
-    setCliSessionId(nextEntry, cliProvider, params.cliSessionId);
-    return {
-      ...patch,
-      cliSessionIds: nextEntry.cliSessionIds,
-      claudeCliSessionId: nextEntry.claudeCliSessionId,
-    };
+const DEFAULT_STICKY_MAX_TOOLS = 12;
+
+function clamp01(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
   }
-  return patch;
+  if (value < 0) {
+    return 0;
+  }
+  if (value > 1) {
+    return 1;
+  }
+  return value;
+}
+
+function resolveStickyMaxTools(report?: SessionSystemPromptReport): number {
+  const raw = report?.tools?.stickyMaxToolsApplied;
+  if (typeof raw === "number" && Number.isFinite(raw) && raw > 0) {
+    return Math.floor(raw);
+  }
+  return DEFAULT_STICKY_MAX_TOOLS;
+}
+
+function resolveToolDisclosureStatePatch(params: {
+  entry: SessionEntry;
+  toolCallNames?: string[];
+  systemPromptReport?: SessionSystemPromptReport;
+  now: number;
+}): SessionEntry["toolDisclosureState"] | undefined {
+  const existing = params.entry.toolDisclosureState;
+  const called = (params.toolCallNames ?? [])
+    .map((name) => normalizeToolName(name))
+    .filter(Boolean)
+    .filter((name, index, list) => list.indexOf(name) === index);
+  const stickyMaxTools = resolveStickyMaxTools(params.systemPromptReport);
+  const selectionConfidence = params.systemPromptReport?.tools?.selectionConfidence;
+  const disclosureMode = params.systemPromptReport?.tools?.disclosureMode;
+
+  if (
+    called.length === 0 &&
+    (selectionConfidence === undefined || disclosureMode !== "auto_intent")
+  ) {
+    return existing;
+  }
+
+  const merged: string[] = [];
+  for (const name of called) {
+    if (!merged.includes(name)) {
+      merged.push(name);
+    }
+  }
+  for (const name of existing?.stickyToolNames ?? []) {
+    const normalized = normalizeToolName(name);
+    if (!normalized || merged.includes(normalized)) {
+      continue;
+    }
+    merged.push(normalized);
+  }
+
+  return {
+    stickyToolNames: merged.slice(0, stickyMaxTools),
+    lastSelectionConfidence:
+      selectionConfidence === undefined
+        ? (existing?.lastSelectionConfidence ?? 0)
+        : clamp01(selectionConfidence),
+    lastSelectionAt: params.now,
+  };
 }
 
 export async function persistSessionUsageUpdate(params: {
@@ -48,6 +97,7 @@ export async function persistSessionUsageUpdate(params: {
   contextTokensUsed?: number;
   promptTokens?: number;
   systemPromptReport?: SessionSystemPromptReport;
+  toolCallNames?: string[];
   cliSessionId?: string;
   logLabel?: string;
 }): Promise<void> {
@@ -63,6 +113,7 @@ export async function persistSessionUsageUpdate(params: {
         storePath,
         sessionKey,
         update: async (entry) => {
+          const now = Date.now();
           const input = params.usage?.input ?? 0;
           const output = params.usage?.output ?? 0;
           const resolvedContextTokens = params.contextTokensUsed ?? entry.contextTokens;
@@ -86,8 +137,6 @@ export async function persistSessionUsageUpdate(params: {
           const patch: Partial<SessionEntry> = {
             inputTokens: input,
             outputTokens: output,
-            cacheRead: params.usage?.cacheRead ?? 0,
-            cacheWrite: params.usage?.cacheWrite ?? 0,
             // Missing a last-call snapshot means context utilization is stale/unknown.
             totalTokens,
             totalTokensFresh: typeof totalTokens === "number",
@@ -95,9 +144,25 @@ export async function persistSessionUsageUpdate(params: {
             model: params.modelUsed ?? entry.model,
             contextTokens: resolvedContextTokens,
             systemPromptReport: params.systemPromptReport ?? entry.systemPromptReport,
-            updatedAt: Date.now(),
+            toolDisclosureState: resolveToolDisclosureStatePatch({
+              entry,
+              toolCallNames: params.toolCallNames,
+              systemPromptReport: params.systemPromptReport,
+              now,
+            }),
+            updatedAt: now,
           };
-          return applyCliSessionIdToSessionPatch(params, entry, patch);
+          const cliProvider = params.providerUsed ?? entry.modelProvider;
+          if (params.cliSessionId && cliProvider) {
+            const nextEntry = { ...entry, ...patch };
+            setCliSessionId(nextEntry, cliProvider, params.cliSessionId);
+            return {
+              ...patch,
+              cliSessionIds: nextEntry.cliSessionIds,
+              claudeCliSessionId: nextEntry.claudeCliSessionId,
+            };
+          }
+          return patch;
         },
       });
     } catch (err) {
@@ -112,14 +177,31 @@ export async function persistSessionUsageUpdate(params: {
         storePath,
         sessionKey,
         update: async (entry) => {
+          const now = Date.now();
           const patch: Partial<SessionEntry> = {
             modelProvider: params.providerUsed ?? entry.modelProvider,
             model: params.modelUsed ?? entry.model,
             contextTokens: params.contextTokensUsed ?? entry.contextTokens,
             systemPromptReport: params.systemPromptReport ?? entry.systemPromptReport,
-            updatedAt: Date.now(),
+            toolDisclosureState: resolveToolDisclosureStatePatch({
+              entry,
+              toolCallNames: params.toolCallNames,
+              systemPromptReport: params.systemPromptReport,
+              now,
+            }),
+            updatedAt: now,
           };
-          return applyCliSessionIdToSessionPatch(params, entry, patch);
+          const cliProvider = params.providerUsed ?? entry.modelProvider;
+          if (params.cliSessionId && cliProvider) {
+            const nextEntry = { ...entry, ...patch };
+            setCliSessionId(nextEntry, cliProvider, params.cliSessionId);
+            return {
+              ...patch,
+              cliSessionIds: nextEntry.cliSessionIds,
+              claudeCliSessionId: nextEntry.claudeCliSessionId,
+            };
+          }
+          return patch;
         },
       });
     } catch (err) {

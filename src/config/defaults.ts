@@ -11,6 +11,19 @@ let defaultWarnState: WarnState = { warned: false };
 
 type AnthropicAuthDefaultsMode = "api_key" | "oauth";
 
+const DEFAULT_TOOL_DISCLOSURE_ALWAYS_ALLOW = Object.freeze([
+  "session_status",
+  "read",
+  "ls",
+  "grep",
+]);
+const DEFAULT_TOOL_DISCLOSURE_MAX_ACTIVE_TOOLS = 12;
+const DEFAULT_TOOL_DISCLOSURE_MIN_CONFIDENCE = 0.35;
+const DEFAULT_TOOL_DISCLOSURE_LOW_CONFIDENCE_FALLBACK = "full";
+const DEFAULT_TOOL_DISCLOSURE_INCLUDE_CATEGORY_SUMMARY = true;
+const DEFAULT_TOOL_DISCLOSURE_STICKY_TURNS = 4;
+const DEFAULT_TOOL_DISCLOSURE_STICKY_MAX_TOOLS = 12;
+
 const DEFAULT_MODEL_ALIASES: Readonly<Record<string, string>> = {
   // Anthropic (pi-ai catalog uses "latest" ids without date suffix)
   opus: "anthropic/claude-opus-4-6",
@@ -460,6 +473,52 @@ export function applyCompactionDefaults(cfg: OpenClawConfig): OpenClawConfig {
           ...compaction,
           mode: "safeguard",
         },
+      },
+    },
+  };
+}
+
+export function applyToolDisclosureDefaults(cfg: OpenClawConfig): OpenClawConfig {
+  const defaults = cfg.agents?.defaults;
+  if (!defaults) {
+    return cfg;
+  }
+
+  const toolDisclosure = defaults.toolDisclosure;
+  const nextToolDisclosure = {
+    ...toolDisclosure,
+    mode: toolDisclosure?.mode ?? "off",
+    alwaysAllow: toolDisclosure?.alwaysAllow ?? [...DEFAULT_TOOL_DISCLOSURE_ALWAYS_ALLOW],
+    maxActiveTools: toolDisclosure?.maxActiveTools ?? DEFAULT_TOOL_DISCLOSURE_MAX_ACTIVE_TOOLS,
+    minConfidence: toolDisclosure?.minConfidence ?? DEFAULT_TOOL_DISCLOSURE_MIN_CONFIDENCE,
+    lowConfidenceFallback:
+      toolDisclosure?.lowConfidenceFallback ?? DEFAULT_TOOL_DISCLOSURE_LOW_CONFIDENCE_FALLBACK,
+    includeCategorySummary:
+      toolDisclosure?.includeCategorySummary ?? DEFAULT_TOOL_DISCLOSURE_INCLUDE_CATEGORY_SUMMARY,
+    stickyTurns: toolDisclosure?.stickyTurns ?? DEFAULT_TOOL_DISCLOSURE_STICKY_TURNS,
+    stickyMaxTools: toolDisclosure?.stickyMaxTools ?? DEFAULT_TOOL_DISCLOSURE_STICKY_MAX_TOOLS,
+  } as const;
+
+  if (
+    toolDisclosure?.mode === nextToolDisclosure.mode &&
+    toolDisclosure?.alwaysAllow === nextToolDisclosure.alwaysAllow &&
+    toolDisclosure?.maxActiveTools === nextToolDisclosure.maxActiveTools &&
+    toolDisclosure?.minConfidence === nextToolDisclosure.minConfidence &&
+    toolDisclosure?.lowConfidenceFallback === nextToolDisclosure.lowConfidenceFallback &&
+    toolDisclosure?.includeCategorySummary === nextToolDisclosure.includeCategorySummary &&
+    toolDisclosure?.stickyTurns === nextToolDisclosure.stickyTurns &&
+    toolDisclosure?.stickyMaxTools === nextToolDisclosure.stickyMaxTools
+  ) {
+    return cfg;
+  }
+
+  return {
+    ...cfg,
+    agents: {
+      ...cfg.agents,
+      defaults: {
+        ...defaults,
+        toolDisclosure: nextToolDisclosure,
       },
     },
   };

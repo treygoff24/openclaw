@@ -271,6 +271,8 @@ export const FIELD_HELP: Record<string, string> = {
     "Minimum appended bytes before session transcripts trigger reindex (default: 100000).",
   "agents.defaults.memorySearch.sync.sessions.deltaMessages":
     "Minimum appended JSONL lines before session transcripts trigger reindex (default: 50).",
+  "agents.defaults.memorySearch.sync.sessions.retainEmbeddings":
+    "Keep existing session embeddings when transcript chunks disappear during sync (default: true).",
   "plugins.enabled": "Enable plugin/extension loading (default: true).",
   "plugins.allow": "Optional allowlist of plugin ids; when set, only listed plugins load.",
   "plugins.deny": "Optional denylist of plugin ids; deny wins over allowlist.",
@@ -315,6 +317,26 @@ export const FIELD_HELP: Record<string, string> = {
   "agents.defaults.humanDelay.mode": 'Delay style for block replies ("off", "natural", "custom").',
   "agents.defaults.humanDelay.minMs": "Minimum delay in ms for custom humanDelay (default: 800).",
   "agents.defaults.humanDelay.maxMs": "Maximum delay in ms for custom humanDelay (default: 2500).",
+  "agents.defaults.toolDisclosure":
+    "Progressive tool disclosure defaults. Use auto_intent to send an intent-selected tool subset instead of full tool surface.",
+  "agents.defaults.toolDisclosure.mode":
+    'Disclosure mode ("off" for full tools, "auto_intent" for intent-selected subset).',
+  "agents.defaults.toolDisclosure.alwaysAllow":
+    "Tool names always kept active even when intent selection narrows the set.",
+  "agents.defaults.toolDisclosure.maxActiveTools":
+    "Maximum number of intent-selected tools per run (alwaysAllow/sticky can add more).",
+  "agents.defaults.toolDisclosure.minConfidence":
+    "Minimum confidence (0-1) required to keep a narrowed subset before fallback applies.",
+  "agents.defaults.toolDisclosure.lowConfidenceFallback":
+    'Fallback behavior when confidence is low ("full" or "widen").',
+  "agents.defaults.toolDisclosure.includeCategorySummary":
+    "Include high-level capability category coverage in system prompt when disclosure is active.",
+  "agents.defaults.toolDisclosure.stickyTurns":
+    "How many turns recent tool usage should stay sticky for intent selection.",
+  "agents.defaults.toolDisclosure.stickyMaxTools":
+    "Maximum sticky tools retained in session state for future intent selection.",
+  "agents.list[].toolDisclosure":
+    "Per-agent override for tool disclosure behavior (same fields as agents.defaults.toolDisclosure).",
   "commands.native":
     "Register native commands with channels that support it (Discord/Slack/Telegram).",
   "commands.nativeSkills":

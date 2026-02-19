@@ -817,6 +817,30 @@ Notes:
 
 See [Session Pruning](/concepts/session-pruning) for behavior details.
 
+### `agents.defaults.memorySearch.sync.sessions.retainEmbeddings`
+
+Controls whether session-memory sync keeps embeddings for transcript chunks that are no longer present.
+Default: `true`.
+
+```json5
+{
+  agents: {
+    defaults: {
+      memorySearch: {
+        sync: {
+          sessions: {
+            retainEmbeddings: true,
+          },
+        },
+      },
+    },
+  },
+}
+```
+
+- `true`: keep previously indexed session embeddings even if those chunks are no longer present.
+- `false`: remove embeddings for session chunks that disappear from transcript sources during sync.
+
 ### Block streaming
 
 ```json5

@@ -143,6 +143,24 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("sessions_send");
   });
 
+  it("shows category summary when progressive disclosure is enabled", () => {
+    const prompt = buildAgentSystemPrompt({
+      workspaceDir: "/tmp/openclaw",
+      toolNames: ["read", "session_status"],
+      toolDisclosureMode: "auto_intent",
+      toolCategorySummaryLines: [
+        "- Workspace & Files: 1/4 active",
+        "- Sessions & Delegation: 1/9 active",
+      ],
+    });
+
+    expect(prompt).toContain("Progressive disclosure is active");
+    expect(prompt).toContain("High-level capability coverage:");
+    expect(prompt).toContain("- Workspace & Files: 1/4 active");
+    expect(prompt).toContain("- Sessions & Delegation: 1/9 active");
+    expect(prompt).not.toContain("- write:");
+  });
+
   it("preserves tool casing in the prompt", () => {
     const prompt = buildAgentSystemPrompt({
       workspaceDir: "/tmp/openclaw",

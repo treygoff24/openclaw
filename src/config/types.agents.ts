@@ -7,7 +7,7 @@ import type {
   SandboxDockerSettings,
   SandboxPruneSettings,
 } from "./types.sandbox.js";
-import type { AgentToolsConfig, MemorySearchConfig } from "./types.tools.js";
+import type { AgentToolsConfig, MemorySearchConfig, ToolDisclosureConfig } from "./types.tools.js";
 
 export type AgentModelConfig =
   | string
@@ -28,6 +28,8 @@ export type AgentConfig = {
   /** Optional allowlist of skills for this agent (omit = all skills; empty = none). */
   skills?: string[];
   memorySearch?: MemorySearchConfig;
+  /** Optional per-agent override for progressive tool disclosure. */
+  toolDisclosure?: ToolDisclosureConfig;
   /** Human-like delay between block replies for this agent. */
   humanDelay?: HumanDelayConfig;
   /** Optional per-agent heartbeat overrides. */

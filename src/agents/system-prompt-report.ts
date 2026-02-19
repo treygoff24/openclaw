@@ -68,8 +68,20 @@ function buildInjectedWorkspaceFiles(params: {
   });
 }
 
-function buildToolsEntries(tools: AgentTool[]): SessionSystemPromptReport["tools"]["entries"] {
-  return tools.map((tool) => {
+function buildToolsEntries(params: {
+  tools: AgentTool[];
+  selectedBy: SessionSystemPromptReport["tools"]["selectedBy"];
+}): SessionSystemPromptReport["tools"]["entries"] {
+  const selectedByLookup = new Map<string, Array<"always" | "sticky" | "intent">>();
+  for (const source of ["always", "sticky", "intent"] as const) {
+    for (const name of params.selectedBy[source]) {
+      const existing = selectedByLookup.get(name) ?? [];
+      existing.push(source);
+      selectedByLookup.set(name, existing);
+    }
+  }
+
+  return params.tools.map((tool) => {
     const name = tool.name;
     const summary = tool.description?.trim() || tool.label?.trim() || "";
     const summaryChars = summary.length;
@@ -94,7 +106,13 @@ function buildToolsEntries(tools: AgentTool[]): SessionSystemPromptReport["tools
       }
       return Object.keys(props as Record<string, unknown>).length;
     })();
-    return { name, summaryChars, schemaChars, propertiesCount };
+    return {
+      name,
+      summaryChars,
+      schemaChars,
+      propertiesCount,
+      selectedBy: selectedByLookup.get(name),
+    };
   });
 }
 
@@ -124,7 +142,14 @@ export function buildSystemPromptReport(params: {
   bootstrapFiles: WorkspaceBootstrapFile[];
   injectedFiles: EmbeddedContextFile[];
   skillsPrompt: string;
-  tools: AgentTool[];
+  activeTools: AgentTool[];
+  fullToolsEstimate?: AgentTool[];
+  toolDisclosure?: {
+    mode: SessionSystemPromptReport["tools"]["disclosureMode"];
+    selectionConfidence?: number;
+    stickyMaxToolsApplied?: number;
+    selectedBy?: Partial<SessionSystemPromptReport["tools"]["selectedBy"]>;
+  };
 }): SessionSystemPromptReport {
   const systemPrompt = params.systemPrompt.trim();
   const projectContext = extractBetween(
@@ -135,8 +160,27 @@ export function buildSystemPromptReport(params: {
   const projectContextChars = projectContext.text.length;
   const toolListText = extractToolListText(systemPrompt);
   const toolListChars = toolListText.length;
-  const toolsEntries = buildToolsEntries(params.tools);
-  const toolsSchemaChars = toolsEntries.reduce((sum, t) => sum + (t.schemaChars ?? 0), 0);
+  const selectedBy: SessionSystemPromptReport["tools"]["selectedBy"] = {
+    always: [...(params.toolDisclosure?.selectedBy?.always ?? [])],
+    sticky: [...(params.toolDisclosure?.selectedBy?.sticky ?? [])],
+    intent: [...(params.toolDisclosure?.selectedBy?.intent ?? [])],
+  };
+  const toolsEntries = buildToolsEntries({
+    tools: params.activeTools,
+    selectedBy,
+  });
+  const activeSchemaChars = toolsEntries.reduce((sum, t) => sum + (t.schemaChars ?? 0), 0);
+  const fullSchemaChars = (params.fullToolsEstimate ?? params.activeTools).reduce((sum, tool) => {
+    if (!tool.parameters || typeof tool.parameters !== "object") {
+      return sum;
+    }
+    try {
+      return sum + JSON.stringify(tool.parameters).length;
+    } catch {
+      return sum;
+    }
+  }, 0);
+  const disclosureMode = params.toolDisclosure?.mode ?? "off";
   const skillsEntries = parseSkillBlocks(params.skillsPrompt);
 
   return {
@@ -164,8 +208,17 @@ export function buildSystemPromptReport(params: {
       entries: skillsEntries,
     },
     tools: {
+      fullCount: (params.fullToolsEstimate ?? params.activeTools).length,
+      activeCount: params.activeTools.length,
+      disclosureMode,
       listChars: toolListChars,
-      schemaChars: toolsSchemaChars,
+      schemaChars: activeSchemaChars,
+      schemaCharsFullEstimate: fullSchemaChars,
+      schemaCharsActive: activeSchemaChars,
+      schemaCharsSaved: Math.max(0, fullSchemaChars - activeSchemaChars),
+      selectionConfidence: params.toolDisclosure?.selectionConfidence ?? 1,
+      stickyMaxToolsApplied: params.toolDisclosure?.stickyMaxToolsApplied,
+      selectedBy,
       entries: toolsEntries,
     },
   };

@@ -55,6 +55,13 @@ import {
   resolveSkillsPromptForRun,
   type SkillSnapshot,
 } from "../skills.js";
+import {
+  buildToolCategoryCoverage,
+  buildToolDisclosureCatalog,
+  formatToolCategoryCoverageLines,
+  resolveToolDisclosureConfig,
+  selectToolsByIntent,
+} from "../tool-disclosure/index.js";
 import { resolveTranscriptPolicy } from "../transcript-policy.js";
 import {
   compactWithSafetyTimeout,
@@ -358,6 +365,10 @@ export async function compactEmbeddedPiSessionDirect(
       sessionId: params.sessionId,
       warn: makeBootstrapWarn({ sessionLabel, warn: (message) => log.warn(message) }),
     });
+    const { defaultAgentId, sessionAgentId } = resolveSessionAgentIds({
+      sessionKey: params.sessionKey,
+      config: params.config,
+    });
     const runAbortController = new AbortController();
     const toolsRaw = createOpenClawCodingTools({
       exec: {
@@ -381,7 +392,37 @@ export async function compactEmbeddedPiSessionDirect(
       modelContextWindowTokens: model.contextWindow,
       modelAuthMode: resolveModelAuthMode(model.provider, params.config),
     });
-    const tools = sanitizeToolsForGoogle({ tools: toolsRaw, provider });
+    const fullTools = sanitizeToolsForGoogle({ tools: toolsRaw, provider });
+    const disclosureConfig = resolveToolDisclosureConfig({
+      cfg: params.config,
+      agentId: sessionAgentId,
+    });
+    const toolCatalog = buildToolDisclosureCatalog(fullTools);
+    const disclosureSelection = selectToolsByIntent({
+      mode: disclosureConfig.mode,
+      prompt: params.customInstructions ?? "compact session history",
+      catalog: toolCatalog,
+      alwaysAllow: disclosureConfig.alwaysAllow,
+      stickyToolNames: [],
+      maxActiveTools: disclosureConfig.maxActiveTools,
+      minConfidence: disclosureConfig.minConfidence,
+      lowConfidenceFallback: disclosureConfig.lowConfidenceFallback,
+      stickyMaxTools: disclosureConfig.stickyMaxTools,
+      stickyTurns: disclosureConfig.stickyTurns,
+    });
+    const activeToolNames = new Set(disclosureSelection.activeToolNames);
+    const tools =
+      disclosureSelection.mode === "auto_intent"
+        ? fullTools.filter((tool) => activeToolNames.has(tool.name))
+        : fullTools;
+    const categoryCoverage = buildToolCategoryCoverage({
+      catalog: toolCatalog,
+      activeToolNames: tools.map((tool) => tool.name),
+    });
+    const toolCategorySummaryLines =
+      disclosureConfig.mode === "auto_intent" && disclosureConfig.includeCategorySummary
+        ? formatToolCategoryCoverageLines(categoryCoverage).slice(0, 8)
+        : [];
     logToolSchemasForGoogle({ tools, provider });
     const machineName = await getMachineDisplayName();
     const runtimeChannel = normalizeMessageChannel(params.messageChannel ?? params.messageProvider);
@@ -461,10 +502,6 @@ export async function compactEmbeddedPiSessionDirect(
     const userTimezone = resolveUserTimezone(params.config?.agents?.defaults?.userTimezone);
     const userTimeFormat = resolveUserTimeFormat(params.config?.agents?.defaults?.timeFormat);
     const userTime = formatUserTime(new Date(), userTimezone, userTimeFormat);
-    const { defaultAgentId, sessionAgentId } = resolveSessionAgentIds({
-      sessionKey: params.sessionKey,
-      config: params.config,
-    });
     const isDefaultAgent = sessionAgentId === defaultAgentId;
     const promptMode =
       isSubagentSessionKey(params.sessionKey) || isCronSessionKey(params.sessionKey)
@@ -496,6 +533,8 @@ export async function compactEmbeddedPiSessionDirect(
       messageToolHints,
       sandboxInfo,
       tools,
+      toolCategorySummaryLines,
+      toolDisclosureMode: disclosureSelection.mode,
       modelAliasLines: buildModelAliasLines(params.config),
       userTimezone,
       userTime,

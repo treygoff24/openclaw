@@ -7,7 +7,7 @@ type ToolProfilePolicy = {
   deny?: string[];
 };
 
-const TOOL_NAME_ALIASES: Record<string, string> = {
+export const TOOL_NAME_ALIASES: Record<string, string> = {
   bash: "exec",
   "apply-patch": "apply_patch",
 };

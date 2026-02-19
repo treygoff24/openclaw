@@ -52,6 +52,7 @@ export type ResolvedMemorySearchConfig = {
     sessions: {
       deltaBytes: number;
       deltaMessages: number;
+      retainEmbeddings: boolean;
     };
   };
   query: {
@@ -225,6 +226,10 @@ function mergeConfig(
         overrides?.sync?.sessions?.deltaMessages ??
         defaults?.sync?.sessions?.deltaMessages ??
         DEFAULT_SESSION_DELTA_MESSAGES,
+      retainEmbeddings:
+        overrides?.sync?.sessions?.retainEmbeddings ??
+        defaults?.sync?.sessions?.retainEmbeddings ??
+        true,
     },
   };
   const query = {
@@ -311,6 +316,7 @@ function mergeConfig(
       sessions: {
         deltaBytes,
         deltaMessages,
+        retainEmbeddings: Boolean(sync.sessions.retainEmbeddings),
       },
     },
     query: {

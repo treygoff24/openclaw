@@ -154,6 +154,27 @@ export type ToolLoopDetectionConfig = {
 };
 
 export type SessionsToolsVisibility = "self" | "tree" | "agent" | "all";
+export type ToolDisclosureMode = "off" | "auto_intent";
+export type ToolDisclosureLowConfidenceFallback = "full" | "widen";
+
+export type ToolDisclosureConfig = {
+  /** Progressive disclosure mode for tool availability. */
+  mode?: ToolDisclosureMode;
+  /** Always include these tools in the active tool subset. */
+  alwaysAllow?: string[];
+  /** Maximum number of intent-selected tools (excludes alwaysAllow/sticky additions). */
+  maxActiveTools?: number;
+  /** Confidence threshold (0-1) required to keep a narrowed tool subset. */
+  minConfidence?: number;
+  /** Fallback behavior when confidence is low. */
+  lowConfidenceFallback?: ToolDisclosureLowConfidenceFallback;
+  /** Include high-level tool capability category summary in system prompt. */
+  includeCategorySummary?: boolean;
+  /** Number of turns to keep recent tool usage sticky. */
+  stickyTurns?: number;
+  /** Maximum number of sticky tools retained in session state. */
+  stickyMaxTools?: number;
+};
 
 export type ToolPolicyConfig = {
   allow?: string[];
@@ -336,6 +357,8 @@ export type MemorySearchConfig = {
       deltaBytes?: number;
       /** Minimum appended JSONL lines before session transcripts are reindexed. */
       deltaMessages?: number;
+      /** Retain session embeddings even when transcript chunks are no longer present. */
+      retainEmbeddings?: boolean;
     };
   };
   /** Query behavior. */

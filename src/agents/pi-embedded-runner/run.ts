@@ -989,6 +989,13 @@ export async function runEmbeddedPiAgent(
             lastCallUsage: lastCallUsage ?? undefined,
             promptTokens,
             compactionCount: autoCompactionCount > 0 ? autoCompactionCount : undefined,
+            toolCallNames: Array.from(
+              new Set(
+                attempt.toolMetas
+                  .map((entry) => entry.toolName?.trim())
+                  .filter((name): name is string => Boolean(name)),
+              ),
+            ),
           };
 
           const payloads = buildEmbeddedRunPayloads({

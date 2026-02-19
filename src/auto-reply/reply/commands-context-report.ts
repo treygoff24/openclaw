@@ -1,12 +1,27 @@
-import {
-  resolveBootstrapMaxChars,
-  resolveBootstrapTotalMaxChars,
-} from "../../agents/pi-embedded-helpers.js";
-import { buildSystemPromptReport } from "../../agents/system-prompt-report.js";
 import type { SessionSystemPromptReport } from "../../config/sessions/types.js";
 import type { ReplyPayload } from "../types.js";
-import { resolveCommandsSystemPromptBundle } from "./commands-system-prompt.js";
 import type { HandleCommandsParams } from "./commands-types.js";
+import { resolveSessionAgentIds } from "../../agents/agent-scope.js";
+import { resolveBootstrapContextForRun } from "../../agents/bootstrap-files.js";
+import { resolveDefaultModelForAgent } from "../../agents/model-selection.js";
+import { resolveBootstrapMaxChars } from "../../agents/pi-embedded-helpers.js";
+import { createOpenClawCodingTools } from "../../agents/pi-tools.js";
+import { resolveSandboxRuntimeStatus } from "../../agents/sandbox.js";
+import { buildWorkspaceSkillSnapshot } from "../../agents/skills.js";
+import { getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
+import { buildSystemPromptParams } from "../../agents/system-prompt-params.js";
+import { buildSystemPromptReport } from "../../agents/system-prompt-report.js";
+import { buildAgentSystemPrompt } from "../../agents/system-prompt.js";
+import {
+  buildToolCategoryCoverage,
+  buildToolDisclosureCatalog,
+  formatToolCategoryCoverageLines,
+  resolveToolDisclosureConfig,
+  selectToolsByIntent,
+} from "../../agents/tool-disclosure/index.js";
+import { buildToolSummaryMap } from "../../agents/tool-summaries.js";
+import { getRemoteSkillEligibility } from "../../infra/skills-remote.js";
+import { buildTtsSystemPromptHint } from "../../tts/tts.js";
 
 function estimateTokensFromChars(chars: number): number {
   return Math.ceil(Math.max(0, chars) / 4);
@@ -49,10 +64,142 @@ async function resolveContextReport(
     return existing;
   }
 
+  const workspaceDir = params.workspaceDir;
   const bootstrapMaxChars = resolveBootstrapMaxChars(params.cfg);
-  const bootstrapTotalMaxChars = resolveBootstrapTotalMaxChars(params.cfg);
-  const { systemPrompt, tools, skillsPrompt, bootstrapFiles, injectedFiles, sandboxRuntime } =
-    await resolveCommandsSystemPromptBundle(params);
+  const { bootstrapFiles, contextFiles: injectedFiles } = await resolveBootstrapContextForRun({
+    workspaceDir,
+    config: params.cfg,
+    sessionKey: params.sessionKey,
+    sessionId: params.sessionEntry?.sessionId,
+  });
+  const skillsSnapshot = (() => {
+    try {
+      return buildWorkspaceSkillSnapshot(workspaceDir, {
+        config: params.cfg,
+        eligibility: { remote: getRemoteSkillEligibility() },
+        snapshotVersion: getSkillsSnapshotVersion(workspaceDir),
+      });
+    } catch {
+      return { prompt: "", skills: [], resolvedSkills: [] };
+    }
+  })();
+  const skillsPrompt = skillsSnapshot.prompt ?? "";
+  const sandboxRuntime = resolveSandboxRuntimeStatus({
+    cfg: params.cfg,
+    sessionKey: params.ctx.SessionKey ?? params.sessionKey,
+  });
+  const { sessionAgentId } = resolveSessionAgentIds({
+    sessionKey: params.sessionKey,
+    config: params.cfg,
+  });
+  const fullTools = (() => {
+    try {
+      return createOpenClawCodingTools({
+        config: params.cfg,
+        workspaceDir,
+        sessionKey: params.sessionKey,
+        messageProvider: params.command.channel,
+        groupId: params.sessionEntry?.groupId ?? undefined,
+        groupChannel: params.sessionEntry?.groupChannel ?? undefined,
+        groupSpace: params.sessionEntry?.space ?? undefined,
+        spawnedBy: params.sessionEntry?.spawnedBy ?? undefined,
+        senderIsOwner: params.command.senderIsOwner,
+        modelProvider: params.provider,
+        modelId: params.model,
+      });
+    } catch {
+      return [];
+    }
+  })();
+  const disclosureConfig = resolveToolDisclosureConfig({
+    cfg: params.cfg,
+    agentId: sessionAgentId,
+  });
+  const toolCatalog = buildToolDisclosureCatalog(fullTools);
+  const disclosureSelection = selectToolsByIntent({
+    mode: disclosureConfig.mode,
+    prompt: params.command.commandBodyNormalized,
+    catalog: toolCatalog,
+    alwaysAllow: disclosureConfig.alwaysAllow,
+    stickyToolNames: params.sessionEntry?.toolDisclosureState?.stickyToolNames,
+    stickyLastSelectionAt: params.sessionEntry?.toolDisclosureState?.lastSelectionAt,
+    maxActiveTools: disclosureConfig.maxActiveTools,
+    minConfidence: disclosureConfig.minConfidence,
+    lowConfidenceFallback: disclosureConfig.lowConfidenceFallback,
+    stickyMaxTools: disclosureConfig.stickyMaxTools,
+    stickyTurns: disclosureConfig.stickyTurns,
+  });
+  const activeToolNames = new Set(disclosureSelection.activeToolNames);
+  const tools =
+    disclosureSelection.mode === "auto_intent"
+      ? fullTools.filter((tool) => activeToolNames.has(tool.name))
+      : fullTools;
+  const toolCategorySummaryLines =
+    disclosureConfig.mode === "auto_intent" && disclosureConfig.includeCategorySummary
+      ? formatToolCategoryCoverageLines(
+          buildToolCategoryCoverage({
+            catalog: toolCatalog,
+            activeToolNames: tools.map((tool) => tool.name),
+          }),
+        ).slice(0, 8)
+      : [];
+  const toolSummaries = buildToolSummaryMap(tools);
+  const toolNames = tools.map((t) => t.name);
+  const defaultModelRef = resolveDefaultModelForAgent({
+    cfg: params.cfg,
+    agentId: sessionAgentId,
+  });
+  const defaultModelLabel = `${defaultModelRef.provider}/${defaultModelRef.model}`;
+  const { runtimeInfo, userTimezone, userTime, userTimeFormat } = buildSystemPromptParams({
+    config: params.cfg,
+    agentId: sessionAgentId,
+    workspaceDir,
+    cwd: process.cwd(),
+    runtime: {
+      host: "unknown",
+      os: "unknown",
+      arch: "unknown",
+      node: process.version,
+      model: `${params.provider}/${params.model}`,
+      defaultModel: defaultModelLabel,
+    },
+  });
+  const sandboxInfo = sandboxRuntime.sandboxed
+    ? {
+        enabled: true,
+        workspaceDir,
+        workspaceAccess: "rw" as const,
+        elevated: {
+          allowed: params.elevated.allowed,
+          defaultLevel: (params.resolvedElevatedLevel ?? "off") as "on" | "off" | "ask" | "full",
+        },
+      }
+    : { enabled: false };
+  const ttsHint = params.cfg ? buildTtsSystemPromptHint(params.cfg) : undefined;
+
+  const systemPrompt = buildAgentSystemPrompt({
+    workspaceDir,
+    defaultThinkLevel: params.resolvedThinkLevel,
+    reasoningLevel: params.resolvedReasoningLevel,
+    extraSystemPrompt: undefined,
+    ownerNumbers: undefined,
+    reasoningTagHint: false,
+    toolNames,
+    toolSummaries,
+    toolCategorySummaryLines,
+    toolDisclosureMode: disclosureSelection.mode,
+    modelAliasLines: [],
+    userTimezone,
+    userTime,
+    userTimeFormat,
+    contextFiles: injectedFiles,
+    skillsPrompt,
+    heartbeatPrompt: undefined,
+    ttsHint,
+    runtimeInfo,
+    sandboxInfo,
+    memoryCitationsMode: params.cfg?.memory?.citations,
+  });
 
   return buildSystemPromptReport({
     source: "estimate",
@@ -61,15 +208,21 @@ async function resolveContextReport(
     sessionKey: params.sessionKey,
     provider: params.provider,
     model: params.model,
-    workspaceDir: params.workspaceDir,
+    workspaceDir,
     bootstrapMaxChars,
-    bootstrapTotalMaxChars,
     sandbox: { mode: sandboxRuntime.mode, sandboxed: sandboxRuntime.sandboxed },
     systemPrompt,
     bootstrapFiles,
     injectedFiles,
     skillsPrompt,
-    tools,
+    activeTools: tools,
+    fullToolsEstimate: fullTools,
+    toolDisclosure: {
+      mode: disclosureSelection.mode,
+      selectionConfidence: disclosureSelection.confidence,
+      stickyMaxToolsApplied: disclosureConfig.stickyMaxTools,
+      selectedBy: disclosureSelection.selectedBy,
+    },
   });
 }
 
@@ -123,7 +276,23 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
   });
 
   const sandboxLine = `Sandbox: mode=${report.sandbox?.mode ?? "unknown"} sandboxed=${report.sandbox?.sandboxed ?? false}`;
-  const toolSchemaLine = `Tool schemas (JSON): ${formatCharsAndTokens(report.tools.schemaChars)} (counts toward context; not shown as text)`;
+  const disclosureMode = report.tools.disclosureMode ?? "off";
+  const schemaCharsActive = report.tools.schemaCharsActive ?? report.tools.schemaChars ?? 0;
+  const schemaCharsFullEstimate =
+    report.tools.schemaCharsFullEstimate ?? report.tools.schemaChars ?? 0;
+  const schemaCharsSaved =
+    report.tools.schemaCharsSaved ?? Math.max(0, schemaCharsFullEstimate - schemaCharsActive);
+  const activeToolCount = report.tools.activeCount ?? report.tools.entries.length;
+  const fullToolCount = report.tools.fullCount ?? report.tools.entries.length;
+  const selectionConfidence =
+    typeof report.tools.selectionConfidence === "number" &&
+    Number.isFinite(report.tools.selectionConfidence)
+      ? report.tools.selectionConfidence
+      : 1;
+  const toolSchemaLine =
+    disclosureMode === "auto_intent"
+      ? `Tool schemas (JSON): active ${formatCharsAndTokens(schemaCharsActive)} of full ${formatCharsAndTokens(schemaCharsFullEstimate)} (saved ${formatCharsAndTokens(schemaCharsSaved)})`
+      : `Tool schemas (JSON): ${formatCharsAndTokens(report.tools.schemaChars)} (counts toward context; not shown as text)`;
   const toolListLine = `Tool list (system prompt text): ${formatCharsAndTokens(report.tools.listChars)}`;
   const skillNameSet = new Set(report.skills.entries.map((s) => s.name));
   const skillNames = Array.from(skillNameSet);
@@ -139,43 +308,13 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
   const toolsNamesLine = toolNames.length
     ? `Tools: ${formatNameList(toolNames, 30)}`
     : "Tools: (none)";
+  const toolsDisclosureLine = `Tool disclosure: mode=${disclosureMode} active=${activeToolCount}/${fullToolCount} confidence=${selectionConfidence.toFixed(2)}`;
   const systemPromptLine = `System prompt (${report.source}): ${formatCharsAndTokens(report.systemPrompt.chars)} (Project Context ${formatCharsAndTokens(report.systemPrompt.projectContextChars)})`;
   const workspaceLabel = report.workspaceDir ?? params.workspaceDir;
   const bootstrapMaxLabel =
     typeof report.bootstrapMaxChars === "number"
       ? `${formatInt(report.bootstrapMaxChars)} chars`
       : "? chars";
-  const bootstrapTotalLabel =
-    typeof report.bootstrapTotalMaxChars === "number"
-      ? `${formatInt(report.bootstrapTotalMaxChars)} chars`
-      : "? chars";
-  const bootstrapMaxChars = report.bootstrapMaxChars;
-  const bootstrapTotalMaxChars = report.bootstrapTotalMaxChars;
-  const nonMissingBootstrapFiles = report.injectedWorkspaceFiles.filter((f) => !f.missing);
-  const truncatedBootstrapFiles = nonMissingBootstrapFiles.filter((f) => f.truncated);
-  const rawBootstrapChars = nonMissingBootstrapFiles.reduce((sum, file) => sum + file.rawChars, 0);
-  const injectedBootstrapChars = nonMissingBootstrapFiles.reduce(
-    (sum, file) => sum + file.injectedChars,
-    0,
-  );
-  const perFileOverLimitCount =
-    typeof bootstrapMaxChars === "number"
-      ? nonMissingBootstrapFiles.filter((f) => f.rawChars > bootstrapMaxChars).length
-      : 0;
-  const totalOverLimit =
-    typeof bootstrapTotalMaxChars === "number" && rawBootstrapChars > bootstrapTotalMaxChars;
-  const truncationCauseParts = [
-    perFileOverLimitCount > 0 ? `${perFileOverLimitCount} file(s) exceeded max/file` : null,
-    totalOverLimit ? "raw total exceeded max/total" : null,
-  ].filter(Boolean);
-  const bootstrapWarningLines =
-    truncatedBootstrapFiles.length > 0
-      ? [
-          `⚠ Bootstrap context is over configured limits: ${truncatedBootstrapFiles.length} file(s) truncated (${formatInt(rawBootstrapChars)} raw chars -> ${formatInt(injectedBootstrapChars)} injected chars).`,
-          ...(truncationCauseParts.length ? [`Causes: ${truncationCauseParts.join("; ")}.`] : []),
-          "Tip: increase `agents.defaults.bootstrapMaxChars` and/or `agents.defaults.bootstrapTotalMaxChars` if this truncation is not intentional.",
-        ]
-      : [];
 
   const totalsLine =
     session.totalTokens != null
@@ -206,10 +345,8 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
         "🧠 Context breakdown (detailed)",
         `Workspace: ${workspaceLabel}`,
         `Bootstrap max/file: ${bootstrapMaxLabel}`,
-        `Bootstrap max/total: ${bootstrapTotalLabel}`,
         sandboxLine,
         systemPromptLine,
-        ...(bootstrapWarningLines.length ? ["", ...bootstrapWarningLines] : []),
         "",
         "Injected workspace files:",
         ...fileLines,
@@ -221,6 +358,7 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
         "",
         toolListLine,
         toolSchemaLine,
+        toolsDisclosureLine,
         toolsNamesLine,
         "Top tools (schema size):",
         ...perToolSchema.lines,
@@ -245,10 +383,8 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
       "🧠 Context breakdown",
       `Workspace: ${workspaceLabel}`,
       `Bootstrap max/file: ${bootstrapMaxLabel}`,
-      `Bootstrap max/total: ${bootstrapTotalLabel}`,
       sandboxLine,
       systemPromptLine,
-      ...(bootstrapWarningLines.length ? ["", ...bootstrapWarningLines] : []),
       "",
       "Injected workspace files:",
       ...fileLines,
@@ -257,6 +393,7 @@ export async function buildContextReply(params: HandleCommandsParams): Promise<R
       skillsNamesLine,
       toolListLine,
       toolSchemaLine,
+      toolsDisclosureLine,
       toolsNamesLine,
       "",
       totalsLine,

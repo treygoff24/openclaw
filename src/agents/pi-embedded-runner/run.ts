@@ -981,6 +981,7 @@ export async function runEmbeddedPiAgent(
           // the final call, giving an accurate snapshot of current context.
           const lastCallUsage = normalizeUsage(lastAssistant?.usage as UsageLike);
           const promptTokens = derivePromptTokens(lastRunPromptUsage);
+          const attemptedToolMetas = attempt.toolMetas ?? [];
           const agentMeta: EmbeddedPiAgentMeta = {
             sessionId: sessionIdUsed,
             provider: lastAssistant?.provider ?? provider,
@@ -991,7 +992,7 @@ export async function runEmbeddedPiAgent(
             compactionCount: autoCompactionCount > 0 ? autoCompactionCount : undefined,
             toolCallNames: Array.from(
               new Set(
-                attempt.toolMetas
+                attemptedToolMetas
                   .map((entry) => entry.toolName?.trim())
                   .filter((name): name is string => Boolean(name)),
               ),
@@ -1000,7 +1001,7 @@ export async function runEmbeddedPiAgent(
 
           const payloads = buildEmbeddedRunPayloads({
             assistantTexts: attempt.assistantTexts,
-            toolMetas: attempt.toolMetas,
+            toolMetas: attemptedToolMetas,
             lastAssistant: attempt.lastAssistant,
             lastToolError: attempt.lastToolError,
             config: params.config,

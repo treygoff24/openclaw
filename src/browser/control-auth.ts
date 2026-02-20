@@ -30,10 +30,18 @@ function shouldAutoGenerateBrowserAuth(env: NodeJS.ProcessEnv): boolean {
   if (nodeEnv === "test") {
     return false;
   }
+
+  // Vitest does not always set NODE_ENV=test, so detect its worker env vars.
   const vitest = (env.VITEST ?? "").trim().toLowerCase();
+  const vitestWorker = (env.VITEST_WORKER_ID ?? "").trim();
+  const vitestPool = (env.VITEST_POOL_ID ?? "").trim();
   if (vitest && vitest !== "0" && vitest !== "false" && vitest !== "off") {
     return false;
   }
+  if (vitestWorker || vitestPool) {
+    return false;
+  }
+
   return true;
 }
 

@@ -208,6 +208,30 @@ describe("web media loading", () => {
     fetchMock.mockRestore();
   });
 
+  it("allows explicit hostname allowlist overrides before fetch precheck", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      body: true,
+      arrayBuffer: async () =>
+        tinyPngBuffer.buffer.slice(
+          tinyPngBuffer.byteOffset,
+          tinyPngBuffer.byteOffset + tinyPngBuffer.byteLength,
+        ),
+      headers: { get: () => "image/png" },
+      status: 200,
+    } as unknown as Response);
+
+    const result = await loadWebMedia("http://127.0.0.1:8080/internal-api", 1024 * 1024, {
+      ssrfPolicy: {
+        hostnameAllowlist: ["127.0.0.1"],
+      },
+    });
+
+    expect(result.kind).toBe("image");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    fetchMock.mockRestore();
+  });
+
   it("blocks cloud metadata hostnames (SSRF guard)", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
 

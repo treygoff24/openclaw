@@ -104,6 +104,8 @@ export const AgentDefaultsSchema = z
     compaction: z
       .object({
         mode: z.union([z.literal("default"), z.literal("safeguard")]).optional(),
+        reserveTokens: z.number().int().nonnegative().optional(),
+        keepRecentTokens: z.number().int().nonnegative().optional(),
         reserveTokensFloor: z.number().int().nonnegative().optional(),
         maxHistoryShare: z.number().min(0.1).max(0.9).optional(),
         lastTurnInjection: z.boolean().optional(),
@@ -159,6 +161,7 @@ export const AgentDefaultsSchema = z
         archiveAfterMinutes: z.number().int().positive().optional(),
         allowRecursiveSpawn: z.boolean().optional(),
         maxDepth: z.number().int().min(1).max(10).optional(),
+        maxSpawnDepth: z.number().int().min(1).max(10).optional(),
         maxChildrenPerAgent: z.number().int().min(1).max(20).optional(),
         model: z
           .union([

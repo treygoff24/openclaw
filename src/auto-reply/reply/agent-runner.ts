@@ -1,9 +1,5 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
-import type { TypingMode } from "../../config/types.js";
-import type { OriginatingChannelType, TemplateContext } from "../templating.js";
-import type { GetReplyOptions, ReplyPayload } from "../types.js";
-import type { TypingController } from "./typing.js";
 import { lookupContextTokens } from "../../agents/context.js";
 import { DEFAULT_CONTEXT_TOKENS } from "../../agents/defaults.js";
 import { resolveModelAuthMode } from "../../agents/model-auth.js";
@@ -18,11 +14,20 @@ import {
   updateSessionStore,
   updateSessionStoreEntry,
 } from "../../config/sessions.js";
+import type { TypingMode } from "../../config/types.js";
+import { emitAgentEvent } from "../../infra/agent-events.js";
 import { emitDiagnosticEvent, isDiagnosticsEnabled } from "../../infra/diagnostic-events.js";
 import { enqueueSystemEvent } from "../../infra/system-events.js";
 import { defaultRuntime } from "../../runtime.js";
 import { estimateUsageCost, resolveModelCostConfig } from "../../utils/usage-format.js";
+import {
+  buildFallbackClearedNotice,
+  buildFallbackNotice,
+  resolveFallbackTransition,
+} from "../fallback-state.js";
+import type { OriginatingChannelType, TemplateContext } from "../templating.js";
 import { resolveResponseUsageMode, type VerboseLevel } from "../thinking.js";
+import type { GetReplyOptions, ReplyPayload } from "../types.js";
 import { runAgentTurnWithFallback } from "./agent-runner-execution.js";
 import {
   createShouldEmitToolOutput,
@@ -48,6 +53,7 @@ import { enqueueFollowupRun, type FollowupRun, type QueueSettings } from "./queu
 import { createReplyToModeFilterForChannel, resolveReplyToMode } from "./reply-threading.js";
 import { incrementRunCompactionCount, persistRunSessionUsage } from "./session-run-accounting.js";
 import { createTypingSignaler } from "./typing-mode.js";
+import type { TypingController } from "./typing.js";
 
 const BLOCK_REPLY_SEND_TIMEOUT_MS = 15_000;
 
@@ -247,6 +253,9 @@ export async function runReplyAgent(params: {
       updatedAt: Date.now(),
       systemSent: false,
       abortedLastRun: false,
+      fallbackNoticeSelectedModel: undefined,
+      fallbackNoticeActiveModel: undefined,
+      fallbackNoticeReason: undefined,
     };
     const agentId = resolveAgentIdFromSessionKey(sessionKey);
     const nextSessionFile = resolveSessionTranscriptPath(
@@ -300,8 +309,47 @@ export async function runReplyAgent(params: {
         `Role ordering conflict (${reason}). Restarting session ${sessionKey} -> ${nextSessionId}.`,
       cleanupTranscripts: true,
     });
-  let shouldScheduleMemoryFlush = false;
+  const updateFallbackNoticeState = async (nextState: {
+    selectedModel?: string;
+    activeModel?: string;
+    reason?: string;
+  }) => {
+    if (activeSessionEntry) {
+      activeSessionEntry.fallbackNoticeSelectedModel = nextState.selectedModel;
+      activeSessionEntry.fallbackNoticeActiveModel = nextState.activeModel;
+      activeSessionEntry.fallbackNoticeReason = nextState.reason;
+    }
+    if (storePath && sessionKey && activeSessionStore) {
+      const updated = await updateSessionStoreEntry({
+        storePath,
+        sessionKey,
+        update: async () => ({
+          fallbackNoticeSelectedModel: nextState.selectedModel,
+          fallbackNoticeActiveModel: nextState.activeModel,
+          fallbackNoticeReason: nextState.reason,
+          updatedAt: Date.now(),
+        }),
+      });
+      if (updated) {
+        activeSessionStore[sessionKey] = updated;
+      }
+    }
+  };
   try {
+    await scheduleMemoryFlushIfNeeded({
+      cfg,
+      followupRun,
+      sessionCtx,
+      opts,
+      defaultModel,
+      agentCfgContextTokens,
+      resolvedVerboseLevel,
+      sessionEntry: activeSessionEntry,
+      sessionStore: activeSessionStore,
+      sessionKey,
+      storePath,
+      isHeartbeat,
+    });
     const runStartedAt = Date.now();
     const runOutcome = await runAgentTurnWithFallback({
       commandBody,
@@ -326,14 +374,58 @@ export async function runReplyAgent(params: {
       storePath,
       resolvedVerboseLevel,
     });
-    shouldScheduleMemoryFlush = true;
-
     if (runOutcome.kind === "final") {
       return finalizeWithFollowup(runOutcome.payload, queueKey, runFollowupTurn);
     }
 
-    const { runResult, fallbackProvider, fallbackModel, directlySentBlockKeys } = runOutcome;
+    const {
+      runId,
+      runResult,
+      fallbackProvider,
+      fallbackModel,
+      attempts = [],
+      directlySentBlockKeys,
+    } = runOutcome;
     let { didLogHeartbeatStrip, autoCompactionCompleted } = runOutcome;
+    const selectedModelProvider = followupRun.run.provider;
+    const selectedModel = followupRun.run.model;
+    const activeModelProvider = fallbackProvider ?? selectedModelProvider;
+    const activeModel = fallbackModel ?? selectedModel;
+    const fallbackTransition = resolveFallbackTransition({
+      selectedProvider: selectedModelProvider,
+      selectedModel,
+      activeProvider: activeModelProvider,
+      activeModel,
+      attempts,
+      state: activeSessionEntry,
+    });
+
+    if (fallbackTransition.fallbackTransitioned) {
+      emitAgentEvent({
+        runId,
+        stream: "lifecycle",
+        data: {
+          phase: "fallback",
+          selectedModel: fallbackTransition.selectedModelRef,
+          activeModel: fallbackTransition.activeModelRef,
+          reasonSummary: fallbackTransition.reasonSummary,
+          attemptSummaries: fallbackTransition.attemptSummaries,
+        },
+      });
+    } else if (fallbackTransition.fallbackCleared) {
+      emitAgentEvent({
+        runId,
+        stream: "lifecycle",
+        data: {
+          phase: "fallback_cleared",
+          selectedModel: fallbackTransition.selectedModelRef,
+          previousActiveModel: fallbackTransition.previousState.activeModel,
+        },
+      });
+    }
+    if (fallbackTransition.stateChanged) {
+      await updateFallbackNoticeState(fallbackTransition.nextState);
+    }
 
     if (
       shouldInjectGroupIntro &&
@@ -496,6 +588,41 @@ export async function runReplyAgent(params: {
     // If verbose is enabled and this is a new session, prepend a session hint.
     let finalPayloads = replyPayloads;
     const verboseEnabled = resolvedVerboseLevel !== "off";
+    if (verboseEnabled && fallbackTransition.fallbackTransitioned) {
+      const fallbackNotice = buildFallbackNotice({
+        selectedProvider: selectedModelProvider,
+        selectedModel: selectedModel,
+        activeProvider: activeModelProvider,
+        activeModel,
+        attempts,
+      });
+      if (fallbackNotice) {
+        finalPayloads = [{ text: fallbackNotice }, ...finalPayloads];
+      }
+    }
+    if (verboseEnabled && fallbackTransition.fallbackCleared) {
+      const fallbackClearedNotice = buildFallbackClearedNotice({
+        selectedProvider: selectedModelProvider,
+        selectedModel,
+        previousActiveModel: fallbackTransition.previousState.activeModel,
+      });
+      finalPayloads = [{ text: fallbackClearedNotice }, ...finalPayloads];
+    }
+    if (finalPayloads.length > 0 && runResult?.successfulCronAdds === 0) {
+      const prependedNotices =
+        (verboseEnabled && fallbackTransition.fallbackTransitioned ? 1 : 0) +
+        (verboseEnabled && fallbackTransition.fallbackCleared ? 1 : 0);
+      const targetPayload =
+        finalPayloads
+          .slice(prependedNotices)
+          .find((payload) => typeof payload.text === "string" && payload.text.length > 0) ??
+        finalPayloads.find(
+          (payload) => typeof payload.text === "string" && payload.text.length > 0,
+        );
+      if (targetPayload?.text) {
+        targetPayload.text = `${targetPayload.text}\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.`;
+      }
+    }
     if (autoCompactionCompleted) {
       const count = await incrementRunCompactionCount({
         sessionEntry: activeSessionEntry,
@@ -560,23 +687,6 @@ export async function runReplyAgent(params: {
       runFollowupTurn,
     );
   } finally {
-    if (shouldScheduleMemoryFlush) {
-      void scheduleMemoryFlushIfNeeded({
-        cfg,
-        followupRun,
-        sessionCtx,
-        opts,
-        defaultModel,
-        agentCfgContextTokens,
-        resolvedVerboseLevel,
-        sessionEntry:
-          sessionKey && activeSessionStore ? activeSessionStore[sessionKey] : activeSessionEntry,
-        sessionStore: activeSessionStore,
-        sessionKey,
-        storePath,
-        isHeartbeat,
-      });
-    }
     blockReplyPipeline?.stop();
     typing.markRunComplete();
   }

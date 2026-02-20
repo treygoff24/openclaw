@@ -3,7 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { logVerbose, shouldLogVerbose } from "../globals.js";
 import { SafeOpenError, readLocalFileSafely } from "../infra/fs-safe.js";
-import type { SsrFPolicy } from "../infra/net/ssrf.js";
+import { normalizeHostname } from "../infra/net/hostname.js";
+import { isBlockedHostnameOrIp, type SsrFPolicy } from "../infra/net/ssrf.js";
 import { type MediaKind, maxBytesForKind, mediaKindFromMime } from "../media/constants.js";
 import { fetchRemoteMedia } from "../media/fetch.js";
 import {
@@ -32,6 +33,7 @@ type WebMediaOptions = {
   /** Caller already validated the local path (sandbox/other guards); requires readFile override. */
   sandboxValidated?: boolean;
   readFile?: (filePath: string) => Promise<Buffer>;
+  fetchImpl?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 };
 
 export type LocalMediaAccessErrorCode =
@@ -130,6 +132,57 @@ function formatCapLimit(label: string, cap: number, size: number): string {
 
 function formatCapReduce(label: string, cap: number, size: number): string {
   return `${label} could not be reduced below ${formatMb(cap, 0)}MB (got ${formatMb(size)}MB)`;
+}
+
+function normalizeHostnameAllowlist(values?: string[]): string[] {
+  if (!values || values.length === 0) {
+    return [];
+  }
+  return Array.from(
+    new Set(
+      values
+        .map((value) => normalizeHostname(value))
+        .filter((value) => value !== "*" && value !== "*." && value.length > 0),
+    ),
+  );
+}
+
+function isHostnameAllowedByPattern(hostname: string, pattern: string): boolean {
+  if (pattern.startsWith("*.")) {
+    const suffix = pattern.slice(2);
+    if (!suffix || hostname === suffix) {
+      return false;
+    }
+    return hostname.endsWith(`.${suffix}`);
+  }
+  return hostname === pattern;
+}
+
+function matchesHostnameAllowlist(hostname: string, allowlist: string[]): boolean {
+  if (allowlist.length === 0) {
+    return true;
+  }
+  return allowlist.some((pattern) => isHostnameAllowedByPattern(hostname, pattern));
+}
+
+function isExplicitlyAllowedHostname(hostname: string, policy?: SsrFPolicy): boolean {
+  if (!policy) {
+    return false;
+  }
+  const normalizedHostname = normalizeHostname(hostname);
+  if (!normalizedHostname) {
+    return false;
+  }
+  const allowedHostnames = new Set(
+    (policy.allowedHostnames ?? [])
+      .map((value) => normalizeHostname(value))
+      .filter((value) => Boolean(value)),
+  );
+  if (allowedHostnames.has(normalizedHostname)) {
+    return true;
+  }
+  const allowlist = normalizeHostnameAllowlist(policy.hostnameAllowlist);
+  return allowlist.length > 0 && matchesHostnameAllowlist(normalizedHostname, allowlist);
 }
 
 function isHeicSource(opts: { contentType?: string; fileName?: string }): boolean {
@@ -301,6 +354,25 @@ async function loadWebMediaInternal(
   };
 
   if (/^https?:\/\//i.test(mediaUrl)) {
+    // Fast-fail obvious SSRF targets before touching fetch().
+    // (fetchWithSsrFGuard should also catch these, but this keeps callers/tests strict.)
+    try {
+      const parsed = new URL(mediaUrl);
+      const hostname = parsed.hostname;
+      const normalized = normalizeHostname(hostname);
+      const allowPrivate = Boolean(ssrfPolicy?.allowPrivateNetwork);
+      const explicitlyAllowed = isExplicitlyAllowedHostname(normalized, ssrfPolicy);
+      if (!allowPrivate && !explicitlyAllowed && isBlockedHostnameOrIp(normalized)) {
+        throw new Error("Blocked hostname or private/internal IP address");
+      }
+    } catch (err) {
+      // If URL parsing fails, defer to the fetch layer which will throw a clearer error.
+      // If the precheck threw, preserve that.
+      if (String(err).includes("Blocked hostname")) {
+        throw err;
+      }
+    }
+
     // Enforce a download cap during fetch to avoid unbounded memory usage.
     // For optimized images, allow fetching larger payloads before compression.
     const defaultFetchCap = maxBytesForKind("unknown");
@@ -310,7 +382,12 @@ async function loadWebMediaInternal(
         : optimizeImages
           ? Math.max(maxBytes, defaultFetchCap)
           : maxBytes;
-    const fetched = await fetchRemoteMedia({ url: mediaUrl, maxBytes: fetchCap, ssrfPolicy });
+    const fetched = await fetchRemoteMedia({
+      url: mediaUrl,
+      maxBytes: fetchCap,
+      ssrfPolicy,
+      fetchImpl: options.fetchImpl,
+    });
     const { buffer, contentType, fileName } = fetched;
     const kind = mediaKindFromMime(contentType);
     return await clampAndFinalize({ buffer, contentType, kind, fileName });
@@ -383,7 +460,11 @@ async function loadWebMediaInternal(
 export async function loadWebMedia(
   mediaUrl: string,
   maxBytesOrOptions?: number | WebMediaOptions,
-  options?: { ssrfPolicy?: SsrFPolicy; localRoots?: readonly string[] | "any" },
+  options?: {
+    ssrfPolicy?: SsrFPolicy;
+    localRoots?: readonly string[] | "any";
+    fetchImpl?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+  },
 ): Promise<WebMediaResult> {
   if (typeof maxBytesOrOptions === "number" || maxBytesOrOptions === undefined) {
     return await loadWebMediaInternal(mediaUrl, {
@@ -391,6 +472,7 @@ export async function loadWebMedia(
       optimizeImages: true,
       ssrfPolicy: options?.ssrfPolicy,
       localRoots: options?.localRoots,
+      fetchImpl: options?.fetchImpl,
     });
   }
   return await loadWebMediaInternal(mediaUrl, {
@@ -402,7 +484,11 @@ export async function loadWebMedia(
 export async function loadWebMediaRaw(
   mediaUrl: string,
   maxBytesOrOptions?: number | WebMediaOptions,
-  options?: { ssrfPolicy?: SsrFPolicy; localRoots?: readonly string[] | "any" },
+  options?: {
+    ssrfPolicy?: SsrFPolicy;
+    localRoots?: readonly string[] | "any";
+    fetchImpl?: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+  },
 ): Promise<WebMediaResult> {
   if (typeof maxBytesOrOptions === "number" || maxBytesOrOptions === undefined) {
     return await loadWebMediaInternal(mediaUrl, {
@@ -410,6 +496,7 @@ export async function loadWebMediaRaw(
       optimizeImages: false,
       ssrfPolicy: options?.ssrfPolicy,
       localRoots: options?.localRoots,
+      fetchImpl: options?.fetchImpl,
     });
   }
   return await loadWebMediaInternal(mediaUrl, {

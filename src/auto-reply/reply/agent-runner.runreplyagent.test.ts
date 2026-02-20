@@ -414,7 +414,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
     expect(typing.startTypingOnText).not.toHaveBeenCalled();
   });
 
-  it("keeps assistant partial streaming enabled when reasoning mode is stream", async () => {
+  it("suppresses assistant partial streaming when reasoning mode is stream and reasoning callbacks are enabled", async () => {
     const onPartialReply = vi.fn();
     const onReasoningStream = vi.fn();
     state.runEmbeddedPiAgentMock.mockImplementationOnce(async (params: AgentRunParams) => {
@@ -430,7 +430,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
     await run();
 
     expect(onReasoningStream).toHaveBeenCalled();
-    expect(onPartialReply).toHaveBeenCalledWith({ text: "answer chunk", mediaUrls: undefined });
+    expect(onPartialReply).not.toHaveBeenCalled();
   });
 
   it("suppresses typing in never mode", async () => {
@@ -654,6 +654,55 @@ describe("runReplyAgent typing (heartbeat)", () => {
     expect(payloads[0]?.text).toContain("Model Fallback:");
     expect(payloads[0]?.text).toContain("deepinfra/moonshotai/Kimi-K2.5");
     expect(sessionEntry.fallbackNoticeReason).toBe("rate limit");
+  });
+
+  it("appends unscheduled-reminder note to assistant payload instead of fallback notice", async () => {
+    const sessionEntry: SessionEntry = {
+      sessionId: "session",
+      updatedAt: Date.now(),
+    };
+    const sessionStore = { main: sessionEntry };
+    state.runEmbeddedPiAgentMock.mockResolvedValueOnce({
+      payloads: [{ text: "Assistant response" }],
+      successfulCronAdds: 0,
+      meta: {},
+    });
+    const modelFallback = await import("../../agents/model-fallback.js");
+    const fallbackSpy = vi
+      .spyOn(modelFallback, "runWithModelFallback")
+      .mockImplementationOnce(
+        async ({ run }: { run: (provider: string, model: string) => Promise<unknown> }) => ({
+          result: await run("deepinfra", "moonshotai/Kimi-K2.5"),
+          provider: "deepinfra",
+          model: "moonshotai/Kimi-K2.5",
+          attempts: [
+            {
+              provider: "fireworks",
+              model: "fireworks/minimax-m2p5",
+              error: "Provider fireworks is in cooldown (all profiles unavailable)",
+              reason: "rate_limit",
+            },
+          ],
+        }),
+      );
+
+    try {
+      const { run } = createMinimalRun({
+        resolvedVerboseLevel: "on",
+        sessionEntry,
+        sessionStore,
+        sessionKey: "main",
+      });
+      const res = await run();
+      expect(Array.isArray(res)).toBe(true);
+      const payloads = res as { text?: string }[];
+      expect(payloads[0]?.text).toContain("Model Fallback:");
+      expect(payloads[0]?.text).not.toContain("did not schedule a reminder");
+      expect(payloads[1]?.text).toContain("Assistant response");
+      expect(payloads[1]?.text).toContain("did not schedule a reminder");
+    } finally {
+      fallbackSpy.mockRestore();
+    }
   });
 
   it("does not announce model fallback when verbose is off", async () => {

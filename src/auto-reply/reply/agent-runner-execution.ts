@@ -1,14 +1,10 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
-import type { TemplateContext } from "../templating.js";
-import type { VerboseLevel } from "../thinking.js";
-import type { GetReplyOptions, ReplyPayload } from "../types.js";
-import type { FollowupRun } from "./queue.js";
-import type { TypingSignaler } from "./typing-mode.js";
 import { resolveAgentModelFallbacksOverride } from "../../agents/agent-scope.js";
 import { runCliAgent } from "../../agents/cli-runner.js";
 import { getCliSessionId } from "../../agents/cli-session.js";
 import { runWithModelFallback } from "../../agents/model-fallback.js";
+import type { FallbackAttempt } from "../../agents/model-fallback.js";
 import { isCliProvider } from "../../agents/model-selection.js";
 import {
   isCompactionFailureError,
@@ -33,11 +29,16 @@ import {
   resolveMessageChannel,
 } from "../../utils/message-channel.js";
 import { stripHeartbeatToken } from "../heartbeat.js";
+import type { TemplateContext } from "../templating.js";
+import type { VerboseLevel } from "../thinking.js";
 import { isSilentReplyText, SILENT_REPLY_TOKEN } from "../tokens.js";
+import type { GetReplyOptions, ReplyPayload } from "../types.js";
 import { buildThreadingToolContext, resolveEnforceFinalTag } from "./agent-runner-utils.js";
 import { createBlockReplyPayloadKey, type BlockReplyPipeline } from "./block-reply-pipeline.js";
+import type { FollowupRun } from "./queue.js";
 import { parseReplyDirectives } from "./reply-directives.js";
 import { applyReplyTagsToPayload, isRenderablePayload } from "./reply-payloads.js";
+import type { TypingSignaler } from "./typing-mode.js";
 
 export type AgentRunLoopResult =
   | {
@@ -45,8 +46,10 @@ export type AgentRunLoopResult =
       runResult: Awaited<ReturnType<typeof runEmbeddedPiAgent>>;
       fallbackProvider?: string;
       fallbackModel?: string;
+      attempts: FallbackAttempt[];
       didLogHeartbeatStrip: boolean;
       autoCompactionCompleted: boolean;
+      runId: string;
       /** Payload keys sent directly (not via pipeline) during tool flush. */
       directlySentBlockKeys?: Set<string>;
     }
@@ -87,7 +90,6 @@ export async function runAgentTurnWithFallback(params: {
   const directlySentBlockKeys = new Set<string>();
 
   const runId = params.opts?.runId ?? crypto.randomUUID();
-  params.opts?.onAgentRunStart?.(runId);
   if (params.sessionKey) {
     registerAgentRunContext(runId, {
       sessionKey: params.sessionKey,
@@ -98,8 +100,11 @@ export async function runAgentTurnWithFallback(params: {
   let runResult: Awaited<ReturnType<typeof runEmbeddedPiAgent>>;
   let fallbackProvider = params.followupRun.run.provider;
   let fallbackModel = params.followupRun.run.model;
+  let fallbackAttempts: FallbackAttempt[] = [];
+  let didStartRun = false;
   let didResetAfterCompactionFailure = false;
   let didRetryTransientHttpError = false;
+  let pendingToolChain: Promise<void> = Promise.resolve();
 
   while (true) {
     try {
@@ -158,6 +163,10 @@ export async function runAgentTurnWithFallback(params: {
           resolveAgentIdFromSessionKey(params.followupRun.run.sessionKey),
         ),
         run: (provider, model) => {
+          if (!didStartRun) {
+            didStartRun = true;
+            params.opts?.onAgentRunStart?.(runId);
+          }
           // Notify that model selection is complete (including after fallback).
           // This allows responsePrefix template interpolation with the actual model.
           params.opts?.onModelSelected?.({
@@ -366,22 +375,41 @@ export async function runAgentTurnWithFallback(params: {
             onBlockReply: params.opts?.onBlockReply
               ? async (payload) => {
                   const { text, skip } = normalizeStreamingText(payload);
-                  const hasPayloadMedia = (payload.mediaUrls?.length ?? 0) > 0;
+                  const currentMessageId =
+                    params.sessionCtx.MessageSidFull ?? params.sessionCtx.MessageSid;
+                  const parsed = parseReplyDirectives(text ?? "", {
+                    currentMessageId,
+                    silentToken: SILENT_REPLY_TOKEN,
+                  });
+                  const hasPayloadMedia =
+                    (payload.mediaUrls?.length ?? 0) > 0 ||
+                    (parsed.mediaUrls?.length ?? 0) > 0 ||
+                    Boolean(parsed.mediaUrl);
                   if (skip && !hasPayloadMedia) {
                     return;
                   }
-                  const currentMessageId =
-                    params.sessionCtx.MessageSidFull ?? params.sessionCtx.MessageSid;
+                  const trimmedText = parsed.text?.trimStart();
                   const taggedPayload = applyReplyTagsToPayload(
                     {
-                      text,
-                      mediaUrls: payload.mediaUrls,
-                      mediaUrl: payload.mediaUrls?.[0],
+                      text: trimmedText,
+                      mediaUrls: [
+                        ...new Set([
+                          ...(payload.mediaUrls ?? [])
+                            .map((mediaUrl) => mediaUrl.trim())
+                            .filter(Boolean),
+                          ...(parsed.mediaUrls ?? [])
+                            .map((mediaUrl) => mediaUrl.trim())
+                            .filter(Boolean),
+                          ...(parsed.mediaUrl ? [parsed.mediaUrl] : []),
+                        ]),
+                      ],
+                      mediaUrl: parsed.mediaUrl ?? payload.mediaUrls?.[0],
                       replyToId:
                         payload.replyToId ??
+                        parsed.replyToId ??
                         (payload.replyToCurrent === false ? undefined : currentMessageId),
-                      replyToTag: payload.replyToTag,
-                      replyToCurrent: payload.replyToCurrent,
+                      replyToTag: payload.replyToTag || parsed.replyToTag,
+                      replyToCurrent: payload.replyToCurrent ?? parsed.replyToCurrent,
                     },
                     currentMessageId,
                   );
@@ -389,11 +417,7 @@ export async function runAgentTurnWithFallback(params: {
                   if (!isRenderablePayload(taggedPayload) && !payload.audioAsVoice) {
                     return;
                   }
-                  const parsed = parseReplyDirectives(taggedPayload.text ?? "", {
-                    currentMessageId,
-                    silentToken: SILENT_REPLY_TOKEN,
-                  });
-                  const cleaned = parsed.text || undefined;
+                  const cleaned = trimmedText || undefined;
                   const hasRenderableMedia =
                     Boolean(taggedPayload.mediaUrl) || (taggedPayload.mediaUrls?.length ?? 0) > 0;
                   // Skip empty payloads unless they have audioAsVoice flag (need to track it)
@@ -413,9 +437,9 @@ export async function runAgentTurnWithFallback(params: {
                     ...taggedPayload,
                     text: cleaned,
                     audioAsVoice: Boolean(parsed.audioAsVoice || payload.audioAsVoice),
-                    replyToId: taggedPayload.replyToId ?? parsed.replyToId,
-                    replyToTag: taggedPayload.replyToTag || parsed.replyToTag,
-                    replyToCurrent: taggedPayload.replyToCurrent || parsed.replyToCurrent,
+                    replyToId: taggedPayload.replyToId,
+                    replyToTag: taggedPayload.replyToTag,
+                    replyToCurrent: taggedPayload.replyToCurrent,
                   });
 
                   void params.typingSignals
@@ -450,6 +474,7 @@ export async function runAgentTurnWithFallback(params: {
                   // If a tool callback starts typing after the run finalized, we can end up with
                   // a typing loop that never sees a matching markRunComplete(). Track and drain.
                   const task = (async () => {
+                    await pendingToolChain;
                     const { text, skip } = normalizeStreamingText(payload);
                     if (skip) {
                       return;
@@ -466,6 +491,7 @@ export async function runAgentTurnWithFallback(params: {
                     .finally(() => {
                       params.pendingToolTasks.delete(task);
                     });
+                  pendingToolChain = task.catch(() => undefined);
                   params.pendingToolTasks.add(task);
                 }
               : undefined,
@@ -475,6 +501,7 @@ export async function runAgentTurnWithFallback(params: {
       runResult = fallbackResult.result;
       fallbackProvider = fallbackResult.provider;
       fallbackModel = fallbackResult.model;
+      fallbackAttempts = fallbackResult.attempts;
 
       // Some embedded runs surface context overflow as an error payload instead of throwing.
       // Treat those as a session-level failure and auto-recover by starting a fresh session.
@@ -621,7 +648,9 @@ export async function runAgentTurnWithFallback(params: {
 
   return {
     kind: "success",
+    runId,
     runResult,
+    attempts: fallbackAttempts,
     fallbackProvider,
     fallbackModel,
     didLogHeartbeatStrip,

@@ -63,12 +63,13 @@ function makeParams(commandBodyNormalized: string, truncated: boolean): HandleCo
 }
 
 describe("buildContextReply", () => {
-  it("shows bootstrap truncation warning in list output when context exceeds configured limits", async () => {
+  it("shows bootstrap truncation details in list output", async () => {
     const result = await buildContextReply(makeParams("/context list", true));
-    expect(result.text).toContain("Bootstrap max/total: 150,000 chars");
-    expect(result.text).toContain("⚠ Bootstrap context is over configured limits");
+    expect(result.text).toContain("Bootstrap max/file: 20,000 chars");
+    expect(result.text).not.toContain("Bootstrap max/total");
+    expect(result.text).not.toContain("⚠ Bootstrap context is over configured limits");
     expect(result.text).toContain(
-      "Causes: 1 file(s) exceeded max/file; raw total exceeded max/total.",
+      "- AGENTS.md: TRUNCATED | raw 200,000 chars (~50,000 tok) | injected 20,000 chars (~5,000 tok)",
     );
   });
 

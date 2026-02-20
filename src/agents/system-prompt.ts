@@ -1,6 +1,5 @@
 import type { ReasoningLevel, ThinkLevel } from "../auto-reply/thinking.js";
 import type { MemoryCitationsMode } from "../config/types.memory.js";
-import type { ToolDisclosureMode } from "../config/types.tools.js";
 import type { ResolvedTimeFormat } from "./date-time.js";
 import type { EmbeddedContextFile } from "./pi-embedded-helpers.js";
 import { SILENT_REPLY_TOKEN } from "../auto-reply/tokens.js";
@@ -173,8 +172,6 @@ export function buildAgentSystemPrompt(params: {
   reasoningTagHint?: boolean;
   toolNames?: string[];
   toolSummaries?: Record<string, string>;
-  toolCategorySummaryLines?: string[];
-  toolDisclosureMode?: ToolDisclosureMode;
   modelAliasLines?: string[];
   userTimezone?: string;
   userTime?: string;
@@ -320,10 +317,6 @@ export function buildAgentSystemPrompt(params: {
   }
 
   const hasGateway = availableTools.has("gateway");
-  const toolDisclosureMode = params.toolDisclosureMode ?? "off";
-  const toolCategorySummaryLines = (params.toolCategorySummaryLines ?? [])
-    .map((line) => line.trim())
-    .filter(Boolean);
   const readToolName = resolveToolName("read");
   const execToolName = resolveToolName("exec");
   const processToolName = resolveToolName("process");
@@ -443,14 +436,13 @@ export function buildAgentSystemPrompt(params: {
         ].join("\n")
       : "",
     "TOOLS.md does not control tool availability; it is user guidance for how to use external tools.",
-    toolDisclosureMode === "auto_intent"
-      ? "Progressive disclosure is active: tools shown above are the current active subset."
-      : "",
-    toolDisclosureMode === "auto_intent" && toolCategorySummaryLines.length > 0
-      ? "High-level capability coverage:"
-      : "",
-    ...(toolDisclosureMode === "auto_intent" ? toolCategorySummaryLines : []),
-    toolDisclosureMode === "auto_intent" && toolCategorySummaryLines.length > 0 ? "" : "",
+    [
+      "You have more tools available to you than the default ones you currently see.",
+      "If you think you're missing a tool, check list_tools first before saying you don't have it.",
+      "Call list_tools with no args to get all available tools with 5-word summaries.",
+      'Call list_tools with {"tool": "tool name"} to get that tool\'s full details.',
+      "Compatibility: list_tool is an alias for list_tools.",
+    ].join("\n"),
     "If a task is more complex or takes longer, spawn a sub-agent. It will do the work for you and ping you when it's done. You can always check up on it.",
     "",
     "## Tool Call Style",

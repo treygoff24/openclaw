@@ -12,13 +12,6 @@ import { getSkillsSnapshotVersion } from "../../agents/skills/refresh.js";
 import { buildSystemPromptParams } from "../../agents/system-prompt-params.js";
 import { buildSystemPromptReport } from "../../agents/system-prompt-report.js";
 import { buildAgentSystemPrompt } from "../../agents/system-prompt.js";
-import {
-  buildToolCategoryCoverage,
-  buildToolDisclosureCatalog,
-  formatToolCategoryCoverageLines,
-  resolveToolDisclosureConfig,
-  selectToolsByIntent,
-} from "../../agents/tool-disclosure/index.js";
 import { buildToolSummaryMap } from "../../agents/tool-summaries.js";
 import { getRemoteSkillEligibility } from "../../infra/skills-remote.js";
 import { buildTtsSystemPromptHint } from "../../tts/tts.js";
@@ -111,38 +104,7 @@ async function resolveContextReport(
       return [];
     }
   })();
-  const disclosureConfig = resolveToolDisclosureConfig({
-    cfg: params.cfg,
-    agentId: sessionAgentId,
-  });
-  const toolCatalog = buildToolDisclosureCatalog(fullTools);
-  const disclosureSelection = selectToolsByIntent({
-    mode: disclosureConfig.mode,
-    prompt: params.command.commandBodyNormalized,
-    catalog: toolCatalog,
-    alwaysAllow: disclosureConfig.alwaysAllow,
-    stickyToolNames: params.sessionEntry?.toolDisclosureState?.stickyToolNames,
-    stickyLastSelectionAt: params.sessionEntry?.toolDisclosureState?.lastSelectionAt,
-    maxActiveTools: disclosureConfig.maxActiveTools,
-    minConfidence: disclosureConfig.minConfidence,
-    lowConfidenceFallback: disclosureConfig.lowConfidenceFallback,
-    stickyMaxTools: disclosureConfig.stickyMaxTools,
-    stickyTurns: disclosureConfig.stickyTurns,
-  });
-  const activeToolNames = new Set(disclosureSelection.activeToolNames);
-  const tools =
-    disclosureSelection.mode === "auto_intent"
-      ? fullTools.filter((tool) => activeToolNames.has(tool.name))
-      : fullTools;
-  const toolCategorySummaryLines =
-    disclosureConfig.mode === "auto_intent" && disclosureConfig.includeCategorySummary
-      ? formatToolCategoryCoverageLines(
-          buildToolCategoryCoverage({
-            catalog: toolCatalog,
-            activeToolNames: tools.map((tool) => tool.name),
-          }),
-        ).slice(0, 8)
-      : [];
+  const tools = fullTools;
   const toolSummaries = buildToolSummaryMap(tools);
   const toolNames = tools.map((t) => t.name);
   const defaultModelRef = resolveDefaultModelForAgent({
@@ -186,8 +148,6 @@ async function resolveContextReport(
     reasoningTagHint: false,
     toolNames,
     toolSummaries,
-    toolCategorySummaryLines,
-    toolDisclosureMode: disclosureSelection.mode,
     modelAliasLines: [],
     userTimezone,
     userTime,
@@ -218,10 +178,8 @@ async function resolveContextReport(
     activeTools: tools,
     fullToolsEstimate: fullTools,
     toolDisclosure: {
-      mode: disclosureSelection.mode,
-      selectionConfidence: disclosureSelection.confidence,
-      stickyMaxToolsApplied: disclosureConfig.stickyMaxTools,
-      selectedBy: disclosureSelection.selectedBy,
+      mode: "off",
+      selectionConfidence: 1,
     },
   });
 }

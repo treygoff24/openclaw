@@ -10,6 +10,7 @@ import type { AnyAgentTool } from "./tools/common.js";
 import { createCronTool } from "./tools/cron-tool.js";
 import { createGatewayTool } from "./tools/gateway-tool.js";
 import { createImageTool } from "./tools/image-tool.js";
+import { createListToolTool, createListToolsTool } from "./tools/list-tools-tool.js";
 import { createMessageTool } from "./tools/message-tool.js";
 import { createNodesTool } from "./tools/nodes-tool.js";
 import { createSessionStatusTool } from "./tools/session-status-tool.js";
@@ -164,7 +165,6 @@ export function createOpenClawTools(options?: {
     ...(webFetchTool ? [webFetchTool] : []),
     ...(imageTool ? [imageTool] : []),
   ];
-
   const pluginTools = resolvePluginTools({
     context: {
       config: options?.config,
@@ -179,9 +179,19 @@ export function createOpenClawTools(options?: {
       agentAccountId: options?.agentAccountId,
       sandboxed: options?.sandboxed,
     },
-    existingToolNames: new Set(tools.map((tool) => tool.name)),
+    existingToolNames: new Set([...tools.map((tool) => tool.name), "list_tools", "list_tool"]),
     toolAllowlist: options?.pluginToolAllowlist,
   });
 
-  return [...tools, ...pluginTools];
+  const allTools = [...tools, ...pluginTools];
+  const toolsForDiscovery: AnyAgentTool[] = [];
+  const listToolsTool = createListToolsTool({
+    tools: () => toolsForDiscovery,
+  });
+  const listToolTool = createListToolTool({
+    tools: () => toolsForDiscovery,
+  });
+  toolsForDiscovery.push(...allTools, listToolsTool, listToolTool);
+
+  return toolsForDiscovery;
 }

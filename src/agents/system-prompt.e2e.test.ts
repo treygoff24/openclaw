@@ -139,22 +139,21 @@ describe("buildAgentSystemPrompt", () => {
     expect(prompt).toContain("sessions_send");
   });
 
-  it("shows category summary when progressive disclosure is enabled", () => {
+  it("guides list_tools-first fallback before claiming missing tools", () => {
     const prompt = buildAgentSystemPrompt({
       workspaceDir: "/tmp/openclaw",
-      toolNames: ["read", "session_status"],
-      toolDisclosureMode: "auto_intent",
-      toolCategorySummaryLines: [
-        "- Workspace & Files: 1/4 active",
-        "- Sessions & Delegation: 1/9 active",
-      ],
+      toolNames: ["read", "session_status", "list_tools"],
+      toolSummaries: {
+        read: "Read files and directories",
+        session_status: "Show session status",
+        list_tools: "List tools and introspect schemas",
+      },
     });
 
-    expect(prompt).toContain("Progressive disclosure is active");
-    expect(prompt).toContain("High-level capability coverage:");
-    expect(prompt).toContain("- Workspace & Files: 1/4 active");
-    expect(prompt).toContain("- Sessions & Delegation: 1/9 active");
-    expect(prompt).not.toContain("- write:");
+    expect(prompt).toContain("more tools available to you than the default ones you currently see");
+    expect(prompt).toContain("check list_tools first");
+    expect(prompt).toContain("Call list_tools with no args");
+    expect(prompt).toContain('Call list_tools with {"tool": "tool name"}');
   });
 
   it("preserves tool casing in the prompt", () => {

@@ -66,13 +66,6 @@ import {
 } from "../../skills.js";
 import { buildSystemPromptParams } from "../../system-prompt-params.js";
 import { buildSystemPromptReport } from "../../system-prompt-report.js";
-import {
-  buildToolCategoryCoverage,
-  buildToolDisclosureCatalog,
-  formatToolCategoryCoverageLines,
-  resolveToolDisclosureConfig,
-  selectToolsByIntent,
-} from "../../tool-disclosure/index.js";
 import { resolveTranscriptPolicy } from "../../transcript-policy.js";
 import { DEFAULT_BOOTSTRAP_FILENAME } from "../../workspace.js";
 import { isRunnerAbortError } from "../abort.js";
@@ -336,40 +329,8 @@ export async function runEmbeddedAttempt(
           disableMessageTool: params.disableMessageTool,
         });
     const fullTools = sanitizeToolsForGoogle({ tools: toolsRaw, provider: params.provider });
-    const disclosureConfig = resolveToolDisclosureConfig({
-      cfg: params.config,
-      agentId: sessionAgentId,
-    });
-    const toolCatalog = buildToolDisclosureCatalog(fullTools);
-    const disclosureSelection = selectToolsByIntent({
-      mode: disclosureConfig.mode,
-      prompt: params.prompt,
-      catalog: toolCatalog,
-      alwaysAllow: disclosureConfig.alwaysAllow,
-      stickyToolNames: params.toolDisclosureState?.stickyToolNames,
-      stickyLastSelectionAt: params.toolDisclosureState?.lastSelectionAt,
-      maxActiveTools: disclosureConfig.maxActiveTools,
-      minConfidence: disclosureConfig.minConfidence,
-      lowConfidenceFallback: disclosureConfig.lowConfidenceFallback,
-      stickyMaxTools: disclosureConfig.stickyMaxTools,
-      stickyTurns: disclosureConfig.stickyTurns,
-    });
-    const activeToolNames = new Set(disclosureSelection.activeToolNames.map((name) => name));
-    const tools =
-      disclosureSelection.mode === "auto_intent"
-        ? fullTools.filter((tool) => activeToolNames.has(tool.name))
-        : fullTools;
-    const categoryCoverage = buildToolCategoryCoverage({
-      catalog: toolCatalog,
-      activeToolNames: tools.map((tool) => tool.name),
-    });
-    const toolCategorySummaryLines =
-      disclosureConfig.mode === "auto_intent" && disclosureConfig.includeCategorySummary
-        ? formatToolCategoryCoverageLines(categoryCoverage).slice(0, 8)
-        : [];
-    log.debug(
-      `tool disclosure: mode=${disclosureSelection.mode} active=${tools.length}/${fullTools.length} confidence=${disclosureSelection.confidence.toFixed(2)} fallback=${disclosureSelection.usedFallback ? (disclosureSelection.fallbackReason ?? "yes") : "no"}`,
-    );
+    const tools = fullTools;
+    log.debug(`tool list prepared: active=${tools.length}/${fullTools.length}`);
     logToolSchemasForGoogle({ tools, provider: params.provider });
 
     const machineName = await getMachineDisplayName();
@@ -492,8 +453,6 @@ export async function runEmbeddedAttempt(
       messageToolHints,
       sandboxInfo,
       tools,
-      toolCategorySummaryLines,
-      toolDisclosureMode: disclosureSelection.mode,
       modelAliasLines: buildModelAliasLines(params.config),
       userTimezone,
       userTime,
@@ -525,10 +484,8 @@ export async function runEmbeddedAttempt(
       activeTools: tools,
       fullToolsEstimate: fullTools,
       toolDisclosure: {
-        mode: disclosureSelection.mode,
-        selectionConfidence: disclosureSelection.confidence,
-        stickyMaxToolsApplied: disclosureConfig.stickyMaxTools,
-        selectedBy: disclosureSelection.selectedBy,
+        mode: "off",
+        selectionConfidence: 1,
       },
     });
     const systemPromptOverride = createSystemPromptOverride(appendPrompt);

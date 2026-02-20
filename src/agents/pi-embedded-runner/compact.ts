@@ -55,13 +55,6 @@ import {
   resolveSkillsPromptForRun,
   type SkillSnapshot,
 } from "../skills.js";
-import {
-  buildToolCategoryCoverage,
-  buildToolDisclosureCatalog,
-  formatToolCategoryCoverageLines,
-  resolveToolDisclosureConfig,
-  selectToolsByIntent,
-} from "../tool-disclosure/index.js";
 import { resolveTranscriptPolicy } from "../transcript-policy.js";
 import {
   compactWithSafetyTimeout,
@@ -393,36 +386,7 @@ export async function compactEmbeddedPiSessionDirect(
       modelAuthMode: resolveModelAuthMode(model.provider, params.config),
     });
     const fullTools = sanitizeToolsForGoogle({ tools: toolsRaw, provider });
-    const disclosureConfig = resolveToolDisclosureConfig({
-      cfg: params.config,
-      agentId: sessionAgentId,
-    });
-    const toolCatalog = buildToolDisclosureCatalog(fullTools);
-    const disclosureSelection = selectToolsByIntent({
-      mode: disclosureConfig.mode,
-      prompt: params.customInstructions ?? "compact session history",
-      catalog: toolCatalog,
-      alwaysAllow: disclosureConfig.alwaysAllow,
-      stickyToolNames: [],
-      maxActiveTools: disclosureConfig.maxActiveTools,
-      minConfidence: disclosureConfig.minConfidence,
-      lowConfidenceFallback: disclosureConfig.lowConfidenceFallback,
-      stickyMaxTools: disclosureConfig.stickyMaxTools,
-      stickyTurns: disclosureConfig.stickyTurns,
-    });
-    const activeToolNames = new Set(disclosureSelection.activeToolNames);
-    const tools =
-      disclosureSelection.mode === "auto_intent"
-        ? fullTools.filter((tool) => activeToolNames.has(tool.name))
-        : fullTools;
-    const categoryCoverage = buildToolCategoryCoverage({
-      catalog: toolCatalog,
-      activeToolNames: tools.map((tool) => tool.name),
-    });
-    const toolCategorySummaryLines =
-      disclosureConfig.mode === "auto_intent" && disclosureConfig.includeCategorySummary
-        ? formatToolCategoryCoverageLines(categoryCoverage).slice(0, 8)
-        : [];
+    const tools = fullTools;
     logToolSchemasForGoogle({ tools, provider });
     const machineName = await getMachineDisplayName();
     const runtimeChannel = normalizeMessageChannel(params.messageChannel ?? params.messageProvider);
@@ -533,8 +497,6 @@ export async function compactEmbeddedPiSessionDirect(
       messageToolHints,
       sandboxInfo,
       tools,
-      toolCategorySummaryLines,
-      toolDisclosureMode: disclosureSelection.mode,
       modelAliasLines: buildModelAliasLines(params.config),
       userTimezone,
       userTime,

@@ -2,16 +2,8 @@ import { spawn } from "node:child_process";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import type { OpenClawConfig } from "../config/config.js";
-import type {
-  MemoryEmbeddingProbeResult,
-  MemoryProviderStatus,
-  MemorySearchManager,
-  MemorySearchResult,
-  MemorySource,
-  MemorySyncProgressUpdate,
-} from "./types.js";
 import { resolveAgentConfig, resolveAgentWorkspaceDir } from "../agents/agent-scope.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
 import { createSubsystemLogger } from "../logging/subsystem.js";
 import { deriveQmdScopeChannel, deriveQmdScopeChatType, isQmdScopeAllowed } from "./qmd-scope.js";
@@ -21,6 +13,14 @@ import {
   type SessionFileEntry,
 } from "./session-files.js";
 import { requireNodeSqlite } from "./sqlite.js";
+import type {
+  MemoryEmbeddingProbeResult,
+  MemoryProviderStatus,
+  MemorySearchManager,
+  MemorySearchResult,
+  MemorySource,
+  MemorySyncProgressUpdate,
+} from "./types.js";
 
 type SqliteDatabase = import("node:sqlite").DatabaseSync;
 import type { ResolvedMemoryBackendConfig, ResolvedQmdConfig } from "./backend-config.js";
@@ -53,6 +53,7 @@ export class QmdMemoryManager implements MemorySearchManager {
     cfg: OpenClawConfig;
     agentId: string;
     resolved: ResolvedMemoryBackendConfig;
+    mode?: "status" | "full";
   }): Promise<QmdMemoryManager | null> {
     const resolved = params.resolved.qmd;
     if (!resolved) {

@@ -83,6 +83,7 @@ describe("resolveGatewayRuntimeConfig", () => {
 
   describe("token/password auth modes", () => {
     it("should reject token mode without token configured", async () => {
+      vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", "");
       const cfg = {
         gateway: {
           bind: "lan" as const,

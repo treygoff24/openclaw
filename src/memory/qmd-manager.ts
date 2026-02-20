@@ -30,7 +30,7 @@ const log = createSubsystemLogger("memory");
 
 const SNIPPET_HEADER_RE = /@@\s*-([0-9]+),([0-9]+)/;
 const SEARCH_PENDING_UPDATE_WAIT_MS = 500;
-const NUL_MARKER_RE = /\\x00|\\u0000/;
+const NUL_MARKER_RE = /\\x00|\\u0000|\^@/;
 
 type CollectionRoot = {
   path: string;
@@ -60,7 +60,11 @@ export class QmdMemoryManager implements MemorySearchManager {
       return null;
     }
     const manager = new QmdMemoryManager({ cfg: params.cfg, agentId: params.agentId, resolved });
-    await manager.initialize();
+    if (params.mode === "status") {
+      await manager.initializeStatusMode();
+    } else {
+      await manager.initialize();
+    }
     return manager;
   }
 
@@ -180,6 +184,16 @@ export class QmdMemoryManager implements MemorySearchManager {
         });
       }, this.qmd.update.intervalMs);
     }
+  }
+
+  private async initializeStatusMode(): Promise<void> {
+    await fs.mkdir(this.xdgConfigHome, { recursive: true });
+    await fs.mkdir(this.xdgCacheHome, { recursive: true });
+    await fs.mkdir(path.dirname(this.indexPath), { recursive: true });
+    if (this.sessionExporter) {
+      await fs.mkdir(this.sessionExporter.dir, { recursive: true });
+    }
+    this.bootstrapCollections();
   }
 
   private bootstrapCollections(): void {
@@ -407,38 +421,78 @@ export class QmdMemoryManager implements MemorySearchManager {
       return [];
     }
     const qmdSearchCommand = this.qmd.searchMode;
-    const args = this.buildSearchArgs(qmdSearchCommand, trimmed, limit);
+    const collectionNames = this.qmd.collections.map((c) => c.name).filter(Boolean);
 
-    // Always scope to managed collections (default + custom). Even for `search`/`vsearch`,
-    // pass collection filters; if a given QMD build rejects these flags, we fall back to `query`.
-    args.push(...collectionFilterArgs);
+    // Helper: run a query-mode command per collection to avoid qmd quirks with multi-collection query.
+    const runQueryPerCollection = async (): Promise<{ stdout: string; stderr: string }> => {
+      const allEntries: unknown[] = [];
+      let lastStderr = "";
+      for (const name of collectionNames) {
+        const perArgs = this.buildSearchArgs("query", trimmed, limit);
+        perArgs.push("-c", name);
+        const result = await this.runQmd(perArgs, { timeoutMs: this.qmd.limits.timeoutMs });
+        lastStderr = result.stderr;
+        try {
+          const entries = JSON.parse(result.stdout);
+          if (Array.isArray(entries)) {
+            allEntries.push(...entries);
+          }
+        } catch {
+          // If one collection returns no results / invalid JSON, skip it
+        }
+      }
+      return { stdout: JSON.stringify(allEntries), stderr: lastStderr };
+    };
+
     let stdout: string;
     let stderr: string;
-    try {
-      const result = await this.runQmd(args, { timeoutMs: this.qmd.limits.timeoutMs });
+
+    if (qmdSearchCommand === "query" && collectionNames.length > 1) {
+      // Query mode with multiple collections: run per-collection
+      const result = await runQueryPerCollection();
       stdout = result.stdout;
       stderr = result.stderr;
-    } catch (err) {
-      if (qmdSearchCommand !== "query" && this.isUnsupportedQmdOptionError(err)) {
-        log.warn(
-          `qmd ${qmdSearchCommand} does not support configured flags; retrying search with qmd query`,
-        );
-        try {
-          const fallbackArgs = this.buildSearchArgs("query", trimmed, limit);
-          fallbackArgs.push(...collectionFilterArgs);
-          const fallback = await this.runQmd(fallbackArgs, {
-            timeoutMs: this.qmd.limits.timeoutMs,
-          });
-          stdout = fallback.stdout;
-          stderr = fallback.stderr;
-        } catch (fallbackErr) {
-          log.warn(`qmd query fallback failed: ${String(fallbackErr)}`);
-          throw fallbackErr instanceof Error ? fallbackErr : new Error(String(fallbackErr));
+    } else {
+      const args = this.buildSearchArgs(qmdSearchCommand, trimmed, limit);
+      args.push(...collectionFilterArgs);
+      try {
+        const result = await this.runQmd(args, { timeoutMs: this.qmd.limits.timeoutMs });
+        stdout = result.stdout;
+        stderr = result.stderr;
+      } catch (err) {
+        if (qmdSearchCommand !== "query" && this.isUnsupportedQmdOptionError(err)) {
+          log.warn(
+            `qmd ${qmdSearchCommand} does not support configured flags; retrying search with qmd query`,
+          );
+          try {
+            if (collectionNames.length > 1) {
+              const fallback = await runQueryPerCollection();
+              stdout = fallback.stdout;
+              stderr = fallback.stderr;
+            } else {
+              const fallbackArgs = this.buildSearchArgs("query", trimmed, limit);
+              fallbackArgs.push(...collectionFilterArgs);
+              const fallback = await this.runQmd(fallbackArgs, {
+                timeoutMs: this.qmd.limits.timeoutMs,
+              });
+              stdout = fallback.stdout;
+              stderr = fallback.stderr;
+            }
+          } catch (fallbackErr) {
+            log.warn(`qmd query fallback failed: ${String(fallbackErr)}`);
+            throw fallbackErr instanceof Error ? fallbackErr : new Error(String(fallbackErr));
+          }
+        } else {
+          log.warn(`qmd ${qmdSearchCommand} failed: ${String(err)}`);
+          throw err instanceof Error ? err : new Error(String(err));
         }
-      } else {
-        log.warn(`qmd ${qmdSearchCommand} failed: ${String(err)}`);
-        throw err instanceof Error ? err : new Error(String(err));
       }
+    }
+    const MAX_STDOUT_BYTES = 200_000;
+    if (stdout.length > MAX_STDOUT_BYTES) {
+      throw new Error(
+        `qmd query returned too much output (${stdout.length} bytes > ${MAX_STDOUT_BYTES} cap)`,
+      );
     }
     const parsed = parseQmdQueryJson(stdout, stderr);
     const results: MemorySearchResult[] = [];
@@ -493,19 +547,58 @@ export class QmdMemoryManager implements MemorySearchManager {
     if (!absPath.endsWith(".md")) {
       throw new Error("path required");
     }
-    const stat = await fs.lstat(absPath);
+    let stat: Awaited<ReturnType<typeof fs.lstat>>;
+    try {
+      stat = await fs.lstat(absPath);
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+        return { text: "", path: relPath };
+      }
+      throw err;
+    }
     if (stat.isSymbolicLink() || !stat.isFile()) {
       throw new Error("path required");
     }
-    const content = await fs.readFile(absPath, "utf-8");
-    if (!params.from && !params.lines) {
-      return { text: content, path: relPath };
+    if (params.from || params.lines) {
+      return this.readFileLines(absPath, relPath, params.from, params.lines);
     }
-    const lines = content.split("\n");
-    const start = Math.max(1, params.from ?? 1);
-    const count = Math.max(1, params.lines ?? lines.length);
-    const slice = lines.slice(start - 1, start - 1 + count);
-    return { text: slice.join("\n"), path: relPath };
+    const content = await fs.readFile(absPath, "utf-8");
+    return { text: content, path: relPath };
+  }
+
+  private async readFileLines(
+    absPath: string,
+    relPath: string,
+    from?: number,
+    lines?: number,
+  ): Promise<{ text: string; path: string }> {
+    const { createReadStream } = await import("node:fs");
+    const { createInterface } = await import("node:readline");
+    const start = Math.max(1, from ?? 1);
+    const count = Math.max(1, lines ?? Infinity);
+    const collected: string[] = [];
+    let lineNum = 0;
+    let stream: ReturnType<typeof createReadStream> | null = null;
+    try {
+      const handle = await fs.open(absPath, "r");
+      stream = handle.createReadStream({ encoding: "utf-8" });
+      const rl = createInterface({ input: stream, crlfDelay: Infinity });
+      for await (const line of rl) {
+        lineNum++;
+        if (lineNum >= start) {
+          collected.push(line);
+        }
+        if (collected.length >= count) {
+          break;
+        }
+      }
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+        return { text: "", path: relPath };
+      }
+      throw err;
+    }
+    return { text: collected.join("\n"), path: relPath };
   }
 
   status(): MemoryProviderStatus {
@@ -594,7 +687,16 @@ export class QmdMemoryManager implements MemorySearchManager {
       if (this.sessionExporter) {
         await this.exportSessions();
       }
-      await this.runQmd(["update"], { timeoutMs: this.qmd.update.updateTimeoutMs });
+      try {
+        await this.runQmd(["update"], { timeoutMs: this.qmd.update.updateTimeoutMs });
+      } catch (updateErr) {
+        const repaired = await this.tryRepairNullByteCollections(updateErr, reason);
+        if (repaired) {
+          await this.runQmd(["update"], { timeoutMs: this.qmd.update.updateTimeoutMs });
+        } else {
+          throw updateErr;
+        }
+      }
       const embedIntervalMs = this.qmd.update.embedIntervalMs;
       const shouldEmbed =
         Boolean(force) ||
@@ -847,8 +949,15 @@ export class QmdMemoryManager implements MemorySearchManager {
     let row: { collection: string; path: string } | undefined;
     try {
       row = db
-        .prepare("SELECT collection, path FROM documents WHERE hash LIKE ? AND active = 1 LIMIT 1")
-        .get(`${normalized}%`) as { collection: string; path: string } | undefined;
+        .prepare("SELECT collection, path FROM documents WHERE hash = ? AND active = 1 LIMIT 1")
+        .get(normalized) as { collection: string; path: string } | undefined;
+      if (!row) {
+        row = db
+          .prepare(
+            "SELECT collection, path FROM documents WHERE hash LIKE ? AND active = 1 LIMIT 1",
+          )
+          .get(`${normalized}%`) as { collection: string; path: string } | undefined;
+      }
     } catch (err) {
       if (this.isSqliteBusyError(err)) {
         log.debug(`qmd index is busy while resolving doc path: ${String(err)}`);
@@ -1118,6 +1227,6 @@ export class QmdMemoryManager implements MemorySearchManager {
     if (command === "query") {
       return ["query", query, "--json", "-n", String(limit)];
     }
-    return [command, query, "--json"];
+    return [command, query, "--json", "-n", String(limit)];
   }
 }

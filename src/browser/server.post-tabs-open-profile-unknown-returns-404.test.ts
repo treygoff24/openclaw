@@ -1,3 +1,4 @@
+import { createServer } from "node:http";
 import { fetch as realFetch } from "undici";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -17,7 +18,21 @@ const state = getBrowserControlServerTestState();
 const cdpMocks = getCdpMocks();
 const pwMocks = getPwMocks();
 
-describe("browser control server", () => {
+async function canStartBrowserControlServer(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    const probeServer = createServer();
+    probeServer.once("error", () => resolve(false));
+    probeServer.listen(0, "127.0.0.1", () => {
+      probeServer.close(() => resolve(true));
+    });
+  });
+}
+
+const describeBrowserControlServer = (await canStartBrowserControlServer())
+  ? describe
+  : describe.skip;
+
+describeBrowserControlServer("browser control server", () => {
   installBrowserControlServerHooks();
 
   it("POST /tabs/open?profile=unknown returns 404", async () => {
@@ -49,7 +64,7 @@ describe("browser control server", () => {
   });
 });
 
-describe("profile CRUD endpoints", () => {
+describeBrowserControlServer("profile CRUD endpoints", () => {
   beforeEach(async () => {
     state.reachable = false;
     state.cfgAttachOnly = false;
@@ -65,6 +80,13 @@ describe("profile CRUD endpoints", () => {
     state.cdpBaseUrl = `http://127.0.0.1:${state.testPort + 1}`;
     state.prevGatewayPort = process.env.OPENCLAW_GATEWAY_PORT;
     process.env.OPENCLAW_GATEWAY_PORT = String(state.testPort - 2);
+
+    // Avoid flaky auth coupling: local shells may have gateway env auth set
+    // which would make the browser control server require auth.
+    state.prevGatewayToken = process.env.OPENCLAW_GATEWAY_TOKEN;
+    state.prevGatewayPassword = process.env.OPENCLAW_GATEWAY_PASSWORD;
+    delete process.env.OPENCLAW_GATEWAY_TOKEN;
+    delete process.env.OPENCLAW_GATEWAY_PASSWORD;
 
     vi.stubGlobal(
       "fetch",
@@ -82,6 +104,16 @@ describe("profile CRUD endpoints", () => {
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
     restoreGatewayPortEnv(state.prevGatewayPort);
+    if (state.prevGatewayToken === undefined) {
+      delete process.env.OPENCLAW_GATEWAY_TOKEN;
+    } else {
+      process.env.OPENCLAW_GATEWAY_TOKEN = state.prevGatewayToken;
+    }
+    if (state.prevGatewayPassword === undefined) {
+      delete process.env.OPENCLAW_GATEWAY_PASSWORD;
+    } else {
+      process.env.OPENCLAW_GATEWAY_PASSWORD = state.prevGatewayPassword;
+    }
     await stopBrowserControlServer();
   });
 

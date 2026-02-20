@@ -23,7 +23,7 @@ describe("buildSystemPromptReport", () => {
       bootstrapFiles: [file],
       injectedFiles: [{ path: "/tmp/workspace/policies/AGENTS.md", content: "trimmed" }],
       skillsPrompt: "",
-      tools: [],
+      activeTools: [],
     });
 
     expect(report.injectedWorkspaceFiles[0]?.injectedChars).toBe("trimmed".length);
@@ -39,7 +39,7 @@ describe("buildSystemPromptReport", () => {
       bootstrapFiles: [file],
       injectedFiles: [{ path: "AGENTS.md", content: "trimmed" }],
       skillsPrompt: "",
-      tools: [],
+      activeTools: [],
     });
 
     expect(report.injectedWorkspaceFiles[0]?.injectedChars).toBe("trimmed".length);
@@ -58,7 +58,7 @@ describe("buildSystemPromptReport", () => {
       bootstrapFiles: [file],
       injectedFiles: [{ path: "/tmp/workspace/policies/AGENTS.md", content: "trimmed" }],
       skillsPrompt: "",
-      tools: [],
+      activeTools: [],
     });
 
     expect(report.injectedWorkspaceFiles[0]?.truncated).toBe(true);
@@ -75,7 +75,7 @@ describe("buildSystemPromptReport", () => {
       bootstrapFiles: [file],
       injectedFiles: [{ path: "AGENTS.md", content: "trimmed" }],
       skillsPrompt: "",
-      tools: [],
+      activeTools: [],
     });
 
     expect(report.bootstrapMaxChars).toBe(11_111);

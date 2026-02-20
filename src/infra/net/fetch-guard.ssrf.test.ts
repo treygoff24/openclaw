@@ -93,6 +93,23 @@ describe("fetchWithSsrFGuard hardening", () => {
     await result.release();
   });
 
+  it("allows explicit private literals when they are hostname-allowlisted", async () => {
+    const lookupFn = vi.fn(async () => [
+      { address: "127.0.0.1", family: 4 },
+    ]) as unknown as LookupFn;
+    const fetchImpl = vi.fn(async () => new Response("ok", { status: 200 }));
+    const result = await fetchWithSsrFGuard({
+      url: "http://127.0.0.1:8080/internal",
+      fetchImpl,
+      lookupFn,
+      policy: { hostnameAllowlist: ["127.0.0.1"] },
+    });
+
+    expect(result.response.status).toBe(200);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    await result.release();
+  });
+
   it("strips sensitive headers when redirect crosses origins", async () => {
     const lookupFn = vi.fn(async () => [
       { address: "93.184.216.34", family: 4 },

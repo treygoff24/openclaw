@@ -4,6 +4,7 @@ import { bindAbortRelay } from "../../utils/fetch-timeout.js";
 import {
   closeDispatcher,
   createPinnedDispatcher,
+  resolvePinnedHostname,
   resolvePinnedHostnameWithPolicy,
   type LookupFn,
   SsrFBlockedError,
@@ -134,10 +135,20 @@ export async function fetchWithSsrFGuard(params: GuardedFetchOptions): Promise<G
 
     let dispatcher: Dispatcher | null = null;
     try {
-      const pinned = await resolvePinnedHostnameWithPolicy(parsedUrl.hostname, {
-        lookupFn: params.lookupFn,
-        policy: params.policy,
-      });
+      const policy = params.policy;
+      const hasExplicitPolicy =
+        policy !== undefined &&
+        (policy.allowPrivateNetwork !== undefined ||
+          policy.allowedHostnames !== undefined ||
+          policy.hostnameAllowlist !== undefined);
+
+      const pinned = hasExplicitPolicy
+        ? await resolvePinnedHostnameWithPolicy(parsedUrl.hostname, {
+            lookupFn: params.lookupFn,
+            policy,
+          })
+        : await resolvePinnedHostname(parsedUrl.hostname, params.lookupFn);
+
       if (params.pinDns !== false) {
         dispatcher = createPinnedDispatcher(pinned);
       }

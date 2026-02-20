@@ -4,6 +4,18 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 const TEST_GATEWAY_TOKEN = "test-gateway-token-1234567890";
 
+async function canStartToolsInvokeHttpServer(): Promise<boolean> {
+  return await new Promise<boolean>((resolve) => {
+    const probe = createServer();
+    probe.once("error", () => resolve(false));
+    probe.listen(0, "127.0.0.1", () => {
+      probe.close(() => resolve(true));
+    });
+  });
+}
+
+const describeToolsInvokeHttp = (await canStartToolsInvokeHttpServer()) ? describe : describe.skip;
+
 let cfg: Record<string, unknown> = {};
 
 // Perf: keep this suite pure unit. Mock heavyweight config/session modules.
@@ -119,9 +131,37 @@ const { handleToolsInvokeHttpRequest } = await import("./tools-invoke-http.js");
 let pluginHttpHandlers: Array<(req: IncomingMessage, res: ServerResponse) => Promise<boolean>> = [];
 
 let sharedPort = 0;
+let sharedHost = "127.0.0.1";
 let sharedServer: ReturnType<typeof createServer> | undefined;
 
 beforeAll(async () => {
+  const listenServer = (host?: string) =>
+    new Promise<number>((resolve, reject) => {
+      if (!sharedServer) {
+        return reject(new Error("server not initialized"));
+      }
+      const onListen = () => {
+        const address = sharedServer.address() as AddressInfo | null;
+        const rawHost = address?.address;
+        sharedPort = address?.port ?? 0;
+        if (typeof rawHost === "string" && rawHost.length > 0) {
+          sharedHost = rawHost.includes(":") ? `[${rawHost}]` : rawHost;
+        }
+        if (!sharedPort) {
+          reject(new Error("server did not report a valid port"));
+          return;
+        }
+        resolve(sharedPort);
+      };
+      const onError = (err: unknown) => reject(err);
+      sharedServer.once("error", onError);
+      if (host) {
+        sharedServer.listen(0, host, onListen);
+      } else {
+        sharedServer.listen(0, onListen);
+      }
+    });
+
   sharedServer = createServer((req, res) => {
     void (async () => {
       const handled = await handleToolsInvokeHttpRequest(req, res, {
@@ -143,14 +183,19 @@ beforeAll(async () => {
     });
   });
 
-  await new Promise<void>((resolve, reject) => {
-    sharedServer?.once("error", reject);
-    sharedServer?.listen(0, "127.0.0.1", () => {
-      const address = sharedServer?.address() as AddressInfo | null;
-      sharedPort = address?.port ?? 0;
-      resolve();
-    });
-  });
+  try {
+    await listenServer("127.0.0.1");
+  } catch (err) {
+    if ((err as { code?: string }).code !== "EPERM") {
+      throw err;
+    }
+    sharedHost = "localhost";
+    await listenServer();
+  }
+
+  if (!sharedPort) {
+    throw new Error("could not start tools invoke HTTP server");
+  }
 });
 
 afterAll(async () => {
@@ -198,7 +243,7 @@ const invokeAgentsList = async (params: {
   if (params.sessionKey) {
     body.sessionKey = params.sessionKey;
   }
-  return await fetch(`http://127.0.0.1:${params.port}/tools/invoke`, {
+  return await fetch(`http://${sharedHost}:${params.port}/tools/invoke`, {
     method: "POST",
     headers: { "content-type": "application/json", ...params.headers },
     body: JSON.stringify(body),
@@ -223,7 +268,7 @@ const invokeTool = async (params: {
   if (params.sessionKey) {
     body.sessionKey = params.sessionKey;
   }
-  return await fetch(`http://127.0.0.1:${params.port}/tools/invoke`, {
+  return await fetch(`http://${sharedHost}:${params.port}/tools/invoke`, {
     method: "POST",
     headers: { "content-type": "application/json", ...params.headers },
     body: JSON.stringify(body),
@@ -249,7 +294,7 @@ const invokeToolAuthed = async (params: {
     ...params,
   });
 
-describe("POST /tools/invoke", () => {
+describeToolsInvokeHttp("POST /tools/invoke", () => {
   it("invokes a tool and returns {ok:true,result}", async () => {
     allowAgentsListForMain();
     const res = await invokeAgentsListAuthed({ sessionKey: "main" });

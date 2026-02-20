@@ -98,7 +98,7 @@ const DEFAULT_MMR_LAMBDA = 0.7;
 const DEFAULT_TEMPORAL_DECAY_ENABLED = false;
 const DEFAULT_TEMPORAL_DECAY_HALF_LIFE_DAYS = 30;
 const DEFAULT_CACHE_ENABLED = true;
-const DEFAULT_SOURCES: Array<"memory" | "sessions"> = ["memory"];
+const DEFAULT_SOURCES: Array<"memory" | "sessions"> = ["memory", "sessions"];
 
 function normalizeSources(
   sources: Array<"memory" | "sessions"> | undefined,
@@ -137,7 +137,7 @@ function mergeConfig(
 ): ResolvedMemorySearchConfig {
   const enabled = overrides?.enabled ?? defaults?.enabled ?? true;
   const sessionMemory =
-    overrides?.experimental?.sessionMemory ?? defaults?.experimental?.sessionMemory ?? false;
+    overrides?.experimental?.sessionMemory ?? defaults?.experimental?.sessionMemory ?? true;
   const provider = overrides?.provider ?? defaults?.provider ?? "auto";
   const defaultRemote = defaults?.remote;
   const overrideRemote = overrides?.remote;

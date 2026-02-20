@@ -243,6 +243,8 @@ export type AgentDefaultsConfig = {
   subagents?: {
     /** Max concurrent sub-agent runs (global lane: "subagent"). Default: 1. */
     maxConcurrent?: number;
+    /** Allow spawned sub-agents (depth >= 1) to spawn further sub-agents. Default: false. */
+    allowRecursiveSpawn?: boolean;
     /** Maximum depth allowed for sessions_spawn chains. Default behavior: 1 (no nested spawns). */
     maxSpawnDepth?: number;
     /** Maximum active children a single requester session may spawn. Default behavior: 5. */

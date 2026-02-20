@@ -175,7 +175,23 @@ describe("memory search config", () => {
     expect(resolved?.sync.sessions).toEqual({
       deltaBytes: 100000,
       deltaMessages: 50,
+      retainEmbeddings: true,
     });
+  });
+
+  it("includes session sources by default and enables session memory unless disabled", () => {
+    const cfg = asConfig({
+      agents: {
+        defaults: {
+          memorySearch: {
+            provider: "openai",
+          },
+        },
+      },
+    });
+    const resolved = resolveMemorySearchConfig(cfg, "main");
+    expect(resolved?.experimental.sessionMemory).toBe(true);
+    expect(resolved?.sources).toEqual(["memory", "sessions"]);
   });
 
   it("merges remote defaults with agent overrides", () => {

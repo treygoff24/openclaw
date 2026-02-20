@@ -656,7 +656,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
     expect(sessionEntry.fallbackNoticeReason).toBe("rate limit");
   });
 
-  it("appends unscheduled-reminder note to assistant payload instead of fallback notice", async () => {
+  it("does not append unscheduled-reminder note to payloads", async () => {
     const sessionEntry: SessionEntry = {
       sessionId: "session",
       updatedAt: Date.now(),
@@ -699,7 +699,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
       expect(payloads[0]?.text).toContain("Model Fallback:");
       expect(payloads[0]?.text).not.toContain("did not schedule a reminder");
       expect(payloads[1]?.text).toContain("Assistant response");
-      expect(payloads[1]?.text).toContain("did not schedule a reminder");
+      expect(payloads[1]?.text).not.toContain("did not schedule a reminder");
     } finally {
       fallbackSpy.mockRestore();
     }

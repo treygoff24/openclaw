@@ -107,6 +107,14 @@ export async function spawnSubagentDirect(
   });
 
   const callerDepth = getSubagentDepthFromSessionStore(requesterInternalKey, { cfg });
+  const allowRecursiveSpawn = cfg.agents?.defaults?.subagents?.allowRecursiveSpawn ?? true;
+  if (!allowRecursiveSpawn && callerDepth >= 1) {
+    return {
+      status: "forbidden",
+      error:
+        "sessions_spawn recursive spawning is disabled (agents.defaults.subagents.allowRecursiveSpawn=false)",
+    };
+  }
   const maxSpawnDepth = cfg.agents?.defaults?.subagents?.maxSpawnDepth ?? 1;
   if (callerDepth >= maxSpawnDepth) {
     return {

@@ -1022,7 +1022,7 @@ describe("runReplyAgent reminder commitment guard", () => {
     });
   }
 
-  it("appends guard note when reminder commitment is not backed by cron.add", async () => {
+  it("keeps reminder commitment unchanged when cron.add did not run", async () => {
     runEmbeddedPiAgentMock.mockResolvedValueOnce({
       payloads: [{ text: "I'll remind you tomorrow morning." }],
       meta: {},
@@ -1031,7 +1031,7 @@ describe("runReplyAgent reminder commitment guard", () => {
 
     const result = await createRun();
     expect(result).toMatchObject({
-      text: "I'll remind you tomorrow morning.\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.",
+      text: "I'll remind you tomorrow morning.",
     });
   });
 

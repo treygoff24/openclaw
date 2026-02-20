@@ -146,4 +146,15 @@ describe("memory session stale cleanup retainEmbeddings", () => {
 
     await expect(hasIndexedSessionPath(stalePath)).resolves.toBe(true);
   });
+
+  it("retains stale session paths when retainEmbeddings is unset (default=true)", async () => {
+    manager = await createManager();
+    await manager.sync({ reason: "bootstrap" });
+    const stalePath = "sessions/orphan-implicit-default.jsonl";
+    await seedStaleSessionPath(stalePath);
+
+    await runSessionSyncPass();
+
+    await expect(hasIndexedSessionPath(stalePath)).resolves.toBe(true);
+  });
 });

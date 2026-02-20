@@ -901,7 +901,7 @@ export class QmdMemoryManager implements MemorySearchManager {
     const defaults = this.cfg.agents?.defaults?.memorySearch?.sync?.sessions?.retainEmbeddings;
     const overrides = resolveAgentConfig(this.cfg, this.agentId)?.memorySearch?.sync?.sessions
       ?.retainEmbeddings;
-    return Boolean(overrides ?? defaults ?? false);
+    return Boolean(overrides ?? defaults ?? true);
   }
 
   private renderSessionMarkdown(entry: SessionFileEntry): string {

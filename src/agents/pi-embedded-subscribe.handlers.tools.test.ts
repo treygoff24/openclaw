@@ -45,6 +45,7 @@ function createTestContext(): {
       messagingToolSentMediaUrls: [],
       messagingToolSentTargets: [],
       successfulCronAdds: 0,
+      attemptedCronAdds: 0,
     },
     shouldEmitToolResult: () => false,
     shouldEmitToolOutput: () => false,
@@ -91,7 +92,7 @@ describe("handleToolExecutionStart read path checks", () => {
 });
 
 describe("handleToolExecutionEnd cron.add commitment tracking", () => {
-  it("increments successfulCronAdds when cron add succeeds", async () => {
+  it("increments attemptedCronAdds and successfulCronAdds when cron add succeeds", async () => {
     const { ctx } = createTestContext();
     await handleToolExecutionStart(
       ctx as never,
@@ -114,10 +115,11 @@ describe("handleToolExecutionEnd cron.add commitment tracking", () => {
       } as never,
     );
 
+    expect(ctx.state.attemptedCronAdds).toBe(1);
     expect(ctx.state.successfulCronAdds).toBe(1);
   });
 
-  it("does not increment successfulCronAdds when cron add fails", async () => {
+  it("increments attemptedCronAdds but not successfulCronAdds when cron add fails", async () => {
     const { ctx } = createTestContext();
     await handleToolExecutionStart(
       ctx as never,
@@ -140,6 +142,34 @@ describe("handleToolExecutionEnd cron.add commitment tracking", () => {
       } as never,
     );
 
+    expect(ctx.state.attemptedCronAdds).toBe(1);
+    expect(ctx.state.successfulCronAdds).toBe(0);
+  });
+
+  it("does not increment cron add counters when cron action is not add", async () => {
+    const { ctx } = createTestContext();
+    await handleToolExecutionStart(
+      ctx as never,
+      {
+        type: "tool_execution_start",
+        toolName: "cron",
+        toolCallId: "tool-cron-3",
+        args: { action: "list" },
+      } as never,
+    );
+
+    await handleToolExecutionEnd(
+      ctx as never,
+      {
+        type: "tool_execution_end",
+        toolName: "cron",
+        toolCallId: "tool-cron-3",
+        isError: false,
+        result: { details: { status: "ok" } },
+      } as never,
+    );
+
+    expect(ctx.state.attemptedCronAdds).toBe(0);
     expect(ctx.state.successfulCronAdds).toBe(0);
   });
 });

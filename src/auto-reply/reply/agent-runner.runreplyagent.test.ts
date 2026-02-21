@@ -664,6 +664,7 @@ describe("runReplyAgent typing (heartbeat)", () => {
     const sessionStore = { main: sessionEntry };
     state.runEmbeddedPiAgentMock.mockResolvedValueOnce({
       payloads: [{ text: "Assistant response" }],
+      attemptedCronAdds: 0,
       successfulCronAdds: 0,
       meta: {},
     });

@@ -646,6 +646,25 @@ export async function runReplyAgent(params: {
     if (responseUsageLine) {
       finalPayloads = appendUsageLine(finalPayloads, responseUsageLine);
     }
+    if (
+      finalPayloads.length > 0 &&
+      (runResult?.attemptedCronAdds ?? 0) > 0 &&
+      runResult?.successfulCronAdds === 0
+    ) {
+      const prependedNotices =
+        (verboseEnabled && fallbackTransition.fallbackTransitioned ? 1 : 0) +
+        (verboseEnabled && fallbackTransition.fallbackCleared ? 1 : 0);
+      const targetPayload =
+        finalPayloads
+          .slice(prependedNotices)
+          .find((payload) => typeof payload.text === "string" && payload.text.length > 0) ??
+        finalPayloads.find(
+          (payload) => typeof payload.text === "string" && payload.text.length > 0,
+        );
+      if (targetPayload?.text) {
+        targetPayload.text = `${targetPayload.text}\n\nNote: I did not schedule a reminder in this turn, so this will not trigger automatically.`;
+      }
+    }
 
     // Post-compaction read audit (Layer 3)
     if (sessionKey && pendingPostCompactionAudits.get(sessionKey)) {

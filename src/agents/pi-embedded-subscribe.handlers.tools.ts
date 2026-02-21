@@ -338,9 +338,12 @@ export async function handleToolExecutionEnd(
     }
   }
 
-  // Track committed reminders only when cron.add completed successfully.
-  if (!isToolError && toolName === "cron" && isCronAddAction(startData?.args)) {
-    ctx.state.successfulCronAdds += 1;
+  // Track reminder scheduling attempts separately from successful commits.
+  if (toolName === "cron" && isCronAddAction(startData?.args)) {
+    ctx.state.attemptedCronAdds += 1;
+    if (!isToolError) {
+      ctx.state.successfulCronAdds += 1;
+    }
   }
 
   emitAgentEvent({

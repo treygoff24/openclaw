@@ -69,6 +69,8 @@ export type EmbeddedPiRunResult = {
   messagingToolSentMediaUrls?: string[];
   // Messaging tool targets that successfully sent a message during the run.
   messagingToolSentTargets?: MessagingToolSend[];
+  // Count of attempted cron.add tool calls in this run.
+  attemptedCronAdds?: number;
   // Count of successful cron.add tool calls in this run.
   successfulCronAdds?: number;
 };

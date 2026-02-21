@@ -1038,6 +1038,7 @@ export async function runEmbeddedPiAgent(
               messagingToolSentTexts: attempt.messagingToolSentTexts,
               messagingToolSentMediaUrls: attempt.messagingToolSentMediaUrls,
               messagingToolSentTargets: attempt.messagingToolSentTargets,
+              attemptedCronAdds: attempt.attemptedCronAdds,
               successfulCronAdds: attempt.successfulCronAdds,
             };
           }
@@ -1081,6 +1082,7 @@ export async function runEmbeddedPiAgent(
             messagingToolSentTexts: attempt.messagingToolSentTexts,
             messagingToolSentMediaUrls: attempt.messagingToolSentMediaUrls,
             messagingToolSentTargets: attempt.messagingToolSentTargets,
+            attemptedCronAdds: attempt.attemptedCronAdds,
             successfulCronAdds: attempt.successfulCronAdds,
           };
         }

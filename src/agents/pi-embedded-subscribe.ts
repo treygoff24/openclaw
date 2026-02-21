@@ -76,6 +76,7 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
     pendingMessagingTexts: new Map(),
     pendingMessagingTargets: new Map(),
     successfulCronAdds: 0,
+    attemptedCronAdds: 0,
     pendingMessagingMediaUrls: new Map(),
   };
   const usageTotals = {
@@ -591,6 +592,7 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
     pendingMessagingTexts.clear();
     pendingMessagingTargets.clear();
     state.successfulCronAdds = 0;
+    state.attemptedCronAdds = 0;
     state.pendingMessagingMediaUrls.clear();
     resetAssistantMessageState(0);
   };
@@ -677,6 +679,7 @@ export function subscribeEmbeddedPiSession(params: SubscribeEmbeddedPiSessionPar
     getMessagingToolSentTexts: () => messagingToolSentTexts.slice(),
     getMessagingToolSentMediaUrls: () => messagingToolSentMediaUrls.slice(),
     getMessagingToolSentTargets: () => messagingToolSentTargets.slice(),
+    getAttemptedCronAdds: () => state.attemptedCronAdds,
     getSuccessfulCronAdds: () => state.successfulCronAdds,
     // Returns true if any messaging tool successfully sent a message.
     // Used to suppress agent's confirmation text (e.g., "Respondi no Telegram!")

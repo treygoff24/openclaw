@@ -75,6 +75,7 @@ export type EmbeddedPiSubscribeState = {
   pendingMessagingTexts: Map<string, string>;
   pendingMessagingTargets: Map<string, MessagingToolSend>;
   successfulCronAdds: number;
+  attemptedCronAdds: number;
   pendingMessagingMediaUrls: Map<string, string[]>;
   lastAssistant?: AgentMessage;
 };
@@ -149,6 +150,7 @@ export type ToolHandlerState = Pick<
   | "messagingToolSentMediaUrls"
   | "messagingToolSentTargets"
   | "successfulCronAdds"
+  | "attemptedCronAdds"
 >;
 
 export type ToolHandlerContext = {

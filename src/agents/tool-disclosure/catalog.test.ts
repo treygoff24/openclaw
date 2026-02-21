@@ -1,17 +1,18 @@
 import type { AgentTool, AgentToolResult } from "@mariozechner/pi-agent-core";
+import { Type, type TSchema } from "@sinclair/typebox";
 import { describe, expect, it } from "vitest";
 import { buildToolCategoryCoverage, buildToolDisclosureCatalog } from "./catalog.js";
 
 function createStubTool(params: {
   name: string;
   description?: string;
-  parameters?: Record<string, unknown>;
-}): AgentTool<unknown, unknown> {
+  parameters?: TSchema;
+}): AgentTool<TSchema, unknown> {
   return {
     name: params.name,
     label: params.name,
     description: params.description ?? "",
-    parameters: params.parameters ?? {},
+    parameters: params.parameters ?? Type.Object({}),
     execute: async () => ({}) as AgentToolResult<unknown>,
   };
 }
@@ -22,12 +23,9 @@ describe("tool disclosure catalog", () => {
       createStubTool({
         name: "exec",
         description: "Run shell commands",
-        parameters: {
-          type: "object",
-          properties: {
-            command: { type: "string" },
-          },
-        },
+        parameters: Type.Object({
+          command: Type.String(),
+        }),
       }),
       createStubTool({
         name: "web_search",

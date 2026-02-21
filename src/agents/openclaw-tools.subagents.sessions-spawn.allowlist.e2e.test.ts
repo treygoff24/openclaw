@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import "./test-helpers/fast-core-tools.js";
+import { normalizeAgentId } from "../routing/session-key.js";
 import {
   getCallGatewayMock,
   getSessionsSpawnTool,
@@ -10,7 +11,7 @@ import { resetSubagentRegistryForTests } from "./subagent-registry.js";
 
 const callGatewayMock = getCallGatewayMock();
 
-describe("openclaw-tools: subagents (sessions_spawn allowlist)", () => {
+describe("openclaw-tools: subagents (sessions_spawn target selection)", () => {
   function setAllowAgents(allowAgents: string[]) {
     setSessionsSpawnConfigOverride({
       session: {
@@ -56,14 +57,12 @@ describe("openclaw-tools: subagents (sessions_spawn allowlist)", () => {
   }
 
   async function expectAllowedSpawn(params: {
-    allowAgents: string[];
     agentId: string;
     callId: string;
     acceptedAt: number;
   }) {
     resetSubagentRegistryForTests();
     callGatewayMock.mockReset();
-    setAllowAgents(params.allowAgents);
     const getChildSessionKey = mockAcceptedSpawn(params.acceptedAt);
 
     const result = await executeSpawn(params.callId, params.agentId);
@@ -72,89 +71,46 @@ describe("openclaw-tools: subagents (sessions_spawn allowlist)", () => {
       status: "accepted",
       runId: "run-1",
     });
-    expect(getChildSessionKey()?.startsWith(`agent:${params.agentId}:subagent:`)).toBe(true);
+    expect(
+      getChildSessionKey()?.startsWith(`agent:${normalizeAgentId(params.agentId)}:subagent:`),
+    ).toBe(true);
   }
 
   beforeEach(() => {
     resetSessionsSpawnConfigOverride();
   });
 
-  it("sessions_spawn only allows same-agent by default", async () => {
-    resetSubagentRegistryForTests();
-    callGatewayMock.mockReset();
-
-    const tool = await getSessionsSpawnTool({
-      agentSessionKey: "main",
-      agentChannel: "whatsapp",
-    });
-
-    const result = await tool.execute("call6", {
-      task: "do thing",
-      agentId: "beta",
-    });
-    expect(result.details).toMatchObject({
-      status: "forbidden",
-    });
-    expect(callGatewayMock).not.toHaveBeenCalled();
-  });
-
-  it("sessions_spawn forbids cross-agent spawning when not allowed", async () => {
-    resetSubagentRegistryForTests();
-    callGatewayMock.mockReset();
-    setSessionsSpawnConfigOverride({
-      session: {
-        mainKey: "main",
-        scope: "per-sender",
-      },
-      agents: {
-        list: [
-          {
-            id: "main",
-            subagents: {
-              allowAgents: ["alpha"],
-            },
-          },
-        ],
-      },
-    });
-
-    const tool = await getSessionsSpawnTool({
-      agentSessionKey: "main",
-      agentChannel: "whatsapp",
-    });
-
-    const result = await tool.execute("call9", {
-      task: "do thing",
-      agentId: "beta",
-    });
-    expect(result.details).toMatchObject({
-      status: "forbidden",
-    });
-    expect(callGatewayMock).not.toHaveBeenCalled();
-  });
-
-  it("sessions_spawn allows cross-agent spawning when configured", async () => {
+  it("sessions_spawn allows cross-agent spawning by default", async () => {
     await expectAllowedSpawn({
-      allowAgents: ["beta"],
       agentId: "beta",
-      callId: "call7",
+      callId: "call6",
+      acceptedAt: 4900,
+    });
+  });
+
+  it("sessions_spawn ignores legacy allowAgents restrictions", async () => {
+    setAllowAgents(["alpha"]);
+
+    await expectAllowedSpawn({
+      agentId: "beta",
+      callId: "call9",
       acceptedAt: 5000,
     });
   });
 
-  it("sessions_spawn allows any agent when allowlist is *", async () => {
+  it("sessions_spawn ignores wildcard allowAgents settings", async () => {
+    setAllowAgents(["*"]);
+
     await expectAllowedSpawn({
-      allowAgents: ["*"],
       agentId: "beta",
       callId: "call8",
       acceptedAt: 5100,
     });
   });
 
-  it("sessions_spawn normalizes allowlisted agent ids", async () => {
+  it("sessions_spawn normalizes target agent ids", async () => {
     await expectAllowedSpawn({
-      allowAgents: ["Research"],
-      agentId: "research",
+      agentId: "Research",
       callId: "call10",
       acceptedAt: 5200,
     });

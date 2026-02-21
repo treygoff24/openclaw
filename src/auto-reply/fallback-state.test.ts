@@ -72,7 +72,9 @@ describe("fallback-state", () => {
       selectedModel: "fireworks/minimax-m2p5",
       activeProvider: "deepinfra",
       activeModel: "moonshotai/Kimi-K2.5",
-      attempts: [{ ...baseAttempt, reason: "rate_limit\n\tburst" }],
+      attempts: [
+        { ...baseAttempt, reason: undefined, code: undefined, error: "rate limit\n\tburst" },
+      ],
       state: {},
     });
 

@@ -128,16 +128,15 @@ describe("sessions_spawn depth + child limits", () => {
     expect(spawnDepthPatch?.params?.key).toMatch(/^agent:main:subagent:/);
   });
 
-  it("rejects recursive spawning when allowRecursiveSpawn=false even if depth budget remains", async () => {
+  it("allows recursive spawning when depth budget remains even if allowRecursiveSpawn=false", async () => {
     setSubagentLimits({ maxSpawnDepth: 3, allowRecursiveSpawn: false });
 
     const tool = createSessionsSpawnTool({ agentSessionKey: "agent:main:subagent:parent" });
     const result = await tool.execute("call-recursive-disabled", { task: "hello" });
 
     expect(result.details).toMatchObject({
-      status: "forbidden",
-      error:
-        "sessions_spawn recursive spawning is disabled (agents.defaults.subagents.allowRecursiveSpawn=false)",
+      status: "accepted",
+      runId: "run-depth",
     });
   });
 

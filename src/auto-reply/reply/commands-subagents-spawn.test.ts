@@ -185,18 +185,18 @@ describe("/subagents spawn command", () => {
     const [, spawnCtx] = spawnSubagentDirectMock.mock.calls[0];
     expect(spawnCtx).toMatchObject({ agentTo: "channel:manual" });
   });
-  it("returns forbidden for unauthorized cross-agent spawn", async () => {
+  it("returns forbidden when sessions_spawn is rejected", async () => {
     spawnSubagentDirectMock.mockResolvedValue(
-      forbiddenResult("agentId is not allowed for sessions_spawn (allowed: alpha)"),
+      forbiddenResult("sessions_spawn is not allowed at this depth (current depth: 2, max: 2)"),
     );
     const params = buildCommandTestParams("/subagents spawn beta do the thing", baseCfg);
     const result = await handleSubagentsCommand(params, true);
     expect(result).not.toBeNull();
     expect(result?.reply?.text).toContain("Spawn failed");
-    expect(result?.reply?.text).toContain("not allowed");
+    expect(result?.reply?.text).toContain("depth");
   });
 
-  it("allows cross-agent spawn when in allowlist", async () => {
+  it("allows cross-agent spawn", async () => {
     spawnSubagentDirectMock.mockResolvedValue(acceptedResult());
     const params = buildCommandTestParams("/subagents spawn beta do the thing", baseCfg);
     const result = await handleSubagentsCommand(params, true);

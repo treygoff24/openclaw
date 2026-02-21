@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 
-function canListen(): (host: string | undefined) => Promise<number> {
+function canListen(): (host?: string) => Promise<number> {
   return (host) =>
     new Promise<number>((resolve, reject) => {
       const s = createServer();

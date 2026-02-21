@@ -93,12 +93,19 @@ describe("QmdMemoryManager", () => {
   let cfg: OpenClawConfig;
   const agentId = "main";
 
-  async function createManager(params?: { mode?: "full" | "status"; cfg?: OpenClawConfig }) {
+  async function createManager(params?: {
+    mode?: "full" | "status";
+    cfg?: OpenClawConfig;
+    agentId?: string;
+  }) {
     const cfgToUse = params?.cfg ?? cfg;
-    const resolved = resolveMemoryBackendConfig({ cfg: cfgToUse, agentId });
+    const resolved = resolveMemoryBackendConfig({
+      cfg: cfgToUse,
+      agentId: params?.agentId ?? agentId,
+    });
     const manager = await QmdMemoryManager.create({
       cfg: cfgToUse,
-      agentId,
+      agentId: params?.agentId ?? agentId,
       resolved,
       mode: params?.mode ?? "status",
     });

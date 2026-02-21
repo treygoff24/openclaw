@@ -1,20 +1,16 @@
 import type { AgentTool, AgentToolResult } from "@mariozechner/pi-agent-core";
+import { Type, type TSchema } from "@sinclair/typebox";
 import { describe, expect, it } from "vitest";
 import { createListToolTool, createListToolsTool } from "./list-tools-tool.js";
 
-function createFakeTool(name: string, description: string): AgentTool<unknown, unknown> {
+function createFakeTool(name: string, description: string): AgentTool<TSchema, unknown> {
   return {
     name,
     label: `${name}-label`,
     description,
-    parameters: {
-      type: "object",
-      properties: {
-        path: {
-          type: "string",
-        },
-      },
-    },
+    parameters: Type.Object({
+      path: Type.String(),
+    }),
     execute: async () => ({}) as AgentToolResult<unknown>,
   };
 }

@@ -25,7 +25,7 @@ function isListenPermissionError(error: unknown): boolean {
 }
 
 function listenBrowserServer(
-  app: ReturnType<(typeof import("express"))["default"]>,
+  app: ReturnType<typeof express>,
   port: number,
   host?: string,
 ): Promise<Server> {

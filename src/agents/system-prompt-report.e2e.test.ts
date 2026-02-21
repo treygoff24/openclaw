@@ -1,20 +1,18 @@
 import type { AgentTool, AgentToolResult } from "@mariozechner/pi-agent-core";
+import { Type, type TSchema } from "@sinclair/typebox";
 import { describe, expect, it } from "vitest";
 import { buildSystemPromptReport } from "./system-prompt-report.js";
 
-function tool(name: string, props: number): AgentTool<unknown, unknown> {
-  const properties: Record<string, { type: string }> = {};
+function tool(name: string, props: number): AgentTool<TSchema, unknown> {
+  const properties: Record<string, TSchema> = {};
   for (let i = 0; i < props; i += 1) {
-    properties[`field_${i}`] = { type: "string" };
+    properties[`field_${i}`] = Type.String();
   }
   return {
     name,
     label: name,
     description: `${name} description`,
-    parameters: {
-      type: "object",
-      properties,
-    },
+    parameters: Type.Object(properties),
     execute: async () => ({}) as AgentToolResult<unknown>,
   };
 }
@@ -29,6 +27,7 @@ describe("buildSystemPromptReport", () => {
       generatedAt: Date.now(),
       systemPrompt:
         "Tool names are case-sensitive. Call tools exactly as listed.\n- read\nTOOLS.md does not control tool availability; it is user guidance for how to use external tools.",
+      bootstrapMaxChars: 8_000,
       bootstrapFiles: [],
       injectedFiles: [],
       skillsPrompt: "",

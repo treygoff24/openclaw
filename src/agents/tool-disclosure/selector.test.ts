@@ -1,19 +1,17 @@
 import type { AgentTool, AgentToolResult } from "@mariozechner/pi-agent-core";
+import { Type, type TSchema } from "@sinclair/typebox";
 import { describe, expect, it } from "vitest";
 import { buildToolDisclosureCatalog } from "./catalog.js";
 import { selectToolsByIntent } from "./selector.js";
 
-function createStubTool(name: string, description = ""): AgentTool<unknown, unknown> {
+function createStubTool(name: string, description = ""): AgentTool<TSchema, unknown> {
   return {
     name,
     label: name,
     description,
-    parameters: {
-      type: "object",
-      properties: {
-        input: { type: "string" },
-      },
-    },
+    parameters: Type.Object({
+      input: Type.String(),
+    }),
     execute: async () => ({}) as AgentToolResult<unknown>,
   };
 }

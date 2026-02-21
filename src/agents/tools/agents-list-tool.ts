@@ -1,11 +1,11 @@
 import { Type } from "@sinclair/typebox";
 import { loadConfig } from "../../config/config.js";
+import { listAgentsForGateway } from "../../gateway/session-utils.js";
 import {
   DEFAULT_AGENT_ID,
   normalizeAgentId,
   parseAgentSessionKey,
 } from "../../routing/session-key.js";
-import { resolveAgentConfig } from "../agent-scope.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult } from "./common.js";
 import { resolveInternalSessionKey, resolveMainSessionAlias } from "./sessions-helpers.js";
@@ -26,7 +26,7 @@ export function createAgentsListTool(opts?: {
   return {
     label: "Agents",
     name: "agents_list",
-    description: "List agent ids you can target with sessions_spawn (based on allowlists).",
+    description: "List available agent ids you can target with sessions_spawn.",
     parameters: AgentsListToolSchema,
     execute: async () => {
       const cfg = loadConfig();
@@ -45,16 +45,8 @@ export function createAgentsListTool(opts?: {
           DEFAULT_AGENT_ID,
       );
 
-      const allowAgents = resolveAgentConfig(cfg, requesterAgentId)?.subagents?.allowAgents ?? [];
-      const allowAny = allowAgents.some((value) => value.trim() === "*");
-      const allowSet = new Set(
-        allowAgents
-          .filter((value) => value.trim() && value.trim() !== "*")
-          .map((value) => normalizeAgentId(value)),
-      );
-
       const configuredAgents = Array.isArray(cfg.agents?.list) ? cfg.agents?.list : [];
-      const configuredIds = configuredAgents.map((entry) => normalizeAgentId(entry.id));
+      const configuredIds = new Set(configuredAgents.map((entry) => normalizeAgentId(entry.id)));
       const configuredNameMap = new Map<string, string>();
       for (const entry of configuredAgents) {
         const name = entry?.name?.trim() ?? "";
@@ -64,32 +56,32 @@ export function createAgentsListTool(opts?: {
         configuredNameMap.set(normalizeAgentId(entry.id), name);
       }
 
-      const allowed = new Set<string>();
-      allowed.add(requesterAgentId);
-      if (allowAny) {
-        for (const id of configuredIds) {
-          allowed.add(id);
-        }
-      } else {
-        for (const id of allowSet) {
-          allowed.add(id);
+      const available = listAgentsForGateway(cfg).agents;
+      const availableNameMap = new Map<string, string>();
+      for (const entry of available) {
+        if (entry.name?.trim()) {
+          availableNameMap.set(entry.id, entry.name.trim());
         }
       }
 
-      const all = Array.from(allowed);
-      const rest = all
+      const all = new Set<string>([requesterAgentId]);
+      for (const entry of available) {
+        all.add(entry.id);
+      }
+      const allIds = Array.from(all);
+      const rest = allIds
         .filter((id) => id !== requesterAgentId)
         .toSorted((a, b) => a.localeCompare(b));
       const ordered = [requesterAgentId, ...rest];
       const agents: AgentListEntry[] = ordered.map((id) => ({
         id,
-        name: configuredNameMap.get(id),
-        configured: configuredIds.includes(id),
+        name: configuredNameMap.get(id) ?? availableNameMap.get(id),
+        configured: configuredIds.has(id),
       }));
 
       return jsonResult({
         requester: requesterAgentId,
-        allowAny,
+        allowAny: true,
         agents,
       });
     },

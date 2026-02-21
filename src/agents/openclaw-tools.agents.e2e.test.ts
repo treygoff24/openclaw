@@ -26,10 +26,19 @@ describe("agents_list", () => {
         mainKey: "main",
         scope: "per-sender",
       },
+      agents: {
+        list: [
+          {
+            id: "main",
+            name: "Main",
+            default: true,
+          },
+        ],
+      },
     };
   });
 
-  it("defaults to the requester agent only", async () => {
+  it("defaults to the requester agent only when no other agents are configured", async () => {
     const tool = createOpenClawTools({
       agentSessionKey: "main",
     }).find((candidate) => candidate.name === "agents_list");
@@ -40,13 +49,13 @@ describe("agents_list", () => {
     const result = await tool.execute("call1", {});
     expect(result.details).toMatchObject({
       requester: "main",
-      allowAny: false,
+      allowAny: true,
     });
     const agents = (result.details as { agents?: Array<{ id: string }> }).agents;
     expect(agents?.map((agent) => agent.id)).toEqual(["main"]);
   });
 
-  it("includes allowlisted targets plus requester", async () => {
+  it("includes all configured targets plus requester", async () => {
     configOverride = {
       session: {
         mainKey: "main",
@@ -57,9 +66,6 @@ describe("agents_list", () => {
           {
             id: "main",
             name: "Main",
-            subagents: {
-              allowAgents: ["research"],
-            },
           },
           {
             id: "research",
@@ -85,7 +91,7 @@ describe("agents_list", () => {
     expect(agents?.map((agent) => agent.id)).toEqual(["main", "research"]);
   });
 
-  it("returns configured agents when allowlist is *", async () => {
+  it("returns all configured agents with requester first", async () => {
     configOverride = {
       session: {
         mainKey: "main",
@@ -95,9 +101,6 @@ describe("agents_list", () => {
         list: [
           {
             id: "main",
-            subagents: {
-              allowAgents: ["*"],
-            },
           },
           {
             id: "research",
@@ -130,7 +133,7 @@ describe("agents_list", () => {
     expect(agents?.map((agent) => agent.id)).toEqual(["main", "coder", "research"]);
   });
 
-  it("marks allowlisted-but-unconfigured agents", async () => {
+  it("adds requester session agent even when it is not configured", async () => {
     configOverride = {
       session: {
         mainKey: "main",
@@ -140,16 +143,18 @@ describe("agents_list", () => {
         list: [
           {
             id: "main",
-            subagents: {
-              allowAgents: ["research"],
-            },
+            name: "Main",
+          },
+          {
+            id: "research",
+            name: "Research",
           },
         ],
       },
     };
 
     const tool = createOpenClawTools({
-      agentSessionKey: "main",
+      agentSessionKey: "agent:review:main",
     }).find((candidate) => candidate.name === "agents_list");
     if (!tool) {
       throw new Error("missing agents_list tool");
@@ -161,8 +166,8 @@ describe("agents_list", () => {
         agents?: Array<{ id: string; configured: boolean }>;
       }
     ).agents;
-    expect(agents?.map((agent) => agent.id)).toEqual(["main", "research"]);
-    const research = agents?.find((agent) => agent.id === "research");
-    expect(research?.configured).toBe(false);
+    expect(agents?.map((agent) => agent.id)).toEqual(["review", "main", "research"]);
+    const review = agents?.find((agent) => agent.id === "review");
+    expect(review?.configured).toBe(false);
   });
 });

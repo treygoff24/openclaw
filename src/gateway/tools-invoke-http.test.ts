@@ -137,11 +137,12 @@ let sharedServer: ReturnType<typeof createServer> | undefined;
 beforeAll(async () => {
   const listenServer = (host?: string) =>
     new Promise<number>((resolve, reject) => {
-      if (!sharedServer) {
+      const server = sharedServer;
+      if (!server) {
         return reject(new Error("server not initialized"));
       }
       const onListen = () => {
-        const address = sharedServer.address() as AddressInfo | null;
+        const address = server.address() as AddressInfo | null;
         const rawHost = address?.address;
         sharedPort = address?.port ?? 0;
         if (typeof rawHost === "string" && rawHost.length > 0) {
@@ -154,11 +155,11 @@ beforeAll(async () => {
         resolve(sharedPort);
       };
       const onError = (err: unknown) => reject(err);
-      sharedServer.once("error", onError);
+      server.once("error", onError);
       if (host) {
-        sharedServer.listen(0, host, onListen);
+        server.listen(0, host, onListen);
       } else {
-        sharedServer.listen(0, onListen);
+        server.listen(0, onListen);
       }
     });
 

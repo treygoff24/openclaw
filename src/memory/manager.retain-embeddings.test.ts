@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { OpenClawConfig } from "../config/config.js";
 import { getMemorySearchManager, type MemoryIndexManager } from "./index.js";
 
 vi.mock("chokidar", () => ({
@@ -51,7 +52,7 @@ describe("memory session stale cleanup retainEmbeddings", () => {
   });
 
   async function createManager(retainEmbeddings?: boolean): Promise<MemoryIndexManager> {
-    const cfg = {
+    const cfg: OpenClawConfig = {
       agents: {
         defaults: {
           workspace: workspaceDir,
@@ -81,7 +82,7 @@ describe("memory session stale cleanup retainEmbeddings", () => {
     if (!result.manager) {
       throw new Error("manager missing");
     }
-    return result.manager;
+    return result.manager as unknown as MemoryIndexManager;
   }
 
   async function seedStaleSessionPath(pathValue: string): Promise<void> {

@@ -48,7 +48,12 @@ export async function resolveGatewayRuntimeConfig(params: {
 }): Promise<GatewayRuntimeConfig> {
   const bindMode = params.bind ?? params.cfg.gateway?.bind ?? "loopback";
   const customBindHost = params.cfg.gateway?.customBindHost;
-  const bindHost = params.host ?? (await resolveGatewayBindHost(bindMode, customBindHost));
+  const hostOverride = params.host?.trim();
+  const bindHost =
+    hostOverride ??
+    (bindMode === "loopback"
+      ? "127.0.0.1"
+      : await resolveGatewayBindHost(bindMode, customBindHost));
   if (bindMode === "loopback" && !isLoopbackHost(bindHost)) {
     throw new Error(
       `gateway bind=loopback resolved to non-loopback host ${bindHost}; refusing fallback to a network bind`,
@@ -105,6 +110,13 @@ export async function resolveGatewayRuntimeConfig(params: {
     process.env.OPENCLAW_SKIP_CANVAS_HOST !== "1" && params.cfg.canvasHost?.enabled !== false;
 
   const trustedProxies = params.cfg.gateway?.trustedProxies ?? [];
+  const configuredAuth = params.auth ?? params.cfg.gateway?.auth ?? {};
+  const isTokenModeExplicit = configuredAuth.mode === "token";
+  if (isTokenModeExplicit && !resolvedAuth.token?.trim()) {
+    throw new Error(
+      "gateway auth mode is token, but no token was configured (set gateway.auth.token or OPENCLAW_GATEWAY_TOKEN)",
+    );
+  }
 
   assertGatewayAuthConfigured(resolvedAuth);
   if (tailscaleMode === "funnel" && authMode !== "password") {
@@ -115,12 +127,6 @@ export async function resolveGatewayRuntimeConfig(params: {
   if (tailscaleMode !== "off" && !isLoopbackHost(bindHost)) {
     throw new Error("tailscale serve/funnel requires gateway bind=loopback (127.0.0.1)");
   }
-  if (!isLoopbackHost(bindHost) && !hasSharedSecret && authMode !== "trusted-proxy") {
-    throw new Error(
-      `refusing to bind gateway to ${bindHost}:${params.port} without auth (set gateway.auth.token/password, or set OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD)`,
-    );
-  }
-
   if (authMode === "trusted-proxy") {
     if (trustedProxies.length === 0) {
       throw new Error(
@@ -137,6 +143,11 @@ export async function resolveGatewayRuntimeConfig(params: {
         );
       }
     }
+  }
+  if (!isLoopbackHost(bindHost) && !hasSharedSecret && authMode !== "trusted-proxy") {
+    throw new Error(
+      `refusing to bind gateway to ${bindHost}:${params.port} without auth (set gateway.auth.token/password, or set OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD)`,
+    );
   }
 
   return {

@@ -18,6 +18,29 @@ let state: BrowserServerState | null = null;
 const log = createSubsystemLogger("browser");
 const logServer = log.child("server");
 
+function isListenPermissionError(error: unknown): boolean {
+  return (
+    typeof error === "object" && error !== null && (error as { code?: string }).code === "EPERM"
+  );
+}
+
+function listenBrowserServer(
+  app: ReturnType<(typeof import("express"))["default"]>,
+  port: number,
+  host?: string,
+): Promise<Server> {
+  return new Promise((resolve, reject) => {
+    const server = host
+      ? app.listen(port, host, () => {
+          resolve(server);
+        })
+      : app.listen(port, () => {
+          resolve(server);
+        });
+    server.once("error", reject);
+  });
+}
+
 export async function startBrowserControlServerFromConfig(): Promise<BrowserServerState | null> {
   if (state) {
     return state;
@@ -51,13 +74,25 @@ export async function startBrowserControlServerFromConfig(): Promise<BrowserServ
   registerBrowserRoutes(app as unknown as BrowserRouteRegistrar, ctx);
 
   const port = resolved.controlPort;
-  const server = await new Promise<Server>((resolve, reject) => {
-    const s = app.listen(port, "127.0.0.1", () => resolve(s));
-    s.once("error", reject);
-  }).catch((err) => {
-    logServer.error(`openclaw browser server failed to bind 127.0.0.1:${port}: ${String(err)}`);
-    return null;
-  });
+  let server: Server | null = null;
+  let bindHost = "127.0.0.1";
+  try {
+    server = await listenBrowserServer(app, port, bindHost);
+  } catch (err) {
+    if (!isListenPermissionError(err)) {
+      logServer.error(`openclaw browser server failed to bind 127.0.0.1:${port}: ${String(err)}`);
+      return null;
+    }
+
+    bindHost = "0.0.0.0";
+    logServer.warn(
+      `openclaw browser server could not bind to 127.0.0.1:${port} (permission denied); retrying default interface`,
+    );
+    server = await listenBrowserServer(app, port).catch((fallbackErr) => {
+      logServer.error(`openclaw browser server failed to bind: ${String(fallbackErr)}`);
+      return null;
+    });
+  }
 
   if (!server) {
     return null;
@@ -76,7 +111,7 @@ export async function startBrowserControlServerFromConfig(): Promise<BrowserServ
   });
 
   const authMode = browserAuth.token ? "token" : browserAuth.password ? "password" : "off";
-  logServer.info(`Browser control listening on http://127.0.0.1:${port}/ (auth=${authMode})`);
+  logServer.info(`Browser control listening on http://${bindHost}:${port}/ (auth=${authMode})`);
   return state;
 }
 

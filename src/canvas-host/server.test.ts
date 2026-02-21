@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import os from "node:os";
 import path from "node:path";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { WebSocket } from "ws";
 import { rawDataToString } from "../infra/ws.js";
 import { defaultRuntime } from "../runtime.js";
@@ -60,9 +60,22 @@ describe("canvas host", () => {
     await fs.mkdir(dir, { recursive: true });
     return dir;
   };
+  const cleanupA2UiTestLinks = async () => {
+    const a2uiRoot = path.resolve(process.cwd(), "src/canvas-host/a2ui");
+    const entries = await fs.readdir(a2uiRoot).catch(() => []);
+    await Promise.all(
+      entries
+        .filter((entry) => /^test-link-.*\.txt$/i.test(entry))
+        .map((entry) => fs.rm(path.join(a2uiRoot, entry), { force: true })),
+    );
+  };
 
   beforeAll(async () => {
     fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-canvas-fixtures-"));
+  });
+
+  afterEach(async () => {
+    await cleanupA2UiTestLinks();
   });
 
   afterAll(async () => {
@@ -252,6 +265,7 @@ describe("canvas host", () => {
     const dir = await createCaseDir();
     const a2uiRoot = path.resolve(process.cwd(), "src/canvas-host/a2ui");
     const bundlePath = path.join(a2uiRoot, "a2ui.bundle.js");
+    await cleanupA2UiTestLinks();
     const linkName = `test-link-${Date.now()}-${Math.random().toString(16).slice(2)}.txt`;
     const linkPath = path.join(a2uiRoot, linkName);
     let createdBundle = false;

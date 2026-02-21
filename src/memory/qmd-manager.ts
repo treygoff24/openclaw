@@ -218,6 +218,16 @@ export class QmdMemoryManager implements MemorySearchManager {
     }
   }
 
+  private async initializeStatusMode(): Promise<void> {
+    await fs.mkdir(this.xdgConfigHome, { recursive: true });
+    await fs.mkdir(this.xdgCacheHome, { recursive: true });
+    await fs.mkdir(path.dirname(this.indexPath), { recursive: true });
+    if (this.sessionExporter) {
+      await fs.mkdir(this.sessionExporter.dir, { recursive: true });
+    }
+    this.bootstrapCollections();
+  }
+
   private bootstrapCollections(): void {
     this.collectionRoots.clear();
     this.sources.clear();

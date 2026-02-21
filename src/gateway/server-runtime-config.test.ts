@@ -1,7 +1,11 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveGatewayRuntimeConfig } from "./server-runtime-config.js";
 
 describe("resolveGatewayRuntimeConfig", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   describe("trusted-proxy auth mode", () => {
     // This test validates BOTH validation layers:
     // 1. CLI validation in src/cli/gateway-cli/run.ts (line 246)
@@ -147,6 +151,8 @@ describe("resolveGatewayRuntimeConfig", () => {
 
   describe("token/password auth modes", () => {
     it("should reject token mode without token configured", async () => {
+      // Ensure no ambient OPENCLAW_GATEWAY_TOKEN is picked up from the environment.
+      vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", "");
       const cfg = {
         gateway: {
           bind: "lan" as const,
@@ -162,6 +168,27 @@ describe("resolveGatewayRuntimeConfig", () => {
           port: 18789,
         }),
       ).rejects.toThrow("gateway auth mode is token, but no token was configured");
+    });
+
+    it("should allow token mode when token is provided via OPENCLAW_GATEWAY_TOKEN", async () => {
+      vi.stubEnv("OPENCLAW_GATEWAY_TOKEN", "env-token-123");
+      const cfg = {
+        gateway: {
+          bind: "lan" as const,
+          auth: {
+            mode: "token" as const,
+          },
+        },
+      };
+
+      const result = await resolveGatewayRuntimeConfig({
+        cfg,
+        port: 18789,
+      });
+
+      expect(result.authMode).toBe("token");
+      expect(result.bindHost).toBe("0.0.0.0");
+      expect(result.resolvedAuth.token).toBe("env-token-123");
     });
 
     it("should allow lan binding with token", async () => {
